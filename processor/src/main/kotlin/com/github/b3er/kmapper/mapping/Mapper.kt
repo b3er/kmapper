@@ -19,6 +19,7 @@ import com.github.b3er.kmapper.mapping.api.MappingContext
 import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
 import com.github.b3er.kmapper.mapping.common.MapperAnnotation
 import com.github.b3er.kmapper.mapping.common.MappingTargetProperty
+import com.github.b3er.kmapper.mapping.mappings.GeneratedMapping
 import com.github.b3er.kmapper.mapping.mappings.MappingFactory
 import com.github.b3er.kmapper.mapping.mappings.PureMapping
 import com.github.b3er.kmapper.mapping.utils.getAnnotation
@@ -62,7 +63,8 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
     ): PureMapping? {
         return allMappings().find { mapping ->
             mapping.target.matches(target) && mapping.isSourceCompatibleWith(source, parent.sources)
-        } ?: includes.mapNotNull { (include, _) -> include.findMapping(target, source, parent, false) }.firstOrNull()
+        } ?: includes.mapNotNull { (include, _) -> include.findMapping(target, source, parent, false) }
+            .firstOrNull { it !is GeneratedMapping }
         ?: if (createIfNeeded) createMapping(target, source, parent) else null
     }
 

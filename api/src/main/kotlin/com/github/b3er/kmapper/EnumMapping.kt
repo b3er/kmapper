@@ -15,6 +15,9 @@
 
 package com.github.b3er.kmapper
 
+/**
+ * Enum mapping function annotations, auto rename case, or direct matching
+ */
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.SOURCE)
 @Repeatable

@@ -28,6 +28,8 @@ data class OtherModel(
     data class OtherNestedModel(val id: Long, val nestedName: String)
 }
 
+data class AnotherOtherModel(val id: Long, val nested: OtherModel.OtherNestedModel)
+
 
 
 

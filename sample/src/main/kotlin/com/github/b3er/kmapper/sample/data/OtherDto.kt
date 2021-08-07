@@ -29,5 +29,5 @@ data class OtherDto(
 }
 
 
-
+data class AnotherOtherDto(val id: Long, val nested: OtherDto.OtherNestedDto)
 
