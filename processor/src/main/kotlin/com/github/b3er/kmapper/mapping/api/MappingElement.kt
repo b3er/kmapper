@@ -30,4 +30,6 @@ interface MappingElement : NamedTypeElement {
             properties.firstOrNull { it.matchesByName(propertyName) }
         }
     }
+
+    fun makeNotNullable(): MappingElement
 }

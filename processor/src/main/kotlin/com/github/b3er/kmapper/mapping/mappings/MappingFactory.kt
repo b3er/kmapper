@@ -38,6 +38,9 @@ object MappingFactory {
             }
             val target = ref.returnType!!.toMappingElement(enumeration = ConstructorValuesEnumeration)
             when {
+                context.typeResolver.isIterable(target.type) -> {
+                    IterableMappingFunction(ref, target, mapper)
+                }
                 target.declaration.isEnumClass() -> {
                     EnumMappingFunction(ref, target, mapper)
                 }

@@ -28,4 +28,6 @@ interface OtherMapper {
 }
 
 @Mapper
-interface OtherNestedMapper
+interface OtherNestedMapper {
+    fun map(list: List<OtherDto>): List<OtherModel>
+}

@@ -38,7 +38,7 @@ interface GeneratesIterableMapping : PureMapping, MappingGenerator {
         CodeBlock.builder().apply {
             writeNullPreconditions()
             if (mapper.context.typeResolver.isList(source.type)) {
-                addStatement("if(%N.size == 0) return emptyList()", source.shortName)
+                addStatement("if (%N.size == 0) return emptyList()", source.shortName)
                 addStatement(
                     "val %N = %T(%N.size)",
                     "result",

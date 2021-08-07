@@ -46,7 +46,7 @@ class SimpleMapperFactory(
         addParameter(ParameterSpec.builder("cls", KClass::class.asTypeName().parameterizedBy(type)).build())
         returns(type)
         val code = CodeBlock.builder()
-        code.beginControlFlow("return when(%N) {", "cls")
+        code.beginControlFlow("return when (%N) {", "cls")
         context.mappers().forEach { mapper ->
             if (mapper.includes.isEmpty()) {
                 code.addStatement("%T::class -> %T() as %T", mapper.className, mapper.implementationClassName, type)

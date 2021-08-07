@@ -122,38 +122,41 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
                 )
             }
         } else {
-            val ref = findMapping(target, property)
-            if (ref.mapper == mapper) {
-                if (source == property) {
-                    addStatement(
-                        "%N = %N(%N),",
-                        target.shortName,
-                        ref.name,
-                        source.shortName
-                    )
-                } else {
-                    addStatement(
-                        "%N = %N(%N.%N),",
-                        target.shortName,
-                        ref.name,
-                        source.shortName,
-                        property.shortName
-                    )
-                }
+            add("«")
+            add("%N = ", target.shortName)
+            val nullables = property.type.isMarkedNullable && target.type.isMarkedNullable
 
+            val ref = if (nullables) {
+                findMapping(target.makeNotNullable(), property.makeNotNullable())
+            } else {
+                findMapping(target, property)
+            }
+
+            val referenceBlock = if (nullables) {
+                CodeBlock.of("%N", "it")
+            } else if (source == property) {
+                CodeBlock.of("%N", source.shortName)
+            } else {
+                CodeBlock.of("%N.%N", source.shortName, property.shortName)
+            }
+
+            if (nullables) {
+                add("%N.%N?.let { ", source.shortName, property.shortName)
+            }
+            if (ref.mapper == mapper) {
+                add("%N(", ref.name)
+                add(referenceBlock)
+                add(")")
             } else {
                 val refSources = ref.sources.drop(1)
-                addStatement(
-                    "%N = %N.%N(%N.%N,${refSources.joinToString(", ") { "%N" }}),",
-                    *(arrayOf(
-                        target.shortName,
-                        mapper.includes[ref.mapper],
-                        ref.name,
-                        source.shortName,
-                        property.shortName
-                    ) + refSources.map { it.shortName })
-                )
+                add("%N.%N(", mapper.includes[ref.mapper], ref.name)
+                add(referenceBlock)
+                add(", ${refSources.joinToString(", ") { "%N" }})", *refSources.map { it.shortName }.toTypedArray())
             }
+            if (nullables) {
+                add(" }")
+            }
+            add(",\n»")
         }
     }
 }

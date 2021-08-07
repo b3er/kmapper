@@ -34,10 +34,14 @@ data class MappingProperty(
     override val typeParameterResolver: TypeParameterResolver by lazy {
         type.declaration.typeParameters.toTypeParameterResolver()
     }
+
+    override fun makeNotNullable(): MappingElement {
+        return copy(type = type.makeNotNullable())
+    }
 }
 
 fun KSPropertyDeclaration.toMappingElement() =
-    type.resolve().toMappingElement(simpleName.getShortName(), modifiers.kModifiers())
+    type.resolve().toMappingElement(simpleName.getShortName(), emptyList())
 
 fun KSValueParameter.toMappingElement() = type.resolve().toMappingElement(name!!.getShortName(), kModifiers().toList())
 
