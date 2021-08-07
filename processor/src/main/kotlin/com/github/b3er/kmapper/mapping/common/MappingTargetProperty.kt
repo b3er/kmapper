@@ -16,11 +16,13 @@
 package com.github.b3er.kmapper.mapping.common
 
 import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
+import com.github.b3er.kmapper.mapping.utils.kModifiers
 import com.google.devtools.ksp.getDeclaredProperties
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSValueParameter
 
 data class MappingTargetProperty(val declaration: KSValueParameter) : MappingPropertyElement {
+    override fun modifiers() = declaration.kModifiers()
     override val type by lazy { declaration.type.resolve() }
     override val name by lazy { declaration.name!! }
     override val properties by lazy {

@@ -116,7 +116,7 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
                 )
             }
         } else {
-            val ref = mapper.findMapping(target, property, this@GeneratesSimpleMapping)
+            val ref = mapper.findMapping(target, property, this@GeneratesSimpleMapping, createIfNeeded = true)
             logger.check(ref != null, mapper.declaration) {
                 "can't find mapping for target.${property.shortName}"
             }

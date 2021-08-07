@@ -15,4 +15,3 @@
 
 package com.github.b3er.kmapper.mapping.api
 
-interface MappingSource : MappingPropertyElement

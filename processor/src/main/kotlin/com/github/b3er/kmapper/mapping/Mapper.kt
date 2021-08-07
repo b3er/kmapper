@@ -18,11 +18,9 @@ package com.github.b3er.kmapper.mapping
 import com.github.b3er.kmapper.mapping.api.MappingContext
 import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
 import com.github.b3er.kmapper.mapping.common.MapperAnnotation
-import com.github.b3er.kmapper.mapping.common.MappingTarget
 import com.github.b3er.kmapper.mapping.common.MappingTargetProperty
 import com.github.b3er.kmapper.mapping.mappings.MappingFactory
 import com.github.b3er.kmapper.mapping.mappings.PureMapping
-import com.github.b3er.kmapper.mapping.mappings.SimpleGeneratedMapping
 import com.github.b3er.kmapper.mapping.utils.getAnnotation
 import com.github.b3er.kmapper.mapping.utils.kModifiers
 import com.github.b3er.kmapper.mapping.utils.toAnnotationSpec
@@ -50,7 +48,7 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
             ?.map(context::findMapper)
             ?.associate {
                 it to it.declaration.simpleName.getShortName()
-                    .replaceFirstChar { c -> c.lowercase(Locale.getDefault()) }
+                    .replaceFirstChar { c -> c.lowercase(Locale.ROOT) }
             } ?: emptyMap()
     }
 
@@ -59,25 +57,23 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
     fun findMapping(
         target: MappingTargetProperty,
         source: MappingPropertyElement,
-        parent: PureMapping
+        parent: PureMapping,
+        createIfNeeded: Boolean
     ): PureMapping? {
         return allMappings().find { mapping ->
             mapping.target.matches(target) && mapping.isSourceCompatibleWith(source, parent.sources)
-        } ?: includes.mapNotNull { (include, _) -> include.findMapping(target, source, parent) }.firstOrNull()
-        ?: createMapping(target, source, parent)
+        } ?: includes.mapNotNull { (include, _) -> include.findMapping(target, source, parent, false) }.firstOrNull()
+        ?: if (createIfNeeded) createMapping(target, source, parent) else null
     }
 
-    private fun createMapping(
+    fun createMapping(
         target: MappingTargetProperty,
         source: MappingPropertyElement,
-        reference: PureMapping
+        parent: PureMapping
     ): PureMapping {
-        return SimpleGeneratedMapping(
-            "map${source.shortName.replaceFirstChar { it.lowercase(Locale.getDefault()) }}",
-            this,
-            MappingTarget(target.declaration.type),
-            listOf(source)
-        )
+        return MappingFactory.createGeneratedMapping(this, target, source).also {
+            createdMappings.add(it)
+        }
     }
 
 
@@ -112,6 +108,8 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
         }
         typeSpec.primaryConstructor(constSpec.build())
         declaredMappins.filter { !it.isImplemented }
+            .forEach { mapper -> mapper.write().also { typeSpec.addFunction(it) } }
+        createdMappings.filter { !it.isImplemented }
             .forEach { mapper -> mapper.write().also { typeSpec.addFunction(it) } }
         fileSpec.addType(typeSpec.build())
         return fileSpec.build()

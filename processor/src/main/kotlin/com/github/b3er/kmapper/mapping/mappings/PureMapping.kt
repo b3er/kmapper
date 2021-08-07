@@ -17,13 +17,12 @@ package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
-import com.github.b3er.kmapper.mapping.api.MappingSource
 import com.github.b3er.kmapper.mapping.common.MappingTarget
 import com.squareup.kotlinpoet.FunSpec
 
 interface PureMapping {
     val isImplemented: Boolean
-    val sources: List<MappingSource>
+    val sources: List<MappingPropertyElement>
     val target: MappingTarget
     val mapper: Mapper
     val name: String

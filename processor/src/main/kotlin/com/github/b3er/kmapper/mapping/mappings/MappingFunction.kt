@@ -30,7 +30,7 @@ import com.squareup.kotlinpoet.KModifier
 //    override val mapper: Mapper,
 //    override val name: String,
 //    override val target: MappingTarget,
-//    override val sources: List<MappingSource>
+//    override val sources: List<MappingPropertyElement>
 //) : PureMapping {
 //    protected fun FunSpec.Builder.writeFunctionDeclaration() {
 //

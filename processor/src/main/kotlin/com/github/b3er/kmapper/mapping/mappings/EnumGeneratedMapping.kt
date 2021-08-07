@@ -17,15 +17,15 @@ package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
-import com.github.b3er.kmapper.mapping.common.MappingAnnotation
+import com.github.b3er.kmapper.mapping.common.EnumMappingAnnotation
 import com.github.b3er.kmapper.mapping.common.MappingTarget
-import com.github.b3er.kmapper.mapping.generators.GeneratesSimpleMapping
+import com.github.b3er.kmapper.mapping.generators.GeneratesEnumMapping
 
-data class SimpleGeneratedMapping(
+class EnumGeneratedMapping(
     override val name: String,
     override val mapper: Mapper,
     override val target: MappingTarget,
     override val sources: List<MappingPropertyElement>
-) : GeneratedMapping(), GeneratesSimpleMapping {
-    override val overrides: List<MappingAnnotation> = emptyList()
+) : GeneratedMapping(), GeneratesEnumMapping {
+    override val overrides: List<EnumMappingAnnotation> = emptyList()
 }
