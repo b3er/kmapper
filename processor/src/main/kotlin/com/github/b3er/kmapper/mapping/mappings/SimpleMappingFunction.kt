@@ -16,11 +16,14 @@
 package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.Mapping
+import com.github.b3er.kmapper.Mappings
 import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.common.MappingAnnotation
 import com.github.b3er.kmapper.mapping.common.MappingTarget
 import com.github.b3er.kmapper.mapping.generators.GeneratesSimpleMapping
-import com.github.b3er.kmapper.mapping.utils.getAnnotations
+import com.github.b3er.kmapper.mapping.utils.get
+import com.github.b3er.kmapper.mapping.utils.getAnnotation
+import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 
 data class SimpleMappingFunction(
@@ -29,6 +32,9 @@ data class SimpleMappingFunction(
     override val mapper: Mapper
 ) : MappingFunction(), GeneratesSimpleMapping {
     override val overrides by lazy {
-        declaration.getAnnotations<Mapping>().map(::MappingAnnotation).toList()
+        declaration.getAnnotation<Mapping>()?.let { listOf(MappingAnnotation(it)) }
+            ?: (declaration.getAnnotation<Mappings>()?.get("mapping")?.value as? Collection<*>)
+                ?.filterIsInstance<KSAnnotation>()?.map(::MappingAnnotation)?.toList()
+            ?: emptyList()
     }
 }

@@ -41,7 +41,7 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
         }.toList()
     }
     private val createdMappings = mutableListOf<PureMapping>()
-    private val annotation by lazy { declaration.getAnnotation<MapperClassAnnotation>()!!.let(::MapperAnnotation) }
+    val annotation by lazy { declaration.getAnnotation<MapperClassAnnotation>()!!.let(::MapperAnnotation) }
     val logger = context.logger
 
     val includes by lazy {
@@ -98,7 +98,7 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
         val constSpec = FunSpec.constructorBuilder()
         if (annotation.injectionType == MapperClassAnnotation.InjectionType.Jsr330) {
             logger.info("Using JSR303 injection", declaration)
-            constSpec.addAnnotation(AnnotationSpec.builder(ClassName.bestGuess("javax.Inject")).build())
+            constSpec.addAnnotation(AnnotationSpec.builder(ClassName.bestGuess("javax.inject.Inject")).build())
         }
         includes.forEach { (mapper, name) ->
             constSpec.addParameter(name, mapper.declaration.toClassName())

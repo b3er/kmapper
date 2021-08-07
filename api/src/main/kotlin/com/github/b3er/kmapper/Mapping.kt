@@ -16,8 +16,7 @@
 package com.github.b3er.kmapper
 
 @Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.SOURCE)
-@Repeatable
+@Retention(AnnotationRetention.BINARY)
 annotation class Mapping(
     /**
      * source property name

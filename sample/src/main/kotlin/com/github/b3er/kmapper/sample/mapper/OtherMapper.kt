@@ -19,8 +19,10 @@ import com.github.b3er.kmapper.sample.data.AnotherOtherDto
 import com.github.b3er.kmapper.sample.data.OtherDto
 import com.github.b3er.kmapper.sample.model.AnotherOtherModel
 import com.github.b3er.kmapper.sample.model.OtherModel
+import javax.inject.Singleton
 
-@Mapper(uses = [OtherNestedMapper::class])
+@Singleton
+@Mapper(uses = [OtherNestedMapper::class], injectionType = Mapper.InjectionType.Jsr330)
 interface OtherMapper {
     fun map(dto: OtherDto): OtherModel
 }

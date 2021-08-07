@@ -15,10 +15,21 @@
 
 package com.github.b3er.kmapper.mapping.factory
 
+import com.github.b3er.kmapper.GenerateMapperFactory
 import com.github.b3er.kmapper.mapping.api.AnnotationHolder
 import com.github.b3er.kmapper.mapping.utils.get
 import com.google.devtools.ksp.symbol.KSAnnotation
+import com.google.devtools.ksp.symbol.KSType
+import com.squareup.kotlinpoet.asClassName
 
 data class GenerateMapperFactoryAnnotation(override val annotation: KSAnnotation) : AnnotationHolder {
     val name: String by lazy { annotation["name"]!!.value as String }
+    val implementation: GenerateMapperFactory.Implementation? by lazy {
+        ((annotation["implementation"]?.value) as? KSType)
+            ?.declaration
+            ?.simpleName
+            ?.getShortName()
+            ?.let { GenerateMapperFactory.Implementation.valueOf(it) }
+    }
+    override val matchedAnnotationTypes = listOf(GenerateMapperFactory::class.asClassName())
 }

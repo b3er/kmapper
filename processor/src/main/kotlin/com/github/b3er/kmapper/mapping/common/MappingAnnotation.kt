@@ -15,12 +15,17 @@
 
 package com.github.b3er.kmapper.mapping.common
 
+import com.github.b3er.kmapper.Mapping
+import com.github.b3er.kmapper.Mappings
 import com.github.b3er.kmapper.mapping.api.AnnotationHolder
 import com.github.b3er.kmapper.mapping.utils.get
 import com.google.devtools.ksp.symbol.KSAnnotation
+import com.squareup.kotlinpoet.asClassName
 
 data class MappingAnnotation(override val annotation: KSAnnotation) : AnnotationHolder {
     val source: String by lazy { annotation["source"]!!.value as String }
     val expression: String by lazy { annotation["expression"]!!.value as String }
     val target: String by lazy { annotation["target"]!!.value as String }
+
+    override val matchedAnnotationTypes = listOf(Mapping::class.asClassName(), Mappings::class.asClassName())
 }

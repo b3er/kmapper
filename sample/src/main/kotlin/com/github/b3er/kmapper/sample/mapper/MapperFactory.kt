@@ -21,5 +21,8 @@ import com.github.b3er.kmapper.MappersFactory
 @GenerateMapperFactory(name = "Mappers", implementation = GenerateMapperFactory.Implementation.Simple)
 interface AppMappersFactory
 
+//@GenerateMapperFactory(name = "MappingModule", implementation = GenerateMapperFactory.Implementation.Hilt)
+//internal interface MappersHiltModule
+
 object MyMappers : MappersFactory by Mappers
 

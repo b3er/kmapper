@@ -37,6 +37,7 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(projects.api)
     implementation(libs.kotlinPoet.library)
+    implementation("com.google.dagger:dagger:2.38.1")
     ksp(projects.processor)
     kspTest(projects.processor)
 

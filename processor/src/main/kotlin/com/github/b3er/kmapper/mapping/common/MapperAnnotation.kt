@@ -21,6 +21,7 @@ import com.github.b3er.kmapper.mapping.utils.get
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
+import com.squareup.kotlinpoet.asClassName
 
 class MapperAnnotation(override val annotation: KSAnnotation) : AnnotationHolder {
     val includes: List<KSClassDeclaration>? by lazy {
@@ -46,4 +47,5 @@ class MapperAnnotation(override val annotation: KSAnnotation) : AnnotationHolder
             ?.getShortName()
             ?.let { Mapper.InjectionType.valueOf(it) }
     }
+    override val matchedAnnotationTypes = listOf(Mapper::class.asClassName())
 }

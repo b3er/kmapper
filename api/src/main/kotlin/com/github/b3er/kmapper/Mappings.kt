@@ -13,5 +13,8 @@
  * limitations under the License.
  */
 
-package com.github.b3er.kmapper.mapping.api
+package com.github.b3er.kmapper
 
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+annotation class Mappings(vararg val mapping: Mapping)

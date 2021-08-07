@@ -100,6 +100,12 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
         source: MappingPropertyElement,
         property: MappingPropertyElement
     ) {
+        if (property.type.isMarkedNullable && !target.type.isMarkedNullable) {
+            logger.error(
+                "Cannot assign nullable source ${source.shortName}.${property.shortName}" +
+                    " to target ${target.shortName}", mapper.declaration
+            )
+        }
         if (target.isAssignableFrom(property)) {
             if (source != property) {
                 addStatement(

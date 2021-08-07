@@ -30,6 +30,10 @@ object MapperModuleFactory {
         context.logger.check(annotation != null, declaration) {
             "Can't find GenerateMapperFactory for $declaration"
         }
-        return SimpleMapperFactory(context, declaration, annotation)
+        return when (annotation.implementation) {
+            GenerateMapperFactory.Implementation.Hilt -> HiltMapperFactory(context, declaration, annotation)
+            // simple by default
+            else -> SimpleMapperFactory(context, declaration, annotation)
+        }
     }
 }

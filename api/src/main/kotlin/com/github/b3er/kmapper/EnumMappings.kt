@@ -13,15 +13,8 @@
  * limitations under the License.
  */
 
-package com.github.b3er.kmapper.mapping.api
+package com.github.b3er.kmapper
 
-import com.google.devtools.ksp.symbol.KSAnnotation
-import com.squareup.kotlinpoet.ClassName
-
-interface AnnotationHolder {
-    val annotation: KSAnnotation
-    val matchedAnnotationTypes: List<ClassName>
-    fun matchType(annotation: ClassName): Boolean {
-        return matchedAnnotationTypes.contains(annotation)
-    }
-}
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+annotation class EnumMappings(vararg val mapping: EnumMapping)

@@ -17,7 +17,7 @@ package com.github.b3er.kmapper.sample.data
 
 data class OtherDto(
     val id: Long,
-    val name: String,
+    val name: String?,
     val nested: OtherNestedDto,
     val status: Status
 ) {

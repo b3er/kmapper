@@ -58,7 +58,8 @@ abstract class MappingFunction : PureMapping, MappingGenerator {
         addModifiers(declaration.modifiers.kModifiers())
 
         addAnnotations(declaration.annotations.filter { ann ->
-            overrides.none { it.annotation.annotationType == ann.annotationType }
+            val type = ann.annotationType.resolve().toClassName()
+            overrides.none { it.matchType(type) }
         }.map { it.toAnnotationSpec(context.resolver) }.toList())
 
         if (isDeclared) {

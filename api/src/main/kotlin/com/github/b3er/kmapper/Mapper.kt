@@ -18,7 +18,7 @@ package com.github.b3er.kmapper
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.CLASS)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(AnnotationRetention.BINARY)
 annotation class Mapper(
     /**
      * Additional mappers to use

@@ -16,10 +16,12 @@
 package com.github.b3er.kmapper.mapping.common
 
 import com.github.b3er.kmapper.EnumMapping
+import com.github.b3er.kmapper.EnumMappings
 import com.github.b3er.kmapper.mapping.api.AnnotationHolder
 import com.github.b3er.kmapper.mapping.utils.get
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSType
+import com.squareup.kotlinpoet.asClassName
 
 data class EnumMappingAnnotation(override val annotation: KSAnnotation) : AnnotationHolder {
     val source: String by lazy { annotation["source"]!!.value as String }
@@ -38,4 +40,6 @@ data class EnumMappingAnnotation(override val annotation: KSAnnotation) : Annota
             ?.getShortName()
             ?.let { EnumMapping.Naming.valueOf(it) }
     }
+
+    override val matchedAnnotationTypes = listOf(EnumMapping::class.asClassName(), EnumMappings::class.asClassName())
 }

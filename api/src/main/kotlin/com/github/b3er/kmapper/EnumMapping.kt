@@ -19,8 +19,7 @@ package com.github.b3er.kmapper
  * Enum mapping function annotations, auto rename case, or direct matching
  */
 @Target(AnnotationTarget.FUNCTION)
-@Retention(AnnotationRetention.SOURCE)
-@Repeatable
+@Retention(AnnotationRetention.BINARY)
 annotation class EnumMapping(
     val source: String = "",
     val target: String = "",

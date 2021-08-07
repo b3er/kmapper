@@ -15,9 +15,7 @@
 
 package com.github.b3er.kmapper.sample.mapper
 
-import com.github.b3er.kmapper.EnumMapping
-import com.github.b3er.kmapper.Mapper
-import com.github.b3er.kmapper.Mapping
+import com.github.b3er.kmapper.*
 import com.github.b3er.kmapper.sample.data.SampleDto
 import com.github.b3er.kmapper.sample.model.SampleModel
 import com.github.b3er.kmapper.sample.model.SampleStatusPascalCase
@@ -32,22 +30,29 @@ import com.squareup.kotlinpoet.FunSpec
 internal interface SampleMapper {
     fun map(dto: SampleDto, additional: Int, additionalForNested: Int, someId: Long): SampleModel
 
-    @EnumMapping(source = "ONE_SAMPLE", target = "OneSample")
-    @EnumMapping(source = "SECOND_SAMPLE", target = "SecondSample")
-    @EnumMapping(source = "THIRD_SAMPLE", target = "SecondSample")
+    @EnumMappings(
+        EnumMapping(source = "ONE_SAMPLE", target = "OneSample"),
+        EnumMapping(source = "SECOND_SAMPLE", target = "SecondSample"),
+        EnumMapping(source = "THIRD_SAMPLE", target = "SecondSample")
+
+    )
     fun map(status: SampleDto.SampleStatusSnake): SampleStatusPascalCase
 
     @EnumMapping(source = "THIRD_SAMPLE", target = "SECOND_SAMPLE")
     fun mapEnum3(status: SampleDto.SampleStatusSnake): SampleStatusSnakeCase
 
-    @EnumMapping(sourceName = EnumMapping.Naming.UpperUnderscore, targetName = EnumMapping.Naming.UpperCamel)
-    @EnumMapping(source = "THIRD_SAMPLE", target = "Unknown")
+    @EnumMappings(
+        EnumMapping(sourceName = EnumMapping.Naming.UpperUnderscore, targetName = EnumMapping.Naming.UpperCamel),
+        EnumMapping(source = "THIRD_SAMPLE", target = "Unknown")
+    )
     fun mapeEnum2(status: SampleDto.SampleStatusSnake): SampleStatusPascalCase
 }
 
 @Mapper
 internal interface TestMapper {
-    @Mapping(target = "nestedId", source = "dto.nestedID")
-    @Mapping(target = "additional", source = "additionalForNested")
+    @Mappings(
+        Mapping(target = "nestedId", source = "dto.nestedID"),
+        Mapping(target = "additional", source = "additionalForNested")
+    )
     fun map(dto: SampleDto.NestedDto, additionalForNested: Int): SampleModel.NestedModel
 }
