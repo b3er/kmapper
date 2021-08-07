@@ -31,6 +31,14 @@ class MapperAnnotation(override val annotation: KSAnnotation) : AnnotationHolder
             .filterIsInstance<KSClassDeclaration>()
             .toList()
     }
+    val imports: List<KSClassDeclaration>? by lazy {
+        (annotation["imports"]?.value as List<*>)
+            .asSequence()
+            .filterIsInstance<KSType>()
+            .map(KSType::declaration)
+            .filterIsInstance<KSClassDeclaration>()
+            .toList()
+    }
     val injectionType: Mapper.InjectionType? by lazy {
         ((annotation["injectionType"]?.value) as? KSType)
             ?.declaration

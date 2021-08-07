@@ -29,10 +29,6 @@ annotation class Mapper(
      */
     val imports: Array<KClass<*>> = [],
     /**
-     * Additional dependencies to add to constructor
-     */
-    val dependencies: Array<Dependency> = [],
-    /**
      * Injection type for constructor annotations
      */
     val injectionType: InjectionType = InjectionType.None
@@ -40,11 +36,6 @@ annotation class Mapper(
     enum class InjectionType {
         None, Jsr330
     }
-
-    annotation class Dependency(
-        val value: KClass<*>,
-        val name: String
-    )
 }
 
 
