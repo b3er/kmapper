@@ -16,12 +16,13 @@
 plugins {
     java
     kotlin("jvm")
+    `maven-publish`
 }
 
 dependencies {
     implementation(libs.kotlin.stdlib)
+
     testImplementation(libs.junit.library)
     testRuntimeOnly(libs.junit.engine)
 }
-
 

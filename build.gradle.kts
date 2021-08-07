@@ -15,9 +15,22 @@
 
 plugins {
     kotlin("jvm") apply false
+    `maven-publish`
 }
 
 subprojects {
     group = "com.github.b3er.kmapper"
-    version = "1.0-SNAPSHOT"
+    version = "0.1-SNAPSHOT"
+    plugins.withId("maven-publish") {
+        publishing {
+            publications {
+                create<MavenPublication>("maven") {
+                    from(components["java"])
+                    pom {
+                        url.set("https://github.com/b3er/kmapper")
+                    }
+                }
+            }
+        }
+    }
 }

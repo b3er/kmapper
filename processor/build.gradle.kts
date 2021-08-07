@@ -16,6 +16,7 @@
 plugins {
     java
     kotlin("jvm")
+    `maven-publish`
 }
 
 val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
