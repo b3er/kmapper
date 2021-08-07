@@ -15,20 +15,17 @@
 
 package com.github.b3er.kmapper.mapping.mappings
 
-import com.github.b3er.kmapper.Mapping
 import com.github.b3er.kmapper.mapping.Mapper
+import com.github.b3er.kmapper.mapping.api.MappingSource
 import com.github.b3er.kmapper.mapping.common.MappingAnnotation
 import com.github.b3er.kmapper.mapping.common.MappingTarget
 import com.github.b3er.kmapper.mapping.generators.GeneratesSimpleMapping
-import com.github.b3er.kmapper.mapping.utils.getAnnotations
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 
-data class GenericMappingFunction(
-    override val declaration: KSFunctionDeclaration,
+data class SimpleGeneratedMapping(
+    override val name: String,
+    override val mapper: Mapper,
     override val target: MappingTarget,
-    override val mapper: Mapper
-) : MappingFunction(), GeneratesSimpleMapping {
-    override val overrides by lazy {
-        declaration.getAnnotations<Mapping>().map(::MappingAnnotation).toList()
-    }
+    override val sources: List<MappingSource>
+) : GeneratedMapping(), GeneratesSimpleMapping {
+    override val overrides: List<MappingAnnotation> = emptyList()
 }

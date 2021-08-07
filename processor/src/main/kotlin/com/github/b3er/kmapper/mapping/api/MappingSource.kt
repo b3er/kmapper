@@ -15,20 +15,4 @@
 
 package com.github.b3er.kmapper.mapping.api
 
-import com.squareup.kotlinpoet.KModifier
-
-interface MappingPropertyElement : NamedTypeElement {
-    val properties: Sequence<MappingPropertyElement>
-    fun modifiers(): Sequence<KModifier>
-    fun findMatchingByName(property: MappingPropertyElement): MappingPropertyElement? {
-        return findMatchingByName(property.shortName)
-    }
-
-    fun findMatchingByName(propertyName: String): MappingPropertyElement? {
-        return if (matchesByName(propertyName)) {
-            this
-        } else {
-            properties.firstOrNull { it.matchesByName(propertyName) }
-        }
-    }
-}
+interface MappingSource : MappingPropertyElement

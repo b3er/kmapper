@@ -15,15 +15,19 @@
 
 package com.github.b3er.kmapper.mapping.common
 
-import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
+import com.github.b3er.kmapper.mapping.api.MappingSource
+import com.github.b3er.kmapper.mapping.utils.kModifiers
 import com.google.devtools.ksp.getDeclaredProperties
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSValueParameter
+import com.squareup.kotlinpoet.KModifier
 
-data class MappingSource(val declaration: KSValueParameter) : MappingPropertyElement {
+data class MappingValueSource(val declaration: KSValueParameter) : MappingSource {
     override val type by lazy { declaration.type.resolve() }
     override val name by lazy { declaration.name!! }
     override val properties by lazy {
         (type.declaration as? KSClassDeclaration)?.getDeclaredProperties()?.map(::MappingProperty) ?: emptySequence()
     }
+
+    override fun modifiers(): Sequence<KModifier> = declaration.kModifiers()
 }

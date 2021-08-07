@@ -37,7 +37,7 @@ object MappingFactory {
             if (target.declaration.isEnumClass()) {
                 EnumMappingFunction(ref, target, mapper)
             } else {
-                GenericMappingFunction(ref, target, mapper)
+                SimpleMappingFunction(ref, target, mapper)
             }
         }
         else -> throw IllegalArgumentException("Can't crete mapping for $ref in ${mapper.toFullString()}")

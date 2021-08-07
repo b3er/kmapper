@@ -16,14 +16,10 @@
 package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.api.AnnotationHolder
-import com.github.b3er.kmapper.mapping.common.MappingValueSource
+import com.github.b3er.kmapper.mapping.api.MappingSource
 import com.github.b3er.kmapper.mapping.generators.MappingGenerator
-import com.github.b3er.kmapper.mapping.utils.kModifiers
-import com.github.b3er.kmapper.mapping.utils.toAnnotationSpec
 import com.github.b3er.kmapper.mapping.utils.toClassName
-import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.squareup.kotlinpoet.FunSpec
-import com.squareup.kotlinpoet.KModifier
 
 //
 //class GeneratedMapping(
@@ -37,17 +33,12 @@ import com.squareup.kotlinpoet.KModifier
 //    }
 //}
 
-abstract class MappingFunction : PureMapping, MappingGenerator {
-    abstract val declaration: KSFunctionDeclaration
+abstract class GeneratedMapping : PureMapping, MappingGenerator {
     protected abstract val overrides: List<AnnotationHolder>
-    override val name: String by lazy { declaration.simpleName.getShortName() }
-    override val isImplemented get() = !declaration.isAbstract
-    val isDeclared = true
-
+    abstract override val sources: List<MappingSource>
+    override val isImplemented get() = false
     val context by lazy(LazyThreadSafetyMode.NONE) { mapper.context }
     val logger by lazy(LazyThreadSafetyMode.NONE) { context.logger }
-
-    override val sources by lazy { declaration.parameters.map(::MappingValueSource) }
 
     override fun write() = FunSpec.builder(name).apply {
         writeFunctionDeclaration()
@@ -55,25 +46,14 @@ abstract class MappingFunction : PureMapping, MappingGenerator {
     }.build()
 
     override fun FunSpec.Builder.writeFunctionDeclaration() {
-        addModifiers(declaration.modifiers.kModifiers())
-
-        addAnnotations(declaration.annotations.filter { ann ->
-            overrides.none { it.annotation.annotationType == ann.annotationType }
-        }.map { it.toAnnotationSpec(context.resolver) }.toList())
-
-        if (isDeclared) {
-            addModifiers(KModifier.OVERRIDE)
-        }
-
         returns(target.type.toClassName())
 
         sources.forEach { source ->
             addParameter(
                 source.shortName,
                 source.type.toClassName(),
-                source.declaration.kModifiers().toList()
+                source.modifiers().toList()
             )
         }
     }
-
 }
