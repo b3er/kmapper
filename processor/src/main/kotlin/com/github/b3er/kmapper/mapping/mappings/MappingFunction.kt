@@ -41,8 +41,7 @@ abstract class MappingFunction : PureMapping, MappingGenerator {
     abstract val declaration: KSFunctionDeclaration
     protected abstract val overrides: List<MappingFunctionAnnotation>
     override val name: String by lazy { declaration.simpleName.getShortName() }
-
-    val isImplemented get() = !declaration.isAbstract
+    override val isImplemented get() = !declaration.isAbstract
     val isDeclared = true
 
     val context by lazy(LazyThreadSafetyMode.NONE) { mapper.context }

@@ -23,7 +23,11 @@ internal data class SampleModel(
     val someId: Long,
     val status: SampleStatusPascalCase
 ) {
-    internal data class NestedModel(val nestedId: Long, val nestedName: String)
+    internal data class NestedModel(
+        val nestedId: Long,
+        val nestedName: String,
+        val additional: Int
+    )
 }
 
 enum class SampleStatusCamelCase {

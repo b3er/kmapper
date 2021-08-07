@@ -27,11 +27,10 @@ import com.squareup.kotlinpoet.FunSpec
 @Mapper(
     uses = [TestMapper::class],
     imports = [FunSpec::class],
-    dependencies = [Mapper.Dependency(TestMapper::class, name = "res")],
     injectionType = Mapper.InjectionType.None
 )
 internal interface SampleMapper {
-    fun map(dto: SampleDto, someId: Long): SampleModel
+    fun map(dto: SampleDto, additional: Int, additionalForNested: Int, someId: Long): SampleModel
 
     @EnumMapping(source = "ONE_SAMPLE", target = "OneSample")
     @EnumMapping(source = "SECOND_SAMPLE", target = "SecondSample")
@@ -39,15 +38,16 @@ internal interface SampleMapper {
     fun map(status: SampleDto.SampleStatusSnake): SampleStatusPascalCase
 
     @EnumMapping(source = "THIRD_SAMPLE", target = "SECOND_SAMPLE")
-    fun map2(status: SampleDto.SampleStatusSnake): SampleStatusSnakeCase
+    fun mapEnum3(status: SampleDto.SampleStatusSnake): SampleStatusSnakeCase
 
     @EnumMapping(sourceName = EnumMapping.Naming.UpperUnderscore, targetName = EnumMapping.Naming.UpperCamel)
     @EnumMapping(source = "THIRD_SAMPLE", target = "Unknown")
-    fun mape4(status: SampleDto.SampleStatusSnake): SampleStatusPascalCase
+    fun mapeEnum2(status: SampleDto.SampleStatusSnake): SampleStatusPascalCase
 }
 
 @Mapper
 internal interface TestMapper {
-    @Mapping(target = "nestedId", source = "nestedID")
-    fun map(dto: SampleDto.NestedDto): SampleModel.NestedModel
+    @Mapping(target = "nestedId", source = "dto.nestedID")
+    @Mapping(target = "additional", source = "additionalForNested")
+    fun map(dto: SampleDto.NestedDto, additionalForNested: Int): SampleModel.NestedModel
 }

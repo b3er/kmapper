@@ -51,10 +51,6 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
     }
 
     fun CodeBlock.Builder.writeSourcePath(property: MappingTargetProperty, source: String) {
-        logger.check(sources.size == 1 || source.contains('.'), mapper.declaration) {
-            "Source notation must contain subject for multiple sources as 'source.property' " +
-                "for mapping ${toFullString()}"
-        }
         val path = source.split('.')
         logger.check(path.size <= 2, mapper.declaration) {
             "Invalid source: '${source}' in ${toFullString()}. Only two level sources supported. "
@@ -120,7 +116,7 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
                 )
             }
         } else {
-            val ref = mapper.findMapping(target, property)
+            val ref = mapper.findMapping(target, property, this@GeneratesSimpleMapping)
             logger.check(ref != null, mapper.declaration) {
                 "can't find mapping for target.${property.shortName}"
             }
@@ -133,13 +129,16 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
                     property.shortName
                 )
             } else {
+                val refSources = ref.sources.drop(1)
                 addStatement(
-                    "%N = %N.%N(%N.%N),",
-                    target.shortName,
-                    mapper.includes[ref.mapper],
-                    ref.name,
-                    source.shortName,
-                    property.shortName
+                    "%N = %N.%N(%N.%N,${refSources.joinToString(", ") { "%N" }}),",
+                    *(arrayOf(
+                        target.shortName,
+                        mapper.includes[ref.mapper],
+                        ref.name,
+                        source.shortName,
+                        property.shortName
+                    ) + refSources.map { it.shortName })
                 )
             }
         }

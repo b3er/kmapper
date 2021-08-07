@@ -13,29 +13,12 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("VERSION_CATALOGS")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+package com.github.b3er.kmapper.mapping.factory
 
-rootProject.name = "kmapper"
+import com.github.b3er.kmapper.mapping.utils.toClassName
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 
-include(":api", ":processor", ":sample")
-
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://jitpack.io")
-    }
-}
-
-pluginManagement {
-    plugins {
-        id("com.google.devtools.ksp") version "1.5.21-1.0.0-beta06"
-        kotlin("jvm") version "1.5.21"
-    }
-    repositories {
-        gradlePluginPortal()
-        google()
-    }
+abstract class DeclaredMapperFactory : MapperFactory {
+    abstract val declaration: KSClassDeclaration
+    val className by lazy { declaration.toClassName() }
 }

@@ -18,6 +18,7 @@ package com.github.b3er.kmapper
 
 import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.api.MappingContext
+import com.github.b3er.kmapper.mapping.factory.MapperModuleFactory
 import com.github.b3er.kmapper.mapping.utils.check
 import com.github.b3er.kmapper.mapping.utils.getAnnotation
 import com.github.b3er.kmapper.mapping.utils.writeTo
@@ -54,6 +55,11 @@ class KMapperProcessor(
 
         context.isResolved = true
         context.writeMappers()
+        resolver.getSymbolsWithAnnotation(MAPPER_FACTORY_ANNOTATION_NAME)
+            .filterIsInstance<KSClassDeclaration>()
+            .forEach { factory ->
+                context.generateFactory(factory)
+            }
         return emptyList()
     }
 
@@ -62,7 +68,7 @@ class KMapperProcessor(
         override val logger: KSPLogger,
         override val options: Map<String, String>,
         private val generator: CodeGenerator,
-        private val mappers: Map<KSDeclaration, Mapper>
+        protected val mappers: Map<KSDeclaration, Mapper>
     ) : MappingContext {
         private val generatedMappers = mutableSetOf<Mapper>()
         var isResolved = false
@@ -93,10 +99,17 @@ class KMapperProcessor(
             }
             return mapper
         }
+
+        override fun mappers(): Sequence<Mapper> = mappers.values.asSequence()
+        fun generateFactory(factory: KSClassDeclaration) {
+            val factoryGenerator = MapperModuleFactory.createFactory(this, factory)
+            factoryGenerator.write().writeTo(generator)
+        }
     }
 
     companion object {
         const val MAPPER_ANNOTATION_NAME = "com.github.b3er.kmapper.Mapper"
+        const val MAPPER_FACTORY_ANNOTATION_NAME = "com.github.b3er.kmapper.GenerateMapperFactory"
     }
 }
 

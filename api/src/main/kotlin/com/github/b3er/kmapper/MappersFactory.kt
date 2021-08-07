@@ -13,29 +13,15 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("VERSION_CATALOGS")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+package com.github.b3er.kmapper
 
-rootProject.name = "kmapper"
+import kotlin.reflect.KClass
 
-include(":api", ":processor", ":sample")
-
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://jitpack.io")
-    }
+/**
+ * Factory to get all mappers
+ */
+interface MappersFactory {
+    fun <T : Any> getMapper(cls: KClass<T>): T
 }
 
-pluginManagement {
-    plugins {
-        id("com.google.devtools.ksp") version "1.5.21-1.0.0-beta06"
-        kotlin("jvm") version "1.5.21"
-    }
-    repositories {
-        gradlePluginPortal()
-        google()
-    }
-}
+inline fun <reified T : Any> MappersFactory.getMapper(): T = getMapper(T::class)

@@ -21,6 +21,7 @@ import com.github.b3er.kmapper.mapping.common.MappingTarget
 import com.squareup.kotlinpoet.FunSpec
 
 interface PureMapping {
+    val isImplemented: Boolean
     val sources: List<MappingPropertyElement>
     val target: MappingTarget
     val mapper: Mapper
@@ -28,11 +29,23 @@ interface PureMapping {
 
     fun write(): FunSpec
 
-    fun isSourceCompatibleWith(property: MappingPropertyElement): Boolean {
+    fun isSourceCompatibleWith(property: MappingPropertyElement, refSources: List<MappingPropertyElement>): Boolean {
         return sources.any { my -> property.isAssignableFrom(my) }
+            && sources.all { my ->
+            my.isAssignableFrom(property) || refSources.any {
+                my.isAssignableFrom(it) && my.matchesByName(
+                    it
+                )
+            }
+        }
+    }
+
+    fun isSourceCompatibleWith(property: MappingPropertyElement): Boolean {
+        return sources.any { my -> my.isAssignableFrom(property) }
     }
 
     fun findSource(targetName: String): Triple<Mapper, MappingPropertyElement, MappingPropertyElement>? {
+
         return sources.asSequence().mapNotNull { source ->
             source.findMatchingByName(targetName)?.let { Triple(mapper, source, it) }
         }.firstOrNull()

@@ -13,29 +13,13 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("VERSION_CATALOGS")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+package com.github.b3er.kmapper.sample.mapper
 
-rootProject.name = "kmapper"
+import com.github.b3er.kmapper.GenerateMapperFactory
+import com.github.b3er.kmapper.MappersFactory
 
-include(":api", ":processor", ":sample")
+@GenerateMapperFactory(name = "Mappers", implementation = GenerateMapperFactory.Implementation.Simple)
+interface AppMappersFactory
 
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://jitpack.io")
-    }
-}
+object MyMappers : MappersFactory by Mappers
 
-pluginManagement {
-    plugins {
-        id("com.google.devtools.ksp") version "1.5.21-1.0.0-beta06"
-        kotlin("jvm") version "1.5.21"
-    }
-    repositories {
-        gradlePluginPortal()
-        google()
-    }
-}

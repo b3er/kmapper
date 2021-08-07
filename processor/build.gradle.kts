@@ -31,7 +31,7 @@ compileTestKotlin.kotlinOptions {
 }
 
 dependencies {
-    implementation(projects.annotations)
+    implementation(projects.api)
 
     implementation(libs.kotlin.stdlib)
     implementation(libs.ksp.api)

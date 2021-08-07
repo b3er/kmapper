@@ -13,29 +13,18 @@
  * limitations under the License.
  */
 
-enableFeaturePreview("VERSION_CATALOGS")
-enableFeaturePreview("TYPESAFE_PROJECT_ACCESSORS")
+package com.github.b3er.kmapper
 
-rootProject.name = "kmapper"
-
-include(":api", ":processor", ":sample")
-
-dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-    repositories {
-        google()
-        mavenCentral()
-        maven("https://jitpack.io")
-    }
-}
-
-pluginManagement {
-    plugins {
-        id("com.google.devtools.ksp") version "1.5.21-1.0.0-beta06"
-        kotlin("jvm") version "1.5.21"
-    }
-    repositories {
-        gradlePluginPortal()
-        google()
+/**
+ * Generates All mappers factory in this package with specified name
+ */
+@Target(AnnotationTarget.CLASS)
+@Retention(AnnotationRetention.SOURCE)
+annotation class GenerateMapperFactory(
+    val name: String,
+    val implementation: Implementation
+) {
+    enum class Implementation {
+        Simple, Hilt
     }
 }

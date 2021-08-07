@@ -34,14 +34,13 @@ java {
 }
 
 dependencies {
-    runtimeOnly(projects.annotations)
-
     implementation(libs.kotlin.stdlib)
-    implementation(projects.annotations)
+    implementation(projects.api)
     implementation(libs.kotlinPoet.library)
     ksp(projects.processor)
+    kspTest(projects.processor)
 
-    testImplementation(libs.junit.library)
+    testImplementation(libs.bundles.testing)
     testRuntimeOnly(libs.junit.engine)
 }
 
