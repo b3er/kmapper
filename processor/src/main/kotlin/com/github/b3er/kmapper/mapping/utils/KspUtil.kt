@@ -20,8 +20,6 @@ import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.*
 import com.google.devtools.ksp.symbol.ClassKind.CLASS
-import com.google.devtools.ksp.symbol.Origin.KOTLIN
-import com.google.devtools.ksp.symbol.Origin.KOTLIN_LIB
 import com.google.devtools.ksp.symbol.Visibility.*
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
@@ -47,10 +45,12 @@ internal fun KSClassDeclaration.superclass(resolver: Resolver): KSType {
 }
 
 internal fun KSClassDeclaration.isKotlinClass(resolver: Resolver): Boolean {
-    return origin == KOTLIN ||
-        origin == KOTLIN_LIB ||
+    return isKotlin ||
         hasAnnotation(resolver.getClassDeclarationByName<Metadata>().asType())
 }
+
+internal val KSDeclaration.isKotlin: Boolean
+    get() = origin == Origin.KOTLIN || origin == Origin.KOTLIN_LIB
 
 internal fun KSAnnotated.hasAnnotation(target: KSType): Boolean {
     return findAnnotationWithType(target) != null

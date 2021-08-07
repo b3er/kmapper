@@ -19,13 +19,13 @@ import com.google.devtools.ksp.symbol.KSType
 
 interface NamedTypeElement : TypeElement {
     override val type: KSType
-    val shortName: String
+    val name: String
 
     fun matchesByName(other: NamedTypeElement): Boolean {
-        return shortName == other.shortName
+        return name == other.name
     }
 
     fun matchesByName(other: String): Boolean {
-        return shortName == other
+        return name == other
     }
 }

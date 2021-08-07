@@ -15,7 +15,7 @@
 
 package com.github.b3er.kmapper.mapping.common
 
-import com.github.b3er.kmapper.mapping.api.MappingElement
+import com.github.b3er.kmapper.mapping.api.NamedTypeElement
 import com.github.b3er.kmapper.mapping.utils.TypeParameterResolver
 import com.github.b3er.kmapper.mapping.utils.kModifiers
 import com.github.b3er.kmapper.mapping.utils.toTypeParameterResolver
@@ -23,20 +23,28 @@ import com.google.devtools.ksp.getDeclaredProperties
 import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.KModifier
 
-data class MappingProperty(
+data class MappingElement(
     override val type: KSType,
-    override val shortName: String,
-    override val modifiers: List<KModifier>,
+    override val name: String,
+    val modifiers: List<KModifier>,
     val propertyEnumeration: (MappingElement) -> List<MappingElement>
-) : MappingElement {
-    override val properties by lazy { propertyEnumeration(this) }
-    override val declaration = type.declaration as KSClassDeclaration
+) : NamedTypeElement {
+    val properties by lazy { propertyEnumeration(this) }
+    val declaration = type.declaration as KSClassDeclaration
     override val typeParameterResolver: TypeParameterResolver by lazy {
         type.declaration.typeParameters.toTypeParameterResolver()
     }
 
-    override fun makeNotNullable(): MappingElement {
+    fun makeNotNullable(): MappingElement {
         return copy(type = type.makeNotNullable())
+    }
+
+    fun findMatchingByName(propertyName: String): MappingElement? {
+        return if (matchesByName(propertyName)) {
+            this
+        } else {
+            properties.firstOrNull { it.matchesByName(propertyName) }
+        }
     }
 }
 
@@ -55,7 +63,7 @@ fun KSType.toMappingElement(
     name: String = "",
     modifiers: List<KModifier> = emptyList(),
     enumeration: (MappingElement) -> List<MappingElement> = DeclarationValuesEnumeration
-) = MappingProperty(this, name, modifiers, enumeration)
+) = MappingElement(this, name, modifiers, enumeration)
 
 object ConstructorValuesEnumeration : (MappingElement) -> List<MappingElement> {
     override fun invoke(element: MappingElement): List<MappingElement> {

@@ -27,7 +27,7 @@ interface MappingGenerator : PureMapping {
         if (target.type.isMarkedNullable) {
             sources.forEach { source ->
                 if (source.type.isMarkedNullable) {
-                    addStatement("if (%N == null) return null", source.shortName)
+                    addStatement("if (%N == null) return null", source.name)
                 }
             }
         }

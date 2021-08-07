@@ -43,7 +43,7 @@ interface GeneratesEnumMapping : PureMapping, MappingGenerator {
 
         CodeBlock.builder().apply {
             writeNullPreconditions()
-            beginControlFlow("return when (%N) {", sources.first().shortName)
+            beginControlFlow("return when (%N) {", sources.first().name)
             sourceEnums.forEach {
                 indent().indent()
                 writeEntryMapping(it, source, targetEnums)

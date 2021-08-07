@@ -62,7 +62,7 @@ abstract class MappingFunction : PureMapping, MappingGenerator {
 
         sources.forEach { source ->
             addParameter(
-                source.shortName,
+                source.name,
                 source.toTypeName(),
                 source.modifiers
             )

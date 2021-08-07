@@ -15,6 +15,7 @@
 
 package com.github.b3er.kmapper.sample.data
 
+import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 data class OtherDto(
@@ -24,6 +25,7 @@ data class OtherDto(
     val status: Status,
     val userEmailList: List<OtherNestedDto>?,
     val createdAt: OffsetDateTime,
+    val hel: BigDecimal
 ) {
     enum class Status {
         Success, Error

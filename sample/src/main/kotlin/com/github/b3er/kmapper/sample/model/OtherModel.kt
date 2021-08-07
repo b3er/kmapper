@@ -15,6 +15,7 @@
 
 package com.github.b3er.kmapper.sample.model
 
+import java.math.BigDecimal
 import java.time.OffsetDateTime
 
 data class OtherModel(
@@ -23,7 +24,8 @@ data class OtherModel(
     val nested: OtherNestedModel,
     val status: Status,
     val userEmailList: List<OtherNestedModel>?,
-    val createdAt: OffsetDateTime?
+    val createdAt: OffsetDateTime?,
+    val hel: BigDecimal
 ) {
     enum class Status {
         Success, Error

@@ -16,7 +16,7 @@
 package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.Mapper
-import com.github.b3er.kmapper.mapping.api.MappingElement
+import com.github.b3er.kmapper.mapping.common.MappingElement
 import com.github.b3er.kmapper.mapping.utils.check
 import com.squareup.kotlinpoet.FunSpec
 
@@ -56,24 +56,38 @@ interface PureMapping {
                 ", ",
                 prefix = "(",
                 postfix = ")"
-            ) { it.shortName }
+            ) { it.name }
         }"
     }
 
     fun findMapping(
         target: MappingElement,
         property: MappingElement,
+        createIfNeeded: Boolean = true
     ): PureMapping {
-        val ref = mapper.findMapping(target, property, this@PureMapping, createIfNeeded = true)
+        val ref = mapper.findMapping(target, property, this@PureMapping, createIfNeeded = createIfNeeded)
         mapper.context.logger.check(ref != null, mapper.declaration) {
-            "can't find mapping for target.${property.shortName}"
+            "can't find mapping for target.${property.name}"
         }
         return ref
     }
 
-    fun ensureNullabiliyComplies(source: MappingElement, target: MappingElement, message: () -> String) {
+    fun peekMapping(
+        target: MappingElement,
+        property: MappingElement
+    ): PureMapping? {
+        return mapper.findMapping(target, property, this@PureMapping, createIfNeeded = false)
+    }
+
+    fun ensureNullabilityComplies(source: MappingElement, target: MappingElement, message: () -> String) {
         if (source.type.isMarkedNullable && !target.type.isMarkedNullable) {
-            mapper.context.logger.error(message())
+            mapper.context.logger.error(message(), mapper.declaration)
+        }
+    }
+
+    fun ensureNullabilityComplies(source: Sequence<MappingElement>, target: MappingElement, message: () -> String) {
+        if (source.any { it.type.isMarkedNullable } && !target.type.isMarkedNullable) {
+            mapper.context.logger.error(message(), mapper.declaration)
         }
     }
 }

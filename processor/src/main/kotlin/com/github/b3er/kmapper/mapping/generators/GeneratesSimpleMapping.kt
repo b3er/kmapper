@@ -15,8 +15,8 @@
 
 package com.github.b3er.kmapper.mapping.generators
 
-import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.common.MappingAnnotation
+import com.github.b3er.kmapper.mapping.common.MappingElement
 import com.github.b3er.kmapper.mapping.mappings.PureMapping
 import com.github.b3er.kmapper.mapping.utils.check
 import com.github.b3er.kmapper.mapping.utils.toClassName
@@ -45,7 +45,7 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
     fun CodeBlock.Builder.writeExpression(property: MappingElement, expression: String) {
         addStatement(
             "%N = %L,",
-            property.shortName,
+            property.name,
             expression
         )
     }
@@ -56,21 +56,24 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
             "Invalid source: '${source}' in ${toFullString()}. Only two level sources supported. "
         }
         if (path.size > 1) {
-            val found = sources.find { it.matchesByName(path.first()) }
+            val found = sources.find { it.matchesByName(path.first()) }?.let { sequenceOf(it) }
+                ?: sources.first().properties.find { it.matchesByName(path.first()) }
+                    ?.let { sequenceOf(sources.first(), it) }
+
             logger.check(found != null, mapper.declaration) {
-                "Source for target.${property.shortName} not found!"
+                "Source for target.${property.name} not found!"
             }
-            val sourceProperty = found.properties.find { it.matchesByName(path.last()) }
+            val sourceProperty = found.last().properties.find { it.matchesByName(path.last()) }
             logger.check(sourceProperty != null, mapper.declaration) {
-                "Source for target.${property.shortName} not found!"
+                "Source for target.${property.name} not found!"
             }
-            writeMappingStatement(property, found, sourceProperty)
+            writeMappingStatement(property, found + sourceProperty)
         } else {
             val found = findSource(path.first())
             logger.check(found != null, mapper.declaration) {
-                "Source for target.${property.shortName} not found!"
+                "Source for target.${property.name} not found!"
             }
-            writeMappingStatement(property, found.second, found.third)
+            writeMappingStatement(property, sequenceOf(found.second, found.third))
         }
     }
 
@@ -88,71 +91,76 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
     }
 
     fun CodeBlock.Builder.writeMappingStatement(property: MappingElement) {
-        val found = findSource(property.shortName)
+        val found = findSource(property.name)
         logger.check(found != null, mapper.declaration) {
-            "Source for target.${property.shortName} not found." +
-                " Available sources ${sources.map { it.shortName }}. Mapper: ${toFullString()}"
+            "Source for target.${property.name} not found." +
+                " Available sources ${sources.map { it.name }}. Mapper: ${toFullString()}"
         }
-        writeMappingStatement(property, found.second, found.third)
+        writeMappingStatement(property, sequenceOf(found.second, found.third))
     }
 
     fun CodeBlock.Builder.writeMappingStatement(
         target: MappingElement,
-        source: MappingElement,
-        property: MappingElement
+        sourcePath: Sequence<MappingElement>,
     ) {
-        ensureNullabiliyComplies(property, target) {
-            "Cannot assign nullable source ${source.shortName}.${property.shortName}" +
-                " to target ${target.shortName}"
+        val source = sourcePath.distinct()
+        val sourceCount = source.count()
+        val property = sourcePath.last()
+
+        val sourcePathStr = source.joinToString(".") { it.name }
+        ensureNullabilityComplies(source.drop(1), target) {
+            "Cannot assign nullable source $sourcePathStr" +
+                " to target ${target.name}"
         }
 
+        val sourcePathBlock = CodeBlock.of(
+            source.take(sourceCount - 1).joinToString(separator = "", postfix = "%N") {
+                if (it.type.isMarkedNullable) {
+                    "%N?."
+                } else {
+                    "%N."
+                }
+            }, *(source.map { it.name }.toList().toTypedArray())
+        )
         if (target.isAssignableFrom(property)) {
-            if (source != property) {
-                addStatement(
-                    "%N = %N.%N,",
-                    target.shortName,
-                    source.shortName,
-                    property.shortName
-                )
-            } else {
-                addStatement(
-                    "%N = %N,",
-                    target.shortName,
-                    source.shortName
-                )
-            }
+            add("«")
+            add("%N = ", target.name)
+            add(sourcePathBlock)
+            add(",\n»")
         } else {
             add("«")
-            add("%N = ", target.shortName)
+            add("%N = ", target.name)
             val nullables = property.type.isMarkedNullable && target.type.isMarkedNullable
 
             val ref = if (nullables) {
-                findMapping(target.makeNotNullable(), property.makeNotNullable())
+                peekMapping(target, property) ?: findMapping(target.makeNotNullable(), property.makeNotNullable())
             } else {
                 findMapping(target, property)
             }
 
             val referenceBlock = if (nullables) {
                 CodeBlock.of("%N", "it")
-            } else if (source == property) {
-                CodeBlock.of("%N", source.shortName)
             } else {
-                CodeBlock.of("%N.%N", source.shortName, property.shortName)
+                sourcePathBlock
             }
 
             if (nullables) {
-                add("%N.%N?.let { ", source.shortName, property.shortName)
+                add(sourcePathBlock)
+                add("?.let { ")
             }
+            val refSources = ref.sources.drop(1)
             if (ref.mapper == mapper) {
                 add("%N(", ref.name)
                 add(referenceBlock)
+                if (refSources.isNotEmpty()) {
+                    add(", ${refSources.joinToString(", ") { "%N" }}", *refSources.map { it.name }.toTypedArray())
+                }
                 add(")")
             } else {
-                val refSources = ref.sources.drop(1)
                 add("%N.%N(", mapper.includes[ref.mapper], ref.name)
                 add(referenceBlock)
                 if (refSources.isNotEmpty()) {
-                    add(", ${refSources.joinToString(", ") { "%N" }}", *refSources.map { it.shortName }.toTypedArray())
+                    add(", ${refSources.joinToString(", ") { "%N" }}", *refSources.map { it.name }.toTypedArray())
                 }
                 add(")")
             }

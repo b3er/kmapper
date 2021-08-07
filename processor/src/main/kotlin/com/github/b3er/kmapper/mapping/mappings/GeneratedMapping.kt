@@ -16,7 +16,7 @@
 package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.api.AnnotationHolder
-import com.github.b3er.kmapper.mapping.api.MappingElement
+import com.github.b3er.kmapper.mapping.common.MappingElement
 import com.github.b3er.kmapper.mapping.generators.MappingGenerator
 import com.squareup.kotlinpoet.FunSpec
 
@@ -38,7 +38,7 @@ abstract class GeneratedMapping : PureMapping, MappingGenerator {
 
         sources.forEach { source ->
             addParameter(
-                source.shortName,
+                source.name,
                 source.toTypeName(),
                 source.modifiers
             )

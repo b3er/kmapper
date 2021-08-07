@@ -15,8 +15,8 @@
 
 package com.github.b3er.kmapper.mapping.generators
 
-import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.common.MappingAnnotation
+import com.github.b3er.kmapper.mapping.common.MappingElement
 import com.github.b3er.kmapper.mapping.mappings.PureMapping
 import com.google.devtools.ksp.processing.KSPLogger
 import com.squareup.kotlinpoet.CodeBlock
@@ -31,19 +31,19 @@ interface GeneratesIterableMapping : PureMapping, MappingGenerator {
     val targetArgument: MappingElement
     val source: MappingElement
     override fun FunSpec.Builder.writeMapping() {
-        ensureNullabiliyComplies(sourceArgument, targetArgument) {
-            "Cannot assign nullable source ${source.shortName}" +
-                " to target ${target.shortName}"
+        ensureNullabilityComplies(sourceArgument, targetArgument) {
+            "Cannot assign nullable source ${source.name}" +
+                " to target ${target.name}"
         }
         CodeBlock.builder().apply {
             writeNullPreconditions()
             if (mapper.context.typeResolver.isList(source.type)) {
-                addStatement("if (%N.size == 0) return emptyList()", source.shortName)
+                addStatement("if (%N.size == 0) return emptyList()", source.name)
                 addStatement(
                     "val %N = %T(%N.size)",
                     "result",
                     ArrayList::class.asClassName().parameterizedBy(targetArgument.toTypeName()),
-                    source.shortName
+                    source.name
                 )
             } else {
                 addStatement(
@@ -53,9 +53,9 @@ interface GeneratesIterableMapping : PureMapping, MappingGenerator {
                 )
             }
             if (targetArgument.isAssignableFrom(sourceArgument)) {
-                addStatement("%N.addAll(%N)", "result", source.shortName)
+                addStatement("%N.addAll(%N)", "result", source.name)
             } else {
-                beginControlFlow("for(%N in %N) {", "item", source.shortName)
+                beginControlFlow("for(%N in %N) {", "item", source.name)
                 val ref = findMapping(targetArgument, sourceArgument)
                 if (ref.mapper == mapper) {
                     addStatement("%N.add(%N(%N))", "result", ref.name, "item")

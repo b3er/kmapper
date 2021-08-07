@@ -17,11 +17,12 @@ package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.api.MappingContext
-import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.common.ConstructorValuesEnumeration
+import com.github.b3er.kmapper.mapping.common.MappingElement
 import com.github.b3er.kmapper.mapping.common.toMappingElement
 import com.github.b3er.kmapper.mapping.utils.check
 import com.github.b3er.kmapper.mapping.utils.isEnumClass
+import com.github.b3er.kmapper.mapping.utils.isKotlin
 import com.github.b3er.kmapper.mapping.utils.toClassName
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
@@ -37,6 +38,9 @@ object MappingFactory {
                 "Mapping function must return value!"
             }
             val target = ref.returnType!!.toMappingElement(enumeration = ConstructorValuesEnumeration)
+            context.logger.check(target.type.declaration.isKotlin, mapper.declaration) {
+                "Target $target must be a kotlin class, for mapper ${mapper.toFullString()}"
+            }
             when {
                 context.typeResolver.isIterable(target.type) -> {
                     IterableMappingFunction(ref, target, mapper)
@@ -80,6 +84,9 @@ object MappingFactory {
                 )
             }
             else -> {
+                context.logger.check(target.type.declaration.isKotlin, mapper.declaration) {
+                    "Target $target must be a kotlin class, for mapper ${mapper.toFullString()}"
+                }
                 SimpleGeneratedMapping(
                     generateName(mapper, "map${source.type.toClassName().simpleName}"),
                     mapper,
@@ -94,7 +101,7 @@ object MappingFactory {
         var name = template
         var i = 1
         while (mapper.allMappings().any { it.name == name }) {
-            name = "template${i++}"
+            name = "$template${i++}"
         }
         return name
     }

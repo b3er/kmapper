@@ -16,8 +16,8 @@
 package com.github.b3er.kmapper.mapping
 
 import com.github.b3er.kmapper.mapping.api.MappingContext
-import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.common.MapperAnnotation
+import com.github.b3er.kmapper.mapping.common.MappingElement
 import com.github.b3er.kmapper.mapping.mappings.GeneratedMapping
 import com.github.b3er.kmapper.mapping.mappings.MappingFactory
 import com.github.b3er.kmapper.mapping.mappings.PureMapping
@@ -83,6 +83,9 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
         }
         val typeSpec = TypeSpec.classBuilder(implementationClassName)
         typeSpec.addOriginatingKSFile(declaration.containingFile!!)
+        includes.forEach { (mapper, _) ->
+            typeSpec.addOriginatingKSFile(mapper.declaration.containingFile!!)
+        }
 
         typeSpec.addSuperinterface(className)
 
@@ -119,8 +122,11 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
     }
 
     fun TypeSpec.Builder.writeCreatedMappings() {
-        createdMappings.filterNot { it.isImplemented }.forEach { mapping ->
-            mapping.write().also { addFunction(it) }
+        //TODO: Rewrite!
+        while (createdMappings.any { !it.isImplemented }) {
+            createdMappings.filterNot { it.isImplemented }.forEach { mapping ->
+                mapping.write().also { addFunction(it) }
+            }
         }
     }
 
