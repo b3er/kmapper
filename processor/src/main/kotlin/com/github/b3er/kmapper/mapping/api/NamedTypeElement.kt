@@ -15,16 +15,11 @@
 
 package com.github.b3er.kmapper.mapping.api
 
-import com.google.devtools.ksp.symbol.KSName
 import com.google.devtools.ksp.symbol.KSType
 
 interface NamedTypeElement : TypeElement {
     override val type: KSType
-    val name: KSName
-    val shortName get() = name.getShortName()
-    fun matches(other: NamedTypeElement): Boolean {
-        return super.matches(other) && shortName == other.shortName
-    }
+    val shortName: String
 
     fun matchesByName(other: NamedTypeElement): Boolean {
         return shortName == other.shortName

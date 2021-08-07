@@ -17,7 +17,8 @@
 package com.github.b3er.kmapper
 
 import com.github.b3er.kmapper.mapping.Mapper
-import com.github.b3er.kmapper.mapping.api.MappingContext
+import com.github.b3er.kmapper.mapping.common.MappingContext
+import com.github.b3er.kmapper.mapping.common.TypesResolver
 import com.github.b3er.kmapper.mapping.factory.MapperModuleFactory
 import com.github.b3er.kmapper.mapping.utils.check
 import com.github.b3er.kmapper.mapping.utils.getAnnotation
@@ -39,7 +40,7 @@ class KMapperProcessor(
 ) : SymbolProcessor {
     override fun process(resolver: Resolver): List<KSAnnotated> {
         val mappers = mutableMapOf<KSDeclaration, Mapper>()
-        val context = MappingContextImpl(resolver, logger, options, codeGenerator, mappers)
+        val context = MappingContextImpl(resolver, logger, options, codeGenerator, TypesResolver(resolver), mappers)
         resolver
             .getSymbolsWithAnnotation(MAPPER_ANNOTATION_NAME)
             .map { type ->
@@ -69,6 +70,7 @@ class KMapperProcessor(
         override val logger: KSPLogger,
         override val options: Map<String, String>,
         private val generator: CodeGenerator,
+        override val typeResolver: TypesResolver,
         protected val mappers: Map<KSDeclaration, Mapper>
     ) : MappingContext {
         private val generatedMappers = mutableSetOf<Mapper>()

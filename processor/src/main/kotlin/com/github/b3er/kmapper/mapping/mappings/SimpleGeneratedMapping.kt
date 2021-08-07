@@ -16,16 +16,15 @@
 package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.Mapper
-import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
+import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.common.MappingAnnotation
-import com.github.b3er.kmapper.mapping.common.MappingTarget
 import com.github.b3er.kmapper.mapping.generators.GeneratesSimpleMapping
 
 data class SimpleGeneratedMapping(
     override val name: String,
     override val mapper: Mapper,
-    override val target: MappingTarget,
-    override val sources: List<MappingPropertyElement>
+    override val target: MappingElement,
+    override val sources: List<MappingElement>
 ) : GeneratedMapping(), GeneratesSimpleMapping {
     override val overrides: List<MappingAnnotation> = emptyList()
 }

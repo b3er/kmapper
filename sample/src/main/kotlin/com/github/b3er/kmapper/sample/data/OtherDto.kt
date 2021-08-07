@@ -15,11 +15,15 @@
 
 package com.github.b3er.kmapper.sample.data
 
+import java.time.OffsetDateTime
+
 data class OtherDto(
     val id: Long,
-    val name: String?,
+    val name: String,
     val nested: OtherNestedDto,
-    val status: Status
+    val status: Status,
+    val userEmailList: List<OtherNestedDto>,
+    val createdAt: OffsetDateTime,
 ) {
     enum class Status {
         Success, Error

@@ -15,15 +15,21 @@
 
 package com.github.b3er.kmapper.mapping.api
 
+import com.github.b3er.kmapper.mapping.utils.TypeParameterResolver
+import com.github.b3er.kmapper.mapping.utils.toTypeName
+import com.github.b3er.kmapper.mapping.utils.toTypeParameterResolver
 import com.google.devtools.ksp.symbol.KSType
+import com.squareup.kotlinpoet.TypeName
 
 interface TypeElement {
     val type: KSType
-    fun matches(other: TypeElement): Boolean {
-        return type.isAssignableFrom(other.type)
-    }
+    val typeParameterResolver: TypeParameterResolver
 
     fun isAssignableFrom(other: TypeElement): Boolean {
         return type.isAssignableFrom(other.type)
+    }
+
+    fun toTypeName(): TypeName {
+        return type.toTypeName(type.declaration.typeParameters.toTypeParameterResolver())
     }
 }

@@ -15,10 +15,9 @@
 
 package com.github.b3er.kmapper.mapping
 
-import com.github.b3er.kmapper.mapping.api.MappingContext
-import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
+import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.common.MapperAnnotation
-import com.github.b3er.kmapper.mapping.common.MappingTargetProperty
+import com.github.b3er.kmapper.mapping.common.MappingContext
 import com.github.b3er.kmapper.mapping.mappings.GeneratedMapping
 import com.github.b3er.kmapper.mapping.mappings.MappingFactory
 import com.github.b3er.kmapper.mapping.mappings.PureMapping
@@ -56,21 +55,21 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
     fun allMappings(): Sequence<PureMapping> = declaredMappins.asSequence() + createdMappings.asSequence()
 
     fun findMapping(
-        target: MappingTargetProperty,
-        source: MappingPropertyElement,
+        target: MappingElement,
+        source: MappingElement,
         parent: PureMapping,
         createIfNeeded: Boolean
     ): PureMapping? {
         return allMappings().find { mapping ->
-            mapping.target.matches(target) && mapping.isSourceCompatibleWith(source, parent.sources)
+            target.isAssignableFrom(mapping.target) && mapping.isSourceCompatibleWith(source, parent.sources)
         } ?: includes.mapNotNull { (include, _) -> include.findMapping(target, source, parent, false) }
             .firstOrNull { it !is GeneratedMapping }
         ?: if (createIfNeeded) createMapping(target, source, parent) else null
     }
 
     fun createMapping(
-        target: MappingTargetProperty,
-        source: MappingPropertyElement,
+        target: MappingElement,
+        source: MappingElement,
         parent: PureMapping
     ): PureMapping {
         return MappingFactory.createGeneratedMapping(this, target, source).also {

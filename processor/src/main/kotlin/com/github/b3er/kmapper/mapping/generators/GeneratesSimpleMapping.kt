@@ -15,9 +15,8 @@
 
 package com.github.b3er.kmapper.mapping.generators
 
-import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
+import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.common.MappingAnnotation
-import com.github.b3er.kmapper.mapping.common.MappingTargetProperty
 import com.github.b3er.kmapper.mapping.mappings.PureMapping
 import com.github.b3er.kmapper.mapping.utils.check
 import com.github.b3er.kmapper.mapping.utils.toClassName
@@ -42,7 +41,7 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
         }
     }
 
-    fun CodeBlock.Builder.writeExpression(property: MappingTargetProperty, expression: String) {
+    fun CodeBlock.Builder.writeExpression(property: MappingElement, expression: String) {
         addStatement(
             "%N = %L,",
             property.shortName,
@@ -50,7 +49,7 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
         )
     }
 
-    fun CodeBlock.Builder.writeSourcePath(property: MappingTargetProperty, source: String) {
+    fun CodeBlock.Builder.writeSourcePath(property: MappingElement, source: String) {
         val path = source.split('.')
         logger.check(path.size <= 2, mapper.declaration) {
             "Invalid source: '${source}' in ${toFullString()}. Only two level sources supported. "
@@ -74,7 +73,7 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
         }
     }
 
-    fun CodeBlock.Builder.writeOverrides(property: MappingTargetProperty): Boolean {
+    fun CodeBlock.Builder.writeOverrides(property: MappingElement): Boolean {
         val override = overrides.find { property.matchesByName(it.target) }
         if (override?.expression?.isNotEmpty() == true) {
             writeExpression(property, override.expression)
@@ -87,18 +86,18 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
         return false
     }
 
-    fun CodeBlock.Builder.writeMappingStatement(property: MappingTargetProperty) {
+    fun CodeBlock.Builder.writeMappingStatement(property: MappingElement) {
         val found = findSource(property.shortName)
         logger.check(found != null, mapper.declaration) {
-            "Source for target.${property.shortName} not found!"
+            "Source for target.${property.shortName} not found. Available sources ${sources.map { it.shortName }}. Mapper: ${toFullString()}"
         }
         writeMappingStatement(property, found.second, found.third)
     }
 
     fun CodeBlock.Builder.writeMappingStatement(
-        target: MappingTargetProperty,
-        source: MappingPropertyElement,
-        property: MappingPropertyElement
+        target: MappingElement,
+        source: MappingElement,
+        property: MappingElement
     ) {
         if (property.type.isMarkedNullable && !target.type.isMarkedNullable) {
             logger.error(
@@ -122,10 +121,7 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
                 )
             }
         } else {
-            val ref = mapper.findMapping(target, property, this@GeneratesSimpleMapping, createIfNeeded = true)
-            logger.check(ref != null, mapper.declaration) {
-                "can't find mapping for target.${property.shortName}"
-            }
+            val ref = findMapping(target, property)
             if (ref.mapper == mapper) {
                 addStatement(
                     "%N = %N(%N.%N),",

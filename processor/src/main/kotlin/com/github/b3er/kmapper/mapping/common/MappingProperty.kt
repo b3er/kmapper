@@ -15,17 +15,56 @@
 
 package com.github.b3er.kmapper.mapping.common
 
-import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
+import com.github.b3er.kmapper.mapping.api.MappingElement
+import com.github.b3er.kmapper.mapping.utils.TypeParameterResolver
 import com.github.b3er.kmapper.mapping.utils.kModifiers
+import com.github.b3er.kmapper.mapping.utils.toTypeParameterResolver
 import com.google.devtools.ksp.getDeclaredProperties
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSPropertyDeclaration
+import com.google.devtools.ksp.symbol.*
+import com.squareup.kotlinpoet.KModifier
 
-data class MappingProperty(val declaration: KSPropertyDeclaration) : MappingPropertyElement {
-    override fun modifiers() = declaration.modifiers.kModifiers().asSequence()
-    override val type by lazy { declaration.type.resolve() }
-    override val name by lazy { declaration.simpleName }
-    override val properties by lazy {
-        (type.declaration as? KSClassDeclaration)?.getDeclaredProperties()?.map(::MappingProperty) ?: emptySequence()
+data class MappingProperty(
+    override val type: KSType,
+    override val shortName: String,
+    override val modifiers: List<KModifier>,
+    val propertyEnumeration: (MappingElement) -> List<MappingElement>
+) : MappingElement {
+    override val properties by lazy { propertyEnumeration(this) }
+    override val declaration = type.declaration as KSClassDeclaration
+    override val typeParameterResolver: TypeParameterResolver by lazy {
+        type.declaration.typeParameters.toTypeParameterResolver()
+    }
+}
+
+fun KSPropertyDeclaration.toMappingElement() =
+    type.resolve().toMappingElement(simpleName.getShortName(), modifiers.kModifiers())
+
+fun KSValueParameter.toMappingElement() = type.resolve().toMappingElement(name!!.getShortName(), kModifiers().toList())
+
+fun KSTypeReference.toMappingElement(
+    name: String = "",
+    modifiers: List<KModifier> = emptyList(),
+    enumeration: (MappingElement) -> List<MappingElement> = DeclarationValuesEnumeration
+) = resolve().toMappingElement(name, modifiers, enumeration)
+
+fun KSType.toMappingElement(
+    name: String = "",
+    modifiers: List<KModifier> = emptyList(),
+    enumeration: (MappingElement) -> List<MappingElement> = DeclarationValuesEnumeration
+) = MappingProperty(this, name, modifiers, enumeration)
+
+object ConstructorValuesEnumeration : (MappingElement) -> List<MappingElement> {
+    override fun invoke(element: MappingElement): List<MappingElement> {
+        return (element.type.declaration as KSClassDeclaration).primaryConstructor?.parameters?.map {
+            it.toMappingElement()
+        } ?: throw IllegalArgumentException("Can't find primary constructor for ${element.type}!")
+    }
+}
+
+object DeclarationValuesEnumeration : (MappingElement) -> List<MappingElement> {
+    override fun invoke(element: MappingElement): List<MappingElement> {
+        return (element.type.declaration as KSClassDeclaration).getDeclaredProperties().map {
+            it.toMappingElement()
+        }.toList()
     }
 }

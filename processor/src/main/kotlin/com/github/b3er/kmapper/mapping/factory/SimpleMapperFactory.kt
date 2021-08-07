@@ -16,7 +16,7 @@
 package com.github.b3er.kmapper.mapping.factory
 
 import com.github.b3er.kmapper.MappersFactory
-import com.github.b3er.kmapper.mapping.api.MappingContext
+import com.github.b3er.kmapper.mapping.common.MappingContext
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy

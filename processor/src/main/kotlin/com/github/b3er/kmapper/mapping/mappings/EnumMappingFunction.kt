@@ -18,8 +18,8 @@ package com.github.b3er.kmapper.mapping.mappings
 import com.github.b3er.kmapper.EnumMapping
 import com.github.b3er.kmapper.EnumMappings
 import com.github.b3er.kmapper.mapping.Mapper
+import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.common.EnumMappingAnnotation
-import com.github.b3er.kmapper.mapping.common.MappingTarget
 import com.github.b3er.kmapper.mapping.generators.GeneratesEnumMapping
 import com.github.b3er.kmapper.mapping.utils.get
 import com.github.b3er.kmapper.mapping.utils.getAnnotation
@@ -28,7 +28,7 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 
 class EnumMappingFunction(
     override val declaration: KSFunctionDeclaration,
-    override val target: MappingTarget,
+    override val target: MappingElement,
     override val mapper: Mapper
 ) : MappingFunction(), GeneratesEnumMapping {
     override val overrides by lazy {

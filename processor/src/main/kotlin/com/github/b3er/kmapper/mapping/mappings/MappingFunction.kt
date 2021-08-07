@@ -16,7 +16,7 @@
 package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.api.AnnotationHolder
-import com.github.b3er.kmapper.mapping.common.MappingValueSource
+import com.github.b3er.kmapper.mapping.common.toMappingElement
 import com.github.b3er.kmapper.mapping.generators.MappingGenerator
 import com.github.b3er.kmapper.mapping.utils.kModifiers
 import com.github.b3er.kmapper.mapping.utils.toAnnotationSpec
@@ -24,18 +24,6 @@ import com.github.b3er.kmapper.mapping.utils.toClassName
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
-
-//
-//class GeneratedMapping(
-//    override val mapper: Mapper,
-//    override val name: String,
-//    override val target: MappingTarget,
-//    override val sources: List<MappingPropertyElement>
-//) : PureMapping {
-//    protected fun FunSpec.Builder.writeFunctionDeclaration() {
-//
-//    }
-//}
 
 abstract class MappingFunction : PureMapping, MappingGenerator {
     abstract val declaration: KSFunctionDeclaration
@@ -47,7 +35,11 @@ abstract class MappingFunction : PureMapping, MappingGenerator {
     val context by lazy(LazyThreadSafetyMode.NONE) { mapper.context }
     val logger by lazy(LazyThreadSafetyMode.NONE) { context.logger }
 
-    override val sources by lazy { declaration.parameters.map(::MappingValueSource) }
+    override val sources by lazy {
+        declaration.parameters.map { value ->
+            value.toMappingElement()
+        }
+    }
 
     override fun write() = FunSpec.builder(name).apply {
         writeFunctionDeclaration()
@@ -72,7 +64,7 @@ abstract class MappingFunction : PureMapping, MappingGenerator {
             addParameter(
                 source.shortName,
                 source.type.toClassName(),
-                source.declaration.kModifiers().toList()
+                source.modifiers
             )
         }
     }

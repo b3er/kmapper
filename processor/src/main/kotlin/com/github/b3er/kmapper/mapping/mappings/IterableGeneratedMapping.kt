@@ -17,14 +17,20 @@ package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.api.MappingElement
-import com.github.b3er.kmapper.mapping.common.EnumMappingAnnotation
-import com.github.b3er.kmapper.mapping.generators.GeneratesEnumMapping
+import com.github.b3er.kmapper.mapping.common.MappingAnnotation
+import com.github.b3er.kmapper.mapping.common.toMappingElement
+import com.github.b3er.kmapper.mapping.generators.GeneratesIterableMapping
 
-class EnumGeneratedMapping(
+class IterableGeneratedMapping(
     override val name: String,
     override val mapper: Mapper,
     override val target: MappingElement,
     override val sources: List<MappingElement>
-) : GeneratedMapping(), GeneratesEnumMapping {
-    override val overrides: List<EnumMappingAnnotation> = emptyList()
+) : GeneratedMapping(), GeneratesIterableMapping {
+    override val source: MappingElement = sources.first()
+    override val overrides: List<MappingAnnotation> = emptyList()
+    override val sourceArgument by lazy {
+        sources.first().type.arguments.first().type!!.toMappingElement(name = "item")
+    }
+    override val targetArgument by lazy { target.type.arguments.first().type!!.toMappingElement() }
 }

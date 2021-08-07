@@ -14,21 +14,13 @@
  */
 package com.github.b3er.kmapper.sample.mapper
 
-import com.github.b3er.kmapper.Mapper
-import com.github.b3er.kmapper.sample.data.AnotherOtherDto
-import com.github.b3er.kmapper.sample.data.OtherDto
-import com.github.b3er.kmapper.sample.model.AnotherOtherModel
-import com.github.b3er.kmapper.sample.model.OtherModel
-import javax.inject.Singleton
-
-@Singleton
-@Mapper(uses = [OtherNestedMapper::class], injectionType = Mapper.InjectionType.Jsr330)
-interface OtherMapper {
-    fun map(dto: OtherDto): OtherModel
-}
-
-@Mapper
-interface OtherNestedMapper {
-    fun map(dto: AnotherOtherDto): AnotherOtherModel
-}
-
+//@Singleton
+//@Mapper(uses = [OtherNestedMapper::class], injectionType = Mapper.InjectionType.Jsr330)
+//interface OtherMapper {
+//    fun map(dto: OtherDto): OtherModel
+//}
+//
+//@Mapper
+//interface OtherNestedMapper {
+//    fun map(dto: AnotherOtherDto): AnotherOtherModel
+//}

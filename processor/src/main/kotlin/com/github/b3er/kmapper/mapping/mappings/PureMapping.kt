@@ -16,20 +16,20 @@
 package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.Mapper
-import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
-import com.github.b3er.kmapper.mapping.common.MappingTarget
+import com.github.b3er.kmapper.mapping.api.MappingElement
+import com.github.b3er.kmapper.mapping.utils.check
 import com.squareup.kotlinpoet.FunSpec
 
 interface PureMapping {
     val isImplemented: Boolean
-    val sources: List<MappingPropertyElement>
-    val target: MappingTarget
+    val sources: List<MappingElement>
+    val target: MappingElement
     val mapper: Mapper
     val name: String
 
     fun write(): FunSpec
 
-    fun isSourceCompatibleWith(property: MappingPropertyElement, refSources: List<MappingPropertyElement>): Boolean {
+    fun isSourceCompatibleWith(property: MappingElement, refSources: List<MappingElement>): Boolean {
         return sources.any { my -> property.isAssignableFrom(my) }
             && sources.all { my ->
             my.isAssignableFrom(property) || refSources.any {
@@ -40,11 +40,11 @@ interface PureMapping {
         }
     }
 
-    fun isSourceCompatibleWith(property: MappingPropertyElement): Boolean {
+    fun isSourceCompatibleWith(property: MappingElement): Boolean {
         return sources.any { my -> my.isAssignableFrom(property) }
     }
 
-    fun findSource(targetName: String): Triple<Mapper, MappingPropertyElement, MappingPropertyElement>? {
+    fun findSource(targetName: String): Triple<Mapper, MappingElement, MappingElement>? {
         return sources.asSequence().mapNotNull { source ->
             source.findMatchingByName(targetName)?.let { Triple(mapper, source, it) }
         }.firstOrNull()
@@ -58,5 +58,16 @@ interface PureMapping {
                 postfix = ")"
             ) { it.shortName }
         }"
+    }
+
+    fun findMapping(
+        target: MappingElement,
+        property: MappingElement,
+    ): PureMapping {
+        val ref = mapper.findMapping(target, property, this@PureMapping, createIfNeeded = true)
+        mapper.context.logger.check(ref != null, mapper.declaration) {
+            "can't find mapping for target.${property.shortName}"
+        }
+        return ref
     }
 }

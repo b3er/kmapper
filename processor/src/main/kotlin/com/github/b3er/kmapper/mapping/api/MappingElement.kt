@@ -13,14 +13,21 @@
  * limitations under the License.
  */
 
-package com.github.b3er.kmapper.mapping.common
+package com.github.b3er.kmapper.mapping.api
 
-import com.github.b3er.kmapper.mapping.api.TypeElement
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSTypeReference
+import com.squareup.kotlinpoet.KModifier
 
-data class MappingTarget(val typeReference: KSTypeReference) : TypeElement {
-    override val type by lazy { typeReference.resolve() }
-    val declaration by lazy { type.declaration as KSClassDeclaration }
-    val properties by lazy { declaration.primaryConstructor!!.parameters.map { MappingTargetProperty(it) } }
+interface MappingElement : NamedTypeElement {
+    val properties: List<MappingElement>
+    val modifiers: List<KModifier>
+    val declaration: KSClassDeclaration
+
+    fun findMatchingByName(propertyName: String): MappingElement? {
+        return if (matchesByName(propertyName)) {
+            this
+        } else {
+            properties.firstOrNull { it.matchesByName(propertyName) }
+        }
+    }
 }

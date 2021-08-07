@@ -16,26 +16,13 @@
 package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.api.AnnotationHolder
-import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
+import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.generators.MappingGenerator
-import com.github.b3er.kmapper.mapping.utils.toClassName
 import com.squareup.kotlinpoet.FunSpec
-
-//
-//class GeneratedMapping(
-//    override val mapper: Mapper,
-//    override val name: String,
-//    override val target: MappingTarget,
-//    override val sources: List<MappingPropertyElement>
-//) : PureMapping {
-//    protected fun FunSpec.Builder.writeFunctionDeclaration() {
-//
-//    }
-//}
 
 abstract class GeneratedMapping : PureMapping, MappingGenerator {
     protected abstract val overrides: List<AnnotationHolder>
-    abstract override val sources: List<MappingPropertyElement>
+    abstract override val sources: List<MappingElement>
     override val isImplemented get() = false
     val context by lazy(LazyThreadSafetyMode.NONE) { mapper.context }
     val logger by lazy(LazyThreadSafetyMode.NONE) { context.logger }
@@ -46,13 +33,13 @@ abstract class GeneratedMapping : PureMapping, MappingGenerator {
     }.build()
 
     override fun FunSpec.Builder.writeFunctionDeclaration() {
-        returns(target.type.toClassName())
+        returns(target.toTypeName())
 
         sources.forEach { source ->
             addParameter(
                 source.shortName,
-                source.type.toClassName(),
-                source.modifiers().toList()
+                source.toTypeName(),
+                source.modifiers
             )
         }
     }
