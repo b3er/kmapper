@@ -183,6 +183,5 @@ internal fun FileSpec.writeTo(codeGenerator: CodeGenerator) {
     val dependencies = Dependencies(false, *originatingKSFiles().toTypedArray())
     val file = codeGenerator.createNewFile(dependencies, packageName, name)
     // Don't use writeTo(file) because that tries to handle directories under the hood
-    OutputStreamWriter(file, StandardCharsets.UTF_8)
-        .use(::writeTo)
+    OutputStreamWriter(file, StandardCharsets.UTF_8).use(::writeTo)
 }

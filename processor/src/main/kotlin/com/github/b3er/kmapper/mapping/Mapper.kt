@@ -21,10 +21,7 @@ import com.github.b3er.kmapper.mapping.common.MapperAnnotation
 import com.github.b3er.kmapper.mapping.mappings.GeneratedMapping
 import com.github.b3er.kmapper.mapping.mappings.MappingFactory
 import com.github.b3er.kmapper.mapping.mappings.PureMapping
-import com.github.b3er.kmapper.mapping.utils.getAnnotation
-import com.github.b3er.kmapper.mapping.utils.kModifiers
-import com.github.b3er.kmapper.mapping.utils.toAnnotationSpec
-import com.github.b3er.kmapper.mapping.utils.toClassName
+import com.github.b3er.kmapper.mapping.utils.*
 import com.google.devtools.ksp.getDeclaredFunctions
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.*
@@ -85,6 +82,7 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
             fileSpec.addImport(import.packageName, import.simpleName)
         }
         val typeSpec = TypeSpec.classBuilder(implementationClassName)
+        typeSpec.addOriginatingKSFile(declaration.containingFile!!)
 
         typeSpec.addSuperinterface(className)
 

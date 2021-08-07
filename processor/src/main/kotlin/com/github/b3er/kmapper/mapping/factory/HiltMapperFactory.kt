@@ -17,6 +17,7 @@ package com.github.b3er.kmapper.mapping.factory
 
 import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.api.MappingContext
+import com.github.b3er.kmapper.mapping.utils.addOriginatingKSFile
 import com.github.b3er.kmapper.mapping.utils.kModifiers
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.*
@@ -31,6 +32,7 @@ class HiltMapperFactory(
 
     override fun FileSpec.Builder.writeClass() {
         TypeSpec.classBuilder(factoryClassName).apply {
+            addOriginatingKSFile(declaration.containingFile!!)
             addAnnotation(AnnotationSpec.builder(DAGGER_MODULE).build())
             addAnnotation(
                 AnnotationSpec.builder(HILT_INSTALL_IN).addMember("%T::class", HILT_SINGLETON_COMPONENT).build()

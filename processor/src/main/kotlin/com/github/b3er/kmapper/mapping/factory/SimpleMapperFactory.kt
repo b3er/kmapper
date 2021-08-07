@@ -17,6 +17,7 @@ package com.github.b3er.kmapper.mapping.factory
 
 import com.github.b3er.kmapper.MappersFactory
 import com.github.b3er.kmapper.mapping.api.MappingContext
+import com.github.b3er.kmapper.mapping.utils.addOriginatingKSFile
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
@@ -32,6 +33,7 @@ class SimpleMapperFactory(
     override fun FileSpec.Builder.writeClass() {
         TypeSpec.objectBuilder(factoryClassName).apply {
             addSuperinterface(MappersFactory::class)
+            addOriginatingKSFile(declaration.containingFile!!)
             addAnnotation(
                 AnnotationSpec.builder(Suppress::class.asClassName()).addMember("%S", "UNCHECKED_CAST").build()
             )

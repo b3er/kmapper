@@ -151,7 +151,10 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
                 val refSources = ref.sources.drop(1)
                 add("%N.%N(", mapper.includes[ref.mapper], ref.name)
                 add(referenceBlock)
-                add(", ${refSources.joinToString(", ") { "%N" }})", *refSources.map { it.shortName }.toTypedArray())
+                if (refSources.isNotEmpty()) {
+                    add(", ${refSources.joinToString(", ") { "%N" }}", *refSources.map { it.shortName }.toTypedArray())
+                }
+                add(")")
             }
             if (nullables) {
                 add(" }")
