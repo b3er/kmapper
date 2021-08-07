@@ -36,6 +36,9 @@ class SimpleMapperFactory(
     private fun FileSpec.Builder.writeClass() {
         TypeSpec.objectBuilder(factoryClassName).apply {
             addSuperinterface(MappersFactory::class)
+            addAnnotation(
+                AnnotationSpec.builder(Suppress::class.asClassName()).addMember("%S", "UNCHECKED_CAST").build()
+            )
             writeFactory()
         }.also { addType(it.build()) }
     }

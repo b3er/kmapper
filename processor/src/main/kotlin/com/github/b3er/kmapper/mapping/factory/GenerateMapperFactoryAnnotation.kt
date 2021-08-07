@@ -15,10 +15,10 @@
 
 package com.github.b3er.kmapper.mapping.factory
 
-import com.github.b3er.kmapper.mapping.api.MappingFunctionAnnotation
+import com.github.b3er.kmapper.mapping.api.AnnotationHolder
 import com.github.b3er.kmapper.mapping.utils.get
 import com.google.devtools.ksp.symbol.KSAnnotation
 
-data class GenerateMapperFactoryAnnotation(override val annotation: KSAnnotation) : MappingFunctionAnnotation {
+data class GenerateMapperFactoryAnnotation(override val annotation: KSAnnotation) : AnnotationHolder {
     val name: String by lazy { annotation["name"]!!.value as String }
 }

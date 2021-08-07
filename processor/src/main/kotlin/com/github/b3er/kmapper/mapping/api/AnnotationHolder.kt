@@ -17,6 +17,6 @@ package com.github.b3er.kmapper.mapping.api
 
 import com.google.devtools.ksp.symbol.KSAnnotation
 
-interface MappingFunctionAnnotation {
+interface AnnotationHolder {
     val annotation: KSAnnotation
 }

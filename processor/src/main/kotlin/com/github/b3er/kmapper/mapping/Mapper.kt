@@ -17,16 +17,19 @@ package com.github.b3er.kmapper.mapping
 
 import com.github.b3er.kmapper.mapping.api.MappingContext
 import com.github.b3er.kmapper.mapping.api.MappingPropertyElement
+import com.github.b3er.kmapper.mapping.common.MapperAnnotation
 import com.github.b3er.kmapper.mapping.common.MappingTargetProperty
 import com.github.b3er.kmapper.mapping.mappings.MappingFactory
 import com.github.b3er.kmapper.mapping.mappings.PureMapping
-import com.github.b3er.kmapper.mapping.utils.*
+import com.github.b3er.kmapper.mapping.utils.getAnnotation
+import com.github.b3er.kmapper.mapping.utils.kModifiers
+import com.github.b3er.kmapper.mapping.utils.toAnnotationSpec
+import com.github.b3er.kmapper.mapping.utils.toClassName
 import com.google.devtools.ksp.getDeclaredFunctions
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSType
 import com.squareup.kotlinpoet.*
 import java.util.*
-import com.github.b3er.kmapper.Mapper as MapperAnnotation
+import com.github.b3er.kmapper.Mapper as MapperClassAnnotation
 
 class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
     val className by lazy { declaration.toClassName() }
@@ -36,26 +39,15 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
             MappingFactory.createMapping(context, this, dec)
         }.toList()
     }
-    private val annotation by lazy { declaration.getAnnotation<MapperAnnotation>()!! }
+    private val annotation by lazy { declaration.getAnnotation<MapperClassAnnotation>()!!.let(::MapperAnnotation) }
     val logger = context.logger
     val includes by lazy {
-        (annotation["uses"]?.value as List<*>)
-            .asSequence()
-            .filterIsInstance<KSType>()
-            .map(KSType::declaration)
-            .filterIsInstance<KSClassDeclaration>()
-            .map(context::findMapper)
-            .associate {
+        annotation.includes?.asSequence()
+            ?.map(context::findMapper)
+            ?.associate {
                 it to it.declaration.simpleName.getShortName()
                     .replaceFirstChar { c -> c.lowercase(Locale.getDefault()) }
-            }
-    }
-    private val injectionType by lazy {
-        ((annotation["injectionType"]?.value) as? KSType)
-            ?.declaration
-            ?.simpleName
-            ?.getShortName()
-            ?.let { MapperAnnotation.InjectionType.valueOf(it) }
+            } ?: emptyMap()
     }
 
     fun findMapping(
@@ -87,11 +79,11 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
         typeSpec.addModifiers(declaration.modifiers.kModifiers())
 
         typeSpec.addAnnotations(declaration.annotations.filter {
-            it.annotationType != annotation.annotationType
+            it.annotationType != annotation.annotation.annotationType
         }.map { it.toAnnotationSpec(context.resolver) }.toList())
 
         val constSpec = FunSpec.constructorBuilder()
-        if (injectionType == MapperAnnotation.InjectionType.Jsr330) {
+        if (annotation.injectionType == MapperClassAnnotation.InjectionType.Jsr330) {
             logger.info("Using JSR303 injection", declaration)
             constSpec.addAnnotation(AnnotationSpec.builder(ClassName.bestGuess("javax.Inject")).build())
         }

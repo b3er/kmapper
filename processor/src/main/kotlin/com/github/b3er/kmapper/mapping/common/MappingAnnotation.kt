@@ -15,11 +15,11 @@
 
 package com.github.b3er.kmapper.mapping.common
 
-import com.github.b3er.kmapper.mapping.api.MappingFunctionAnnotation
+import com.github.b3er.kmapper.mapping.api.AnnotationHolder
 import com.github.b3er.kmapper.mapping.utils.get
 import com.google.devtools.ksp.symbol.KSAnnotation
 
-data class MappingAnnotation(override val annotation: KSAnnotation) : MappingFunctionAnnotation {
+data class MappingAnnotation(override val annotation: KSAnnotation) : AnnotationHolder {
     val source: String by lazy { annotation["source"]!!.value as String }
     val expression: String by lazy { annotation["expression"]!!.value as String }
     val target: String by lazy { annotation["target"]!!.value as String }

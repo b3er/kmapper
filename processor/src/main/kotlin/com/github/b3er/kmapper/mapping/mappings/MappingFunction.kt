@@ -15,7 +15,7 @@
 
 package com.github.b3er.kmapper.mapping.mappings
 
-import com.github.b3er.kmapper.mapping.api.MappingFunctionAnnotation
+import com.github.b3er.kmapper.mapping.api.AnnotationHolder
 import com.github.b3er.kmapper.mapping.common.MappingSource
 import com.github.b3er.kmapper.mapping.generators.MappingGenerator
 import com.github.b3er.kmapper.mapping.utils.kModifiers
@@ -39,7 +39,7 @@ import com.squareup.kotlinpoet.KModifier
 
 abstract class MappingFunction : PureMapping, MappingGenerator {
     abstract val declaration: KSFunctionDeclaration
-    protected abstract val overrides: List<MappingFunctionAnnotation>
+    protected abstract val overrides: List<AnnotationHolder>
     override val name: String by lazy { declaration.simpleName.getShortName() }
     override val isImplemented get() = !declaration.isAbstract
     val isDeclared = true

@@ -58,7 +58,8 @@ class KMapperProcessor(
         resolver.getSymbolsWithAnnotation(MAPPER_FACTORY_ANNOTATION_NAME)
             .filterIsInstance<KSClassDeclaration>()
             .forEach { factory ->
-                context.generateFactory(factory)
+                val factoryGenerator = MapperModuleFactory.createFactory(context, factory)
+                factoryGenerator.write().writeTo(codeGenerator)
             }
         return emptyList()
     }
@@ -101,10 +102,6 @@ class KMapperProcessor(
         }
 
         override fun mappers(): Sequence<Mapper> = mappers.values.asSequence()
-        fun generateFactory(factory: KSClassDeclaration) {
-            val factoryGenerator = MapperModuleFactory.createFactory(this, factory)
-            factoryGenerator.write().writeTo(generator)
-        }
     }
 
     companion object {

@@ -15,27 +15,27 @@
 
 package com.github.b3er.kmapper.mapping.common
 
-import com.github.b3er.kmapper.EnumMapping
+import com.github.b3er.kmapper.Mapper
 import com.github.b3er.kmapper.mapping.api.AnnotationHolder
 import com.github.b3er.kmapper.mapping.utils.get
 import com.google.devtools.ksp.symbol.KSAnnotation
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
 
-data class EnumMappingAnnotation(override val annotation: KSAnnotation) : AnnotationHolder {
-    val source: String by lazy { annotation["source"]!!.value as String }
-    val target: String by lazy { annotation["target"]!!.value as String }
-    val sourceName: EnumMapping.Naming? by lazy {
-        ((annotation["sourceName"]?.value) as? KSType)
-            ?.declaration
-            ?.simpleName
-            ?.getShortName()
-            ?.let { EnumMapping.Naming.valueOf(it) }
+class MapperAnnotation(override val annotation: KSAnnotation) : AnnotationHolder {
+    val includes: List<KSClassDeclaration>? by lazy {
+        (annotation["uses"]?.value as List<*>)
+            .asSequence()
+            .filterIsInstance<KSType>()
+            .map(KSType::declaration)
+            .filterIsInstance<KSClassDeclaration>()
+            .toList()
     }
-    val targetName: EnumMapping.Naming? by lazy {
-        ((annotation["targetName"]?.value) as? KSType)
+    val injectionType: Mapper.InjectionType? by lazy {
+        ((annotation["injectionType"]?.value) as? KSType)
             ?.declaration
             ?.simpleName
             ?.getShortName()
-            ?.let { EnumMapping.Naming.valueOf(it) }
+            ?.let { Mapper.InjectionType.valueOf(it) }
     }
 }
