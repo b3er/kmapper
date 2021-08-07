@@ -15,9 +15,21 @@
 
 package com.github.b3er.kmapper.mapping.generators
 
+import com.github.b3er.kmapper.mapping.mappings.PureMapping
+import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 
-interface MappingGenerator {
+interface MappingGenerator : PureMapping {
     fun FunSpec.Builder.writeFunctionDeclaration()
     fun FunSpec.Builder.writeMapping()
+
+    fun CodeBlock.Builder.writeNullPreconditions() {
+        if (target.type.isMarkedNullable) {
+            sources.forEach { source ->
+                if (source.type.isMarkedNullable) {
+                    addStatement("if(%N == null) return null", source.shortName)
+                }
+            }
+        }
+    }
 }

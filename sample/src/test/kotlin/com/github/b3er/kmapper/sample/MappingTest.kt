@@ -16,16 +16,12 @@
 package com.github.b3er.kmapper.sample
 
 import com.github.b3er.kmapper.getMapper
-import com.github.b3er.kmapper.sample.data.OtherDto
 import com.github.b3er.kmapper.sample.data.SampleDto
 import com.github.b3er.kmapper.sample.mapper.MyMappers
-import com.github.b3er.kmapper.sample.mapper.OtherMapper
 import com.github.b3er.kmapper.sample.mapper.SampleMapper
-import com.github.b3er.kmapper.sample.model.OtherModel
 import com.github.b3er.kmapper.sample.model.SampleModel
 import com.github.b3er.kmapper.sample.model.SampleStatusPascalCase
 import org.junit.jupiter.api.Test
-import java.time.OffsetDateTime
 import kotlin.test.assertEquals
 
 class MappingTest {
@@ -58,31 +54,6 @@ class MappingTest {
             additionalForNested = 777,
             someId = 312
         )
-
-        assertEquals(expected, result)
-    }
-
-    @Test
-    fun testOtherMapping() {
-        val dto = OtherDto(
-            id = 123,
-            name = "test",
-            nested = OtherDto.OtherNestedDto(id = 456, nestedName = "nested"),
-            status = OtherDto.Status.Success,
-            userEmailList = emptyList(),
-            createdAt = OffsetDateTime.now()
-        )
-
-        val expected = OtherModel(
-            id = dto.id,
-            name = dto.name,
-            nested = OtherModel.OtherNestedModel(id = dto.nested.id, nestedName = dto.nested.nestedName),
-            status = OtherModel.Status.Success,
-            emptyList(),
-            createdAt = dto.createdAt
-        )
-
-        val result = MyMappers.getMapper<OtherMapper>().map(dto)
 
         assertEquals(expected, result)
     }

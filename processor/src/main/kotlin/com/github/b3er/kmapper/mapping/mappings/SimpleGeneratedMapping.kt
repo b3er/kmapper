@@ -20,7 +20,7 @@ import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.common.MappingAnnotation
 import com.github.b3er.kmapper.mapping.generators.GeneratesSimpleMapping
 
-data class SimpleGeneratedMapping(
+class SimpleGeneratedMapping(
     override val name: String,
     override val mapper: Mapper,
     override val target: MappingElement,

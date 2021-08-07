@@ -26,7 +26,7 @@ import com.github.b3er.kmapper.mapping.utils.getAnnotation
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 
-data class SimpleMappingFunction(
+class SimpleMappingFunction(
     override val declaration: KSFunctionDeclaration,
     override val target: MappingElement,
     override val mapper: Mapper

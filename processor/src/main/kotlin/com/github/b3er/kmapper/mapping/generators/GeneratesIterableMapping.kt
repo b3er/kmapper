@@ -36,9 +36,7 @@ interface GeneratesIterableMapping : PureMapping, MappingGenerator {
                 " to target ${target.shortName}"
         }
         CodeBlock.builder().apply {
-            if (source.type.isMarkedNullable) {
-                addStatement("if(%N == null) return null", source.shortName)
-            }
+            writeNullPreconditions()
             if (mapper.context.typeResolver.isList(source.type)) {
                 addStatement("if(%N.size == 0) return emptyList()", source.shortName)
                 addStatement(

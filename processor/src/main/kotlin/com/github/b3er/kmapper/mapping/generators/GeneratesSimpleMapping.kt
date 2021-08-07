@@ -30,6 +30,7 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
 
     override fun FunSpec.Builder.writeMapping() {
         CodeBlock.builder().apply {
+            writeNullPreconditions()
             add("return %T(\n", target.type.toClassName()).indent()
             target.properties.forEach { property ->
                 if (!writeOverrides(property)) {
@@ -123,13 +124,23 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
         } else {
             val ref = findMapping(target, property)
             if (ref.mapper == mapper) {
-                addStatement(
-                    "%N = %N(%N.%N),",
-                    target.shortName,
-                    ref.name,
-                    source.shortName,
-                    property.shortName
-                )
+                if (source == property) {
+                    addStatement(
+                        "%N = %N(%N),",
+                        target.shortName,
+                        ref.name,
+                        source.shortName
+                    )
+                } else {
+                    addStatement(
+                        "%N = %N(%N.%N),",
+                        target.shortName,
+                        ref.name,
+                        source.shortName,
+                        property.shortName
+                    )
+                }
+
             } else {
                 val refSources = ref.sources.drop(1)
                 addStatement(

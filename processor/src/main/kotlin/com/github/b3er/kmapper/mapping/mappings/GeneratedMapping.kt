@@ -23,11 +23,12 @@ import com.squareup.kotlinpoet.FunSpec
 abstract class GeneratedMapping : PureMapping, MappingGenerator {
     protected abstract val overrides: List<AnnotationHolder>
     abstract override val sources: List<MappingElement>
-    override val isImplemented get() = false
+    override var isImplemented = false
     val context by lazy(LazyThreadSafetyMode.NONE) { mapper.context }
     val logger by lazy(LazyThreadSafetyMode.NONE) { context.logger }
 
     override fun write() = FunSpec.builder(name).apply {
+        isImplemented = true
         writeFunctionDeclaration()
         writeMapping()
     }.build()
@@ -43,4 +44,5 @@ abstract class GeneratedMapping : PureMapping, MappingGenerator {
             )
         }
     }
+
 }

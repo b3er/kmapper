@@ -110,10 +110,20 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
         typeSpec.primaryConstructor(constSpec.build())
         declaredMappins.filter { !it.isImplemented }
             .forEach { mapper -> mapper.write().also { typeSpec.addFunction(it) } }
-        createdMappings.filter { !it.isImplemented }
-            .forEach { mapper -> mapper.write().also { typeSpec.addFunction(it) } }
+        val created = createdMappings.toList()
+        created
+            .forEach { mapper ->
+                mapper.write().also { typeSpec.addFunction(it) }
+            }
+        typeSpec.writeCreatedMappings()
         fileSpec.addType(typeSpec.build())
         return fileSpec.build()
+    }
+
+    fun TypeSpec.Builder.writeCreatedMappings() {
+        createdMappings.filterNot { it.isImplemented }.forEach { mapping ->
+            mapping.write().also { addFunction(it) }
+        }
     }
 
     fun toFullString(): String {

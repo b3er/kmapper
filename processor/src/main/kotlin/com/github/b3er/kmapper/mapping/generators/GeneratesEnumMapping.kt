@@ -42,6 +42,7 @@ interface GeneratesEnumMapping : PureMapping, MappingGenerator {
         val sourceEnums = source.enumEntries()
 
         CodeBlock.builder().apply {
+            writeNullPreconditions()
             beginControlFlow("return when(%N) {", sources.first().shortName)
             sourceEnums.forEach {
                 indent().indent()
