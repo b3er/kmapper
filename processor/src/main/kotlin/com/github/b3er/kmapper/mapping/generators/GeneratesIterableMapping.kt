@@ -31,19 +31,41 @@ interface GeneratesIterableMapping : PureMapping, MappingGenerator {
     val targetArgument: MappingElement
     val source: MappingElement
     override fun FunSpec.Builder.writeMapping() {
+        ensureNullabiliyComplies(sourceArgument, targetArgument) {
+            "Cannot assign nullable source ${source.shortName}" +
+                " to target ${target.shortName}"
+        }
         CodeBlock.builder().apply {
-            addStatement(
-                "val %N = %T()",
-                "result",
-                ArrayList::class.asClassName().parameterizedBy(targetArgument.toTypeName())
-            )
-            beginControlFlow("for(%N in %N) {", "item", "result")
-            if (targetArgument.isAssignableFrom(sourceArgument)) {
-                addStatement("%N.add(%N)", "result", "item")
-            } else {
-                val ref = findMapping(targetArgument, sourceArgument)
+            if (source.type.isMarkedNullable) {
+                addStatement("if(%N == null) return null", source.shortName)
             }
-            endControlFlow()
+            if (mapper.context.typeResolver.isList(source.type)) {
+                addStatement("if(%N.size == 0) return emptyList()", source.shortName)
+                addStatement(
+                    "val %N = %T(%N.size)",
+                    "result",
+                    ArrayList::class.asClassName().parameterizedBy(targetArgument.toTypeName()),
+                    source.shortName
+                )
+            } else {
+                addStatement(
+                    "val %N = %T()",
+                    "result",
+                    ArrayList::class.asClassName().parameterizedBy(targetArgument.toTypeName())
+                )
+            }
+            if (targetArgument.isAssignableFrom(sourceArgument)) {
+                addStatement("%N.addAll(%N)", "result", source.shortName)
+            } else {
+                beginControlFlow("for(%N in %N) {", "item", source.shortName)
+                val ref = findMapping(targetArgument, sourceArgument)
+                if (ref.mapper == mapper) {
+                    addStatement("%N.add(%N(%N))", "result", ref.name, "item")
+                } else {
+                    addStatement("%N.add(%N.%N(%N))", "result", mapper.includes[ref.mapper], ref.name, "item")
+                }
+                endControlFlow()
+            }
             addStatement("return %N", "result")
             addCode(build())
         }

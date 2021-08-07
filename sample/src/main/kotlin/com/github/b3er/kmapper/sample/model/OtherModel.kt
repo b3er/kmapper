@@ -22,7 +22,7 @@ data class OtherModel(
     val name: String,
     val nested: OtherNestedModel,
     val status: Status,
-    val userEmailList: List<OtherNestedModel>,
+    val userEmailList: List<OtherNestedModel>?,
     val createdAt: OffsetDateTime?
 ) {
     enum class Status {

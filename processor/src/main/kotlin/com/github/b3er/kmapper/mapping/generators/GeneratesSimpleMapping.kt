@@ -89,7 +89,8 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
     fun CodeBlock.Builder.writeMappingStatement(property: MappingElement) {
         val found = findSource(property.shortName)
         logger.check(found != null, mapper.declaration) {
-            "Source for target.${property.shortName} not found. Available sources ${sources.map { it.shortName }}. Mapper: ${toFullString()}"
+            "Source for target.${property.shortName} not found." +
+                " Available sources ${sources.map { it.shortName }}. Mapper: ${toFullString()}"
         }
         writeMappingStatement(property, found.second, found.third)
     }
@@ -99,12 +100,11 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
         source: MappingElement,
         property: MappingElement
     ) {
-        if (property.type.isMarkedNullable && !target.type.isMarkedNullable) {
-            logger.error(
-                "Cannot assign nullable source ${source.shortName}.${property.shortName}" +
-                    " to target ${target.shortName}", mapper.declaration
-            )
+        ensureNullabiliyComplies(property, target) {
+            "Cannot assign nullable source ${source.shortName}.${property.shortName}" +
+                " to target ${target.shortName}"
         }
+
         if (target.isAssignableFrom(property)) {
             if (source != property) {
                 addStatement(

@@ -16,9 +16,9 @@
 package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.mapping.Mapper
+import com.github.b3er.kmapper.mapping.api.MappingContext
 import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.common.ConstructorValuesEnumeration
-import com.github.b3er.kmapper.mapping.common.MappingContext
 import com.github.b3er.kmapper.mapping.common.toMappingElement
 import com.github.b3er.kmapper.mapping.utils.check
 import com.github.b3er.kmapper.mapping.utils.isEnumClass
@@ -37,10 +37,13 @@ object MappingFactory {
                 "Mapping function must return value!"
             }
             val target = ref.returnType!!.toMappingElement(enumeration = ConstructorValuesEnumeration)
-            if (target.declaration.isEnumClass()) {
-                EnumMappingFunction(ref, target, mapper)
-            } else {
-                SimpleMappingFunction(ref, target, mapper)
+            when {
+                target.declaration.isEnumClass() -> {
+                    EnumMappingFunction(ref, target, mapper)
+                }
+                else -> {
+                    SimpleMappingFunction(ref, target, mapper)
+                }
             }
         }
         else -> throw IllegalArgumentException("Can't crete mapping for $ref in ${mapper.toFullString()}")
@@ -52,16 +55,14 @@ object MappingFactory {
         source: MappingElement
     ): PureMapping {
         val context = mapper.context
-        var name = generateName(mapper, "map${source.type.toClassName().simpleName}")
         return when {
             context.typeResolver.isIterable(source.type) -> {
                 context.logger.check(mapper.context.typeResolver.isIterable(target.type), mapper.declaration) {
-                    "both source ${source} and target ${target}  must be iterables!"
+                    "both source $source and target $target must be iterable!"
                 }
                 val src = source.type.arguments.first().type!!.resolve().toClassName()
-                val dst = target.type.arguments.first().type!!.resolve().toClassName()
                 IterableGeneratedMapping(
-                    "map${src.simpleName}${source.type.toClassName().simpleName}",
+                    generateName(mapper, "map${src.simpleName}${source.type.toClassName().simpleName}"),
                     mapper,
                     target,
                     listOf(source)
@@ -69,7 +70,7 @@ object MappingFactory {
             }
             target.declaration.isEnumClass() -> {
                 EnumGeneratedMapping(
-                    name,
+                    generateName(mapper, "map${source.type.toClassName().simpleName}"),
                     mapper,
                     target,
                     listOf(source)
@@ -77,9 +78,9 @@ object MappingFactory {
             }
             else -> {
                 SimpleGeneratedMapping(
-                    name,
+                    generateName(mapper, "map${source.type.toClassName().simpleName}"),
                     mapper,
-                    target,
+                    target.type.toMappingElement(enumeration = ConstructorValuesEnumeration),
                     listOf(source)
                 )
             }

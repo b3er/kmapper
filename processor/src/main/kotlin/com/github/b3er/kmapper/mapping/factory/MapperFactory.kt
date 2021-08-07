@@ -15,7 +15,7 @@
 
 package com.github.b3er.kmapper.mapping.factory
 
-import com.github.b3er.kmapper.mapping.common.MappingContext
+import com.github.b3er.kmapper.mapping.api.MappingContext
 import com.squareup.kotlinpoet.FileSpec
 
 interface MapperFactory {

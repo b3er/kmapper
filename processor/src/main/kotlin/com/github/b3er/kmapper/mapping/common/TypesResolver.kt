@@ -15,26 +15,19 @@
 
 package com.github.b3er.kmapper.mapping.common
 
-import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.utils.getClassDeclarationByName
-import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSType
-
-interface MappingContext {
-    val resolver: Resolver
-    val logger: KSPLogger
-    val options: Map<String, String>
-    val typeResolver: TypesResolver
-    fun mappers(): Sequence<Mapper>
-    fun findMapper(type: KSClassDeclaration): Mapper
-}
 
 class TypesResolver(resolver: Resolver) {
     private val iterableType by lazy { resolver.getClassDeclarationByName<Iterable<*>>() }
+    private val listType by lazy { resolver.getClassDeclarationByName<Iterable<*>>() }
 
     fun isIterable(type: KSType): Boolean {
-        return iterableType.asStarProjectedType().isAssignableFrom(type)
+        return iterableType.asStarProjectedType().isAssignableFrom(type.makeNotNullable())
+    }
+
+    fun isList(type: KSType): Boolean {
+        return listType.asStarProjectedType().isAssignableFrom(type.makeNotNullable())
     }
 }

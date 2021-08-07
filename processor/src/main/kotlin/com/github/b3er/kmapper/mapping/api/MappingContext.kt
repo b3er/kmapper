@@ -12,22 +12,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.github.b3er.kmapper.sample.mapper
 
-import com.github.b3er.kmapper.Mapper
-import com.github.b3er.kmapper.sample.data.AnotherOtherDto
-import com.github.b3er.kmapper.sample.data.OtherDto
-import com.github.b3er.kmapper.sample.model.AnotherOtherModel
-import com.github.b3er.kmapper.sample.model.OtherModel
-import javax.inject.Singleton
+package com.github.b3er.kmapper.mapping.api
 
-@Singleton
-@Mapper(uses = [OtherNestedMapper::class], injectionType = Mapper.InjectionType.Jsr330)
-interface OtherMapper {
-    fun map(dto: OtherDto): OtherModel
-}
+import com.github.b3er.kmapper.mapping.Mapper
+import com.github.b3er.kmapper.mapping.common.TypesResolver
+import com.google.devtools.ksp.processing.KSPLogger
+import com.google.devtools.ksp.processing.Resolver
+import com.google.devtools.ksp.symbol.KSClassDeclaration
 
-@Mapper
-interface OtherNestedMapper {
-    fun map(dto: AnotherOtherDto): AnotherOtherModel
+interface MappingContext {
+    val resolver: Resolver
+    val logger: KSPLogger
+    val options: Map<String, String>
+    val typeResolver: TypesResolver
+    fun mappers(): Sequence<Mapper>
+    fun findMapper(type: KSClassDeclaration): Mapper
 }

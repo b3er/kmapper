@@ -58,12 +58,12 @@ abstract class MappingFunction : PureMapping, MappingGenerator {
             addModifiers(KModifier.OVERRIDE)
         }
 
-        returns(target.type.toClassName())
+        returns(target.toTypeName())
 
         sources.forEach { source ->
             addParameter(
                 source.shortName,
-                source.type.toClassName(),
+                source.toTypeName(),
                 source.modifiers
             )
         }

@@ -22,7 +22,7 @@ data class OtherDto(
     val name: String,
     val nested: OtherNestedDto,
     val status: Status,
-    val userEmailList: List<OtherNestedDto>,
+    val userEmailList: List<OtherNestedDto>?,
     val createdAt: OffsetDateTime,
 ) {
     enum class Status {

@@ -15,9 +15,9 @@
 
 package com.github.b3er.kmapper.mapping
 
+import com.github.b3er.kmapper.mapping.api.MappingContext
 import com.github.b3er.kmapper.mapping.api.MappingElement
 import com.github.b3er.kmapper.mapping.common.MapperAnnotation
-import com.github.b3er.kmapper.mapping.common.MappingContext
 import com.github.b3er.kmapper.mapping.mappings.GeneratedMapping
 import com.github.b3er.kmapper.mapping.mappings.MappingFactory
 import com.github.b3er.kmapper.mapping.mappings.PureMapping

@@ -70,4 +70,10 @@ interface PureMapping {
         }
         return ref
     }
+
+    fun ensureNullabiliyComplies(source: MappingElement, target: MappingElement, message: () -> String) {
+        if (source.type.isMarkedNullable && !target.type.isMarkedNullable) {
+            mapper.context.logger.error(message())
+        }
+    }
 }
