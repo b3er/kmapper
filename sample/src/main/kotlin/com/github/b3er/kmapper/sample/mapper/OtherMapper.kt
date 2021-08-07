@@ -13,24 +13,19 @@
  * limitations under the License.
  */
 
-plugins {
-    kotlin("jvm") apply false
-    `maven-publish`
+import com.github.b3er.kmapper.Mapper
+import com.github.b3er.kmapper.sample.data.AnotherOtherDto
+import com.github.b3er.kmapper.sample.data.OtherDto
+import com.github.b3er.kmapper.sample.model.AnotherOtherModel
+import com.github.b3er.kmapper.sample.model.OtherModel
+
+@Mapper(uses = [OtherNestedMapper::class])
+interface OtherMapper {
+    fun map(dto: OtherDto): OtherModel
 }
 
-subprojects {
-    group = "com.github.b3er.kmapper"
-    version = "0.1.0-SNAPSHOT"
-    plugins.withId("maven-publish") {
-        publishing {
-            publications {
-                create<MavenPublication>("maven") {
-                    from(components["java"])
-                    pom {
-                        url.set("https://github.com/b3er/kmapper")
-                    }
-                }
-            }
-        }
-    }
+@Mapper
+interface OtherNestedMapper {
+    fun map(dto: AnotherOtherDto): AnotherOtherModel
 }
+
