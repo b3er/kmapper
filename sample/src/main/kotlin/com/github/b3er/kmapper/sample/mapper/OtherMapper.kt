@@ -12,6 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package com.github.b3er.kmapper.sample.mapper
 
 import com.github.b3er.kmapper.Mapper
 import com.github.b3er.kmapper.sample.data.AnotherOtherDto

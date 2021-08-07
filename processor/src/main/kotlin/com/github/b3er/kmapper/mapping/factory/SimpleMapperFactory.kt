@@ -53,15 +53,16 @@ class SimpleMapperFactory(
         code.beginControlFlow("return when(%N) {", "cls")
         context.mappers().forEach { mapper ->
             if (mapper.includes.isEmpty()) {
-                code.addStatement("%T::class -> %T()", mapper.className, mapper.implementationClassName)
+                code.addStatement("%T::class -> %T() as %T", mapper.className, mapper.implementationClassName, type)
+
             } else {
                 val includes = mapper.includes.keys.joinToString(", ") {
                     "getMapper(%T::class)"
                 }
                 val includesArgs = mapper.includes.keys.map { it.className }
                 code.addStatement(
-                    "%T::class -> %T($includes)",
-                    *(arrayOf(mapper.className, mapper.implementationClassName) + includesArgs)
+                    "%T::class -> %T($includes) as %T",
+                    *(arrayOf(mapper.className, mapper.implementationClassName) + includesArgs), type
                 )
             }
         }
@@ -70,7 +71,7 @@ class SimpleMapperFactory(
             IllegalArgumentException::class.asClassName(),
             "Can't find mapper for class \${cls}"
         )
-        code.add("} as %T", type)
+        code.endControlFlow()
         addCode(code.build())
     }.also { addFunction(it.build()) }
 

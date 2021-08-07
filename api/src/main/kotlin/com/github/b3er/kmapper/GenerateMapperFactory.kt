@@ -17,7 +17,7 @@ package com.github.b3er.kmapper
 
 /**
  * Generates  factory in this package with specified name
- * [Implementation.Simple] - just an object used to get mapper instance (new instance is returned each call
+ * [Implementation.Simple] - just an object used to get mapper instance (new instance is returned each call)
  * [Implementation.Hilt] - Generates hilt Binds module, optional you can annotate mappers as Singleton
  */
 @Target(AnnotationTarget.CLASS)

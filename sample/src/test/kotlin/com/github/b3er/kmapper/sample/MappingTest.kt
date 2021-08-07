@@ -15,11 +15,11 @@
 
 package com.github.b3er.kmapper.sample
 
-import OtherMapper
 import com.github.b3er.kmapper.getMapper
 import com.github.b3er.kmapper.sample.data.OtherDto
 import com.github.b3er.kmapper.sample.data.SampleDto
 import com.github.b3er.kmapper.sample.mapper.MyMappers
+import com.github.b3er.kmapper.sample.mapper.OtherMapper
 import com.github.b3er.kmapper.sample.mapper.SampleMapper
 import com.github.b3er.kmapper.sample.model.OtherModel
 import com.github.b3er.kmapper.sample.model.SampleModel
