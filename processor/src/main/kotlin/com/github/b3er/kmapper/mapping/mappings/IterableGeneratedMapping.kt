@@ -15,15 +15,15 @@
 
 package com.github.b3er.kmapper.mapping.mappings
 
-import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.common.MappingAnnotation
 import com.github.b3er.kmapper.mapping.common.MappingElement
 import com.github.b3er.kmapper.mapping.common.toMappingElement
 import com.github.b3er.kmapper.mapping.generators.GeneratesIterableMapping
+import com.github.b3er.kmapper.mapping.mappers.GeneratedMapper
 
 class IterableGeneratedMapping(
     override val name: String,
-    override val mapper: Mapper,
+    override val mapper: GeneratedMapper,
     override val target: MappingElement,
     override val sources: List<MappingElement>
 ) : GeneratedMapping(), GeneratesIterableMapping {

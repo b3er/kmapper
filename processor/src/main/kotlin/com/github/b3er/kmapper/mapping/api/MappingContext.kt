@@ -15,8 +15,8 @@
 
 package com.github.b3er.kmapper.mapping.api
 
-import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.common.TypesResolver
+import com.github.b3er.kmapper.mapping.mappers.Mapper
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSClassDeclaration

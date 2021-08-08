@@ -15,8 +15,8 @@
 
 package com.github.b3er.kmapper.mapping.factory
 
-import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.api.MappingContext
+import com.github.b3er.kmapper.mapping.mappers.Mapper
 import com.github.b3er.kmapper.mapping.utils.addOriginatingKSFile
 import com.github.b3er.kmapper.mapping.utils.kModifiers
 import com.google.devtools.ksp.symbol.KSClassDeclaration

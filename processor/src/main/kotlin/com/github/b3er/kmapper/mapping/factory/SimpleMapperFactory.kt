@@ -35,7 +35,7 @@ class SimpleMapperFactory(
             addSuperinterface(MappersFactory::class)
             addOriginatingKSFile(declaration.containingFile!!)
             annotation.mappers?.map { context.findMapper(it) }?.forEach {
-                addOriginatingKSFile(it.declaration.containingFile!!)
+                it.declaration.containingFile?.also { file -> addOriginatingKSFile(file) }
             }
             addAnnotation(
                 AnnotationSpec.builder(Suppress::class.asClassName()).addMember("%S", "UNCHECKED_CAST").build()

@@ -15,14 +15,14 @@
 
 package com.github.b3er.kmapper.mapping.mappings
 
-import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.common.EnumMappingAnnotation
 import com.github.b3er.kmapper.mapping.common.MappingElement
 import com.github.b3er.kmapper.mapping.generators.GeneratesEnumMapping
+import com.github.b3er.kmapper.mapping.mappers.GeneratedMapper
 
 class EnumGeneratedMapping(
     override val name: String,
-    override val mapper: Mapper,
+    override val mapper: GeneratedMapper,
     override val target: MappingElement,
     override val sources: List<MappingElement>
 ) : GeneratedMapping(), GeneratesEnumMapping {

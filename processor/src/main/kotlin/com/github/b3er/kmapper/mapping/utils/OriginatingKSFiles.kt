@@ -50,8 +50,8 @@ private fun Taggable.getKSFilesTag(): List<KSFile> {
     return tag<OriginatingKSFiles>()?.files.orEmpty()
 }
 
-internal fun TypeSpec.Builder.addOriginatingKSFile(ksFile: KSFile): TypeSpec.Builder = apply {
-    getOrCreateKSFilesTag().add(ksFile)
+internal fun TypeSpec.Builder.addOriginatingKSFile(ksFile: KSFile?): TypeSpec.Builder = apply {
+    ksFile?.also { getOrCreateKSFilesTag() }
 }
 
 internal fun FunSpec.Builder.addOriginatingKSFile(ksFile: KSFile): FunSpec.Builder = apply {

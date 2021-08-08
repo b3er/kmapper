@@ -17,10 +17,10 @@ package com.github.b3er.kmapper.mapping.mappings
 
 import com.github.b3er.kmapper.Mapping
 import com.github.b3er.kmapper.Mappings
-import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.common.MappingAnnotation
 import com.github.b3er.kmapper.mapping.common.MappingElement
 import com.github.b3er.kmapper.mapping.generators.GeneratesSimpleMapping
+import com.github.b3er.kmapper.mapping.mappers.Mapper
 import com.github.b3er.kmapper.mapping.utils.get
 import com.github.b3er.kmapper.mapping.utils.getAnnotation
 import com.google.devtools.ksp.symbol.KSAnnotation

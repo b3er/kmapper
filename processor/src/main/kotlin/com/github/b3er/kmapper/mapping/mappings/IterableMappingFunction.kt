@@ -15,11 +15,11 @@
 
 package com.github.b3er.kmapper.mapping.mappings
 
-import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.common.MappingAnnotation
 import com.github.b3er.kmapper.mapping.common.MappingElement
 import com.github.b3er.kmapper.mapping.common.toMappingElement
 import com.github.b3er.kmapper.mapping.generators.GeneratesIterableMapping
+import com.github.b3er.kmapper.mapping.mappers.Mapper
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 
 class IterableMappingFunction(

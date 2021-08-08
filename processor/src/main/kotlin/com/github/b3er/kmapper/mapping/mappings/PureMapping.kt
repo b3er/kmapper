@@ -15,8 +15,8 @@
 
 package com.github.b3er.kmapper.mapping.mappings
 
-import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.common.MappingElement
+import com.github.b3er.kmapper.mapping.mappers.Mapper
 import com.github.b3er.kmapper.mapping.utils.check
 import com.squareup.kotlinpoet.FunSpec
 

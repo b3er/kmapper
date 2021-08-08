@@ -15,11 +15,12 @@
 
 package com.github.b3er.kmapper.mapping.mappings
 
-import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.api.MappingContext
 import com.github.b3er.kmapper.mapping.common.ConstructorValuesEnumeration
 import com.github.b3er.kmapper.mapping.common.MappingElement
 import com.github.b3er.kmapper.mapping.common.toMappingElement
+import com.github.b3er.kmapper.mapping.mappers.GeneratedMapper
+import com.github.b3er.kmapper.mapping.mappers.Mapper
 import com.github.b3er.kmapper.mapping.utils.check
 import com.github.b3er.kmapper.mapping.utils.isEnumClass
 import com.github.b3er.kmapper.mapping.utils.isKotlin
@@ -60,7 +61,7 @@ object MappingFactory {
     }
 
     fun createGeneratedMapping(
-        mapper: Mapper,
+        mapper: GeneratedMapper,
         target: MappingElement,
         source: MappingElement
     ): PureMapping {
@@ -100,7 +101,7 @@ object MappingFactory {
         }
     }
 
-    private fun generateName(mapper: Mapper, template: String): String {
+    private fun generateName(mapper: GeneratedMapper, template: String): String {
         var name = template
         var i = 1
         while (mapper.allMappings().any { it.name == name }) {

@@ -16,10 +16,12 @@
 
 package com.github.b3er.kmapper
 
-import com.github.b3er.kmapper.mapping.Mapper
 import com.github.b3er.kmapper.mapping.api.MappingContext
 import com.github.b3er.kmapper.mapping.common.TypesResolver
 import com.github.b3er.kmapper.mapping.factory.MapperModuleFactory
+import com.github.b3er.kmapper.mapping.mappers.DeclaredMapper
+import com.github.b3er.kmapper.mapping.mappers.GeneratedMapper
+import com.github.b3er.kmapper.mapping.mappers.Mapper
 import com.github.b3er.kmapper.mapping.utils.check
 import com.github.b3er.kmapper.mapping.utils.getAnnotation
 import com.github.b3er.kmapper.mapping.utils.isKotlinClass
@@ -32,6 +34,17 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.MutableMap
+import kotlin.collections.asSequence
+import kotlin.collections.emptyList
+import kotlin.collections.filterIsInstance
+import kotlin.collections.forEach
+import kotlin.collections.isNotEmpty
+import kotlin.collections.mutableMapOf
+import kotlin.collections.mutableSetOf
+import kotlin.collections.set
 
 class KMapperProcessor(
     private val codeGenerator: CodeGenerator,
@@ -51,7 +64,7 @@ class KMapperProcessor(
                 logger.check(annotation != null, type) {
                     "Failed to get @Mapper annotation"
                 }
-                Mapper(type, context)
+                GeneratedMapper(type, context)
             }.associateByTo(mappers) { it.declaration }
 
         context.isResolved = true
@@ -71,13 +84,13 @@ class KMapperProcessor(
         override val options: Map<String, String>,
         private val generator: CodeGenerator,
         override val typeResolver: TypesResolver,
-        protected val mappers: Map<KSDeclaration, Mapper>
+        protected val mappers: MutableMap<KSDeclaration, Mapper>
     ) : MappingContext {
         private val generatedMappers = mutableSetOf<Mapper>()
         var isResolved = false
 
         fun writeMappers() {
-            mappers.values.forEach(::writeMapper)
+            mappers.values.filterIsInstance<GeneratedMapper>().forEach(::writeMapper)
         }
 
         private fun writeMapper(mapper: Mapper) {
@@ -96,7 +109,10 @@ class KMapperProcessor(
             require(isResolved) {
                 "Context is not resolved, please try again later :)"
             }
-            val mapper = mappers[type]
+            val mapper = mappers[type] ?: resolver.getClassDeclarationByName(type.qualifiedName!!)
+                ?.let { DeclaredMapper(it, this) }
+                ?.also { mappers[it.declaration] = it }
+
             require(mapper != null) {
                 "Can't find mapper for $type"
             }

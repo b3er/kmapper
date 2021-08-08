@@ -13,18 +13,20 @@
  * limitations under the License.
  */
 
-package com.github.b3er.kmapper.mapping.mappings
+package com.github.b3er.kmapper.mapping.mappers
 
-import com.github.b3er.kmapper.mapping.common.MappingAnnotation
+import com.github.b3er.kmapper.mapping.api.MappingContext
 import com.github.b3er.kmapper.mapping.common.MappingElement
-import com.github.b3er.kmapper.mapping.generators.GeneratesSimpleMapping
-import com.github.b3er.kmapper.mapping.mappers.GeneratedMapper
+import com.github.b3er.kmapper.mapping.mappings.PureMapping
+import com.google.devtools.ksp.symbol.KSClassDeclaration
+import com.squareup.kotlinpoet.FileSpec
 
-class SimpleGeneratedMapping(
-    override val name: String,
-    override val mapper: GeneratedMapper,
-    override val target: MappingElement,
-    override val sources: List<MappingElement>
-) : GeneratedMapping(), GeneratesSimpleMapping {
-    override val overrides: List<MappingAnnotation> = emptyList()
+class DeclaredMapper(declaration: KSClassDeclaration, context: MappingContext) : BaseMapper(declaration, context) {
+    override fun createMapping(target: MappingElement, source: MappingElement, parent: PureMapping): PureMapping {
+        TODO("not implemented")
+    }
+
+    override fun write(): FileSpec {
+        TODO("not implemented")
+    }
 }
