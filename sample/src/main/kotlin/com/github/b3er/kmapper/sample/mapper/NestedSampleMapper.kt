@@ -12,22 +12,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
 package com.github.b3er.kmapper.sample.mapper
 
+import com.github.b3er.kmapper.EnumMapping
+import com.github.b3er.kmapper.EnumMappings
 import com.github.b3er.kmapper.Mapper
-import com.github.b3er.kmapper.sample.data.OtherDto
-import com.github.b3er.kmapper.sample.model.OtherModel
-import javax.inject.Singleton
+import com.github.b3er.kmapper.sample.data.SampleDto
+import com.github.b3er.kmapper.sample.model.SampleModel
 
-data class AggregatedModel(val some1: OtherModel, val some2: OtherModel.OtherNestedModel)
+@Mapper(injectionType = Mapper.InjectionType.None)
+abstract class NestedSampleMapper {
+    abstract fun map(dto: SampleDto.NestedDto): SampleModel.NestedModel
 
-@Singleton
-@Mapper(uses = [OtherNestedMapper::class], injectionType = Mapper.InjectionType.Jsr330)
-interface OtherMapper {
-    fun map(some1: OtherDto, some2: OtherDto.OtherNestedDto): AggregatedModel
-}
-
-@Mapper
-interface OtherNestedMapper {
-    fun map(list: List<OtherDto>): List<OtherModel>
+    @EnumMappings(
+        EnumMapping(sourceName = EnumMapping.Naming.UpperUnderscore, targetName = EnumMapping.Naming.UpperCamel),
+        EnumMapping(source = "THIRD_SAMPLE", target = "Unknown")
+    )
+    abstract fun map(status: SampleDto.Status): SampleModel.Status
 }

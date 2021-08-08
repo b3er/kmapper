@@ -15,34 +15,20 @@
 
 package com.github.b3er.kmapper.sample.model
 
-internal data class SampleModel(
+data class SampleModel(
     val id: Long,
+    val addedId: Long,
     val name: String,
-    val hello: String = "",
+    val hello: String,
     val nested: NestedModel,
-    val someId: Long,
-    val status: SampleStatusPascalCase
+    val nestedOptional: NestedModel?,
+    val nullableSamples: List<NestedModel>?,
+    val status: Status
 ) {
-    internal data class NestedModel(
-        val nestedId: Long,
-        val nestedName: String,
-        val additional: Int
-    )
-}
+    enum class Status {
+        OneSample, SecondSample, Unknown
+    }
 
-enum class SampleStatusCamelCase {
-    oneSample,
-    secondSample
-}
-
-enum class SampleStatusPascalCase {
-    OneSample,
-    SecondSample,
-    Unknown
-}
-
-enum class SampleStatusSnakeCase {
-    ONE_SAMPLE,
-    SECOND_SAMPLE
+    data class NestedModel(val nestedId: Long, val nestedName: String)
 }
 

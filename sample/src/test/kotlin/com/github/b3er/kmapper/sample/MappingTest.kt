@@ -20,7 +20,6 @@ import com.github.b3er.kmapper.sample.data.SampleDto
 import com.github.b3er.kmapper.sample.mapper.MyMappers
 import com.github.b3er.kmapper.sample.mapper.SampleMapper
 import com.github.b3er.kmapper.sample.model.SampleModel
-import com.github.b3er.kmapper.sample.model.SampleStatusPascalCase
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -28,32 +27,29 @@ class MappingTest {
 
     @Test
     fun testMapping() {
+        val addedId = 456L
         val dto = SampleDto(
             id = 123,
             name = "testName",
             hello = "hi",
-            nested = SampleDto.NestedDto(nestedID = 456, nestedName = "nested"),
-            status = SampleDto.SampleStatusSnake.THIRD_SAMPLE
+            nested = SampleDto.NestedDto(1234, "nested"),
+            nestedOptional = SampleDto.NestedDto(4567, "optional"),
+            nullableSamples = 10L.downTo(0).map { SampleDto.NestedDto(it, "nested_$it") },
+            status = SampleDto.Status.SECOND_SAMPLE
         )
 
         val expected = SampleModel(
             id = dto.id,
             name = dto.name,
             hello = dto.hello,
-            nested = SampleModel.NestedModel(
-                nestedName = dto.nested.nestedName,
-                nestedId = dto.nested.nestedID,
-                additional = 777
-            ),
-            status = SampleStatusPascalCase.SecondSample,
-            someId = 312
+            addedId = addedId,
+            nested = SampleModel.NestedModel(dto.nested.nestedId, dto.nested.nestedName),
+            nestedOptional = SampleModel.NestedModel(dto.nestedOptional!!.nestedId, dto.nestedOptional!!.nestedName),
+            nullableSamples = dto.nullableSamples?.map { SampleModel.NestedModel(it.nestedId, it.nestedName) },
+            status = SampleModel.Status.SecondSample
         )
 
-        val result = MyMappers.getMapper<SampleMapper>().map(
-            dto, additional = 133,
-            additionalForNested = 777,
-            someId = 312
-        )
+        val result = MyMappers.getMapper<SampleMapper>().map(dto, addedId)
 
         assertEquals(expected, result)
     }

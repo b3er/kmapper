@@ -47,7 +47,7 @@ abstract class MappingFunction : PureMapping, MappingGenerator {
     }.build()
 
     override fun FunSpec.Builder.writeFunctionDeclaration() {
-        addModifiers(declaration.modifiers.kModifiers())
+        addModifiers(declaration.modifiers.kModifiers().filterNot { it == KModifier.ABSTRACT })
 
         addAnnotations(declaration.annotations.filter { ann ->
             val type = ann.annotationType.resolve().toClassName()

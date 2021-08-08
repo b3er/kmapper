@@ -23,6 +23,7 @@ import com.github.b3er.kmapper.mapping.mappings.MappingFactory
 import com.github.b3er.kmapper.mapping.mappings.PureMapping
 import com.github.b3er.kmapper.mapping.utils.*
 import com.google.devtools.ksp.getDeclaredFunctions
+import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.squareup.kotlinpoet.*
 import java.util.*
@@ -84,17 +85,18 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
         val typeSpec = TypeSpec.classBuilder(implementationClassName)
 
         typeSpec.addOriginatingKSFile(declaration.containingFile!!)
+
         includes.forEach { (mapper, _) ->
             typeSpec.addOriginatingKSFile(mapper.declaration.containingFile!!)
         }
-//        context
-//            .mappers()
-//            .filter { mapper -> mapper.includes[this] != null }
-//            .forEach { mapper -> typeSpec.addOriginatingKSFile(mapper.declaration.containingFile!!) }
 
-        typeSpec.addSuperinterface(className)
+        if (declaration.classKind == ClassKind.INTERFACE) {
+            typeSpec.addSuperinterface(className)
+        } else {
+            typeSpec.superclass(className)
+        }
 
-        typeSpec.addModifiers(declaration.modifiers.kModifiers())
+        typeSpec.addModifiers(declaration.modifiers.kModifiers().filterNot { it == KModifier.ABSTRACT })
 
         typeSpec.addAnnotations(declaration.annotations.filter {
             it.annotationType != annotation.annotation.annotationType

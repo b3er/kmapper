@@ -20,13 +20,15 @@ data class SampleDto(
     val name: String,
     val hello: String,
     val nested: NestedDto,
-    val status: SampleStatusSnake
+    val nestedOptional: NestedDto?,
+    val nullableSamples: List<NestedDto>?,
+    val status: Status
 ) {
-    enum class SampleStatusSnake {
+    enum class Status {
         ONE_SAMPLE, SECOND_SAMPLE, THIRD_SAMPLE
     }
 
-    data class NestedDto(val nestedID: Long, val nestedName: String)
+    data class NestedDto(val nestedId: Long, val nestedName: String)
 }
 
 
