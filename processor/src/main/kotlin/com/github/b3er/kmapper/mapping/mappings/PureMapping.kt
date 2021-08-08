@@ -40,14 +40,36 @@ interface PureMapping {
         }
     }
 
+    fun findSource(target: MappingElement): List<MappingElement> {
+        return sources.find { element ->
+            element.matchesByName(target)
+        }?.let(::listOf) ?: sources.asSequence().mapNotNull { element ->
+            if (element.matchesByName(target)) {
+                listOf(element)
+            } else {
+                element.properties.find { property -> property.matchesByName(target) }
+                    ?.let { listOf(element, it) }
+            }
+        }.firstOrNull() ?: emptyList()
+    }
+
     fun isSourceCompatibleWith(property: MappingElement): Boolean {
         return sources.any { my -> my.isAssignableFrom(property) }
     }
 
-    fun findSource(targetName: String): Triple<Mapper, MappingElement, MappingElement>? {
-        return sources.asSequence().mapNotNull { source ->
-            source.findMatchingByName(targetName)?.let { Triple(mapper, source, it) }
-        }.firstOrNull()
+    fun findSource(path: String): List<MappingElement> {
+        val split = path.split('.')
+        return split.fold(ArrayList(split.size.coerceAtLeast(2))) { elements, name ->
+            if (elements.isEmpty()) {
+                (sources.find { it.matchesByName(name) }
+                    ?: sources.first().properties.find { it.matchesByName(name) }?.also {
+                        elements.add(sources.first())
+                    })
+            } else {
+                elements.last().properties.find { it.matchesByName(name) }
+            }?.also(elements::add)
+            elements
+        }
     }
 
     fun toFullString(): String {

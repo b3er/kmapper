@@ -39,13 +39,7 @@ data class MappingElement(
         return copy(type = type.makeNotNullable())
     }
 
-    fun findMatchingByName(propertyName: String): MappingElement? {
-        return if (matchesByName(propertyName)) {
-            this
-        } else {
-            properties.firstOrNull { it.matchesByName(propertyName) }
-        }
-    }
+
 }
 
 fun KSPropertyDeclaration.toMappingElement() =

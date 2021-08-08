@@ -51,30 +51,11 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
     }
 
     fun CodeBlock.Builder.writeSourcePath(property: MappingElement, source: String) {
-        val path = source.split('.')
-        logger.check(path.size <= 2, mapper.declaration) {
-            "Invalid source: '${source}' in ${toFullString()}. Only two level sources supported. "
+        val found = findSource(source)
+        logger.check(found.isNotEmpty(), mapper.declaration) {
+            "Source $source for target.${property.name} not found!"
         }
-        if (path.size > 1) {
-            val found = sources.find { it.matchesByName(path.first()) }?.let { sequenceOf(it) }
-                ?: sources.first().properties.find { it.matchesByName(path.first()) }
-                    ?.let { sequenceOf(sources.first(), it) }
-
-            logger.check(found != null, mapper.declaration) {
-                "Source for target.${property.name} not found!"
-            }
-            val sourceProperty = found.last().properties.find { it.matchesByName(path.last()) }
-            logger.check(sourceProperty != null, mapper.declaration) {
-                "Source for target.${property.name} not found!"
-            }
-            writeMappingStatement(property, found + sourceProperty)
-        } else {
-            val found = findSource(path.first())
-            logger.check(found != null, mapper.declaration) {
-                "Source for target.${property.name} not found!"
-            }
-            writeMappingStatement(property, sequenceOf(found.second, found.third))
-        }
+        writeMappingStatement(property, found.asSequence())
     }
 
     fun CodeBlock.Builder.writeOverrides(property: MappingElement): Boolean {
@@ -91,12 +72,12 @@ interface GeneratesSimpleMapping : PureMapping, MappingGenerator {
     }
 
     fun CodeBlock.Builder.writeMappingStatement(property: MappingElement) {
-        val found = findSource(property.name)
-        logger.check(found != null, mapper.declaration) {
+        val found = findSource(property)
+        logger.check(found.isNotEmpty(), mapper.declaration) {
             "Source for target.${property.name} not found." +
                 " Available sources ${sources.map { it.name }}. Mapper: ${toFullString()}"
         }
-        writeMappingStatement(property, sequenceOf(found.second, found.third))
+        writeMappingStatement(property, found.asSequence())
     }
 
     fun CodeBlock.Builder.writeMappingStatement(
