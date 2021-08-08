@@ -37,8 +37,8 @@ interface GeneratesIterableMapping : PureMapping, MappingGenerator {
         }
         CodeBlock.builder().apply {
             writeNullPreconditions()
-            if (mapper.context.typeResolver.isList(source.type)) {
-                addStatement("if (%N.size == 0) return emptyList()", source.name)
+            if (mapper.context.typeResolver.isCollection(source.type)) {
+                addStatement("if (%N.isEmpty()) return emptyList()", source.name)
                 addStatement(
                     "val %N = %T(%N.size)",
                     "result",
@@ -57,11 +57,17 @@ interface GeneratesIterableMapping : PureMapping, MappingGenerator {
             } else {
                 beginControlFlow("for(%N in %N) {", "item", source.name)
                 val ref = findMapping(targetArgument, sourceArgument)
-                if (ref.mapper == mapper) {
-                    addStatement("%N.add(%N(%N))", "result", ref.name, "item")
-                } else {
-                    addStatement("%N.add(%N.%N(%N))", "result", mapper.includes[ref.mapper], ref.name, "item")
+                val argumentsNames = sources.joinToString(", ") { "%N" }
+                val argumentsValues = sources.asSequence().drop(1).map { it.name }.toList().toTypedArray()
+                add("«")
+                add("%N.add(", "result")
+                if (ref.mapper != mapper) {
+                    add("%N.", mapper.includes[ref.mapper])
                 }
+                add("%N(", ref.name)
+                add(CodeBlock.of(argumentsNames, "item", *argumentsValues))
+                add("))")
+                add("»\n")
                 endControlFlow()
             }
             addStatement("return %N", "result")

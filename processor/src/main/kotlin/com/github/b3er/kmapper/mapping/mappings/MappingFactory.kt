@@ -41,6 +41,9 @@ object MappingFactory {
             context.logger.check(target.type.declaration.isKotlin, mapper.declaration) {
                 "Target $target must be a kotlin class, for mapper ${mapper.toFullString()}"
             }
+            context.logger.check(!context.typeResolver.isUnit(target.type), ref) {
+                "Mapping function must return value!"
+            }
             when {
                 context.typeResolver.isIterable(target.type) -> {
                     IterableMappingFunction(ref, target, mapper)

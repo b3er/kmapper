@@ -21,7 +21,9 @@ import com.google.devtools.ksp.symbol.KSType
 
 class TypesResolver(resolver: Resolver) {
     private val iterableType by lazy { resolver.getClassDeclarationByName<Iterable<*>>() }
-    private val listType by lazy { resolver.getClassDeclarationByName<Iterable<*>>() }
+    private val listType by lazy { resolver.getClassDeclarationByName<List<*>>() }
+    private val collectionType by lazy { resolver.getClassDeclarationByName<Collection<*>>() }
+    private val unitType by lazy { resolver.getClassDeclarationByName<Unit>() }
 
     fun isIterable(type: KSType): Boolean {
         return iterableType.asStarProjectedType().isAssignableFrom(type.makeNotNullable())
@@ -29,5 +31,13 @@ class TypesResolver(resolver: Resolver) {
 
     fun isList(type: KSType): Boolean {
         return listType.asStarProjectedType().isAssignableFrom(type.makeNotNullable())
+    }
+
+    fun isCollection(type: KSType): Boolean {
+        return collectionType.asStarProjectedType().isAssignableFrom(type.makeNotNullable())
+    }
+
+    fun isUnit(type: KSType): Boolean {
+        return unitType.asStarProjectedType().isAssignableFrom(type.makeNotNullable())
     }
 }

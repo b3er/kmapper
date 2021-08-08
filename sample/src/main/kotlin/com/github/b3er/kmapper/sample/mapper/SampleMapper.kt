@@ -25,4 +25,12 @@ import com.github.b3er.kmapper.sample.model.SampleModel
 )
 internal interface SampleMapper {
     fun map(dto: SampleDto, addedId: Long): SampleModel
+
+    fun mapList(dto: List<SampleDto>, addedId: Long): List<SampleDto>
+    fun mapIterable(dto: Iterable<SampleDto>, addedId: Long): List<SampleDto>
+    fun mapCollection(dto: Collection<SampleDto>, addedId: Long): List<SampleDto>
+
+    fun mapListToModel(dto: List<SampleDto>, addedId: Long): List<SampleModel>
+    fun mapIterableToModel(dto: Iterable<SampleDto>, addedId: Long): List<SampleModel>
+    fun mapCollectionToModel(dto: Collection<SampleDto>, addedId: Long): List<SampleModel>
 }
