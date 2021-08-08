@@ -1,6 +1,6 @@
 KMapper [![Jitpack](https://jitpack.io/v/b3er/kmapper.svg)](https://jitpack.io/v/b3er/kmapper)
 ===
-Dumb and simple implementation of data class mapper on KSP. WIP - not for production, just POC
+Dumb and simple implementation of data class mapper on KSP. WIP - not for production, just POC.
 
 ### Goals
 
