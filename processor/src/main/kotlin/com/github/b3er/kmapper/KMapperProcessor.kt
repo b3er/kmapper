@@ -34,16 +34,6 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
-import kotlin.collections.List
-import kotlin.collections.Map
-import kotlin.collections.MutableMap
-import kotlin.collections.asSequence
-import kotlin.collections.emptyList
-import kotlin.collections.filterIsInstance
-import kotlin.collections.forEach
-import kotlin.collections.isNotEmpty
-import kotlin.collections.mutableMapOf
-import kotlin.collections.mutableSetOf
 import kotlin.collections.set
 
 class KMapperProcessor(
@@ -118,8 +108,6 @@ class KMapperProcessor(
             }
             return mapper
         }
-
-        override fun mappers(): Sequence<Mapper> = mappers.values.asSequence()
     }
 
     companion object {

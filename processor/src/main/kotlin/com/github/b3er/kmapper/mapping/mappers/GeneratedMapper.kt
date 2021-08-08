@@ -52,10 +52,6 @@ class GeneratedMapper(declaration: KSClassDeclaration, context: MappingContext) 
 
         typeSpec.addOriginatingKSFile(declaration.containingFile!!)
 
-        includes.forEach { (mapper, _) ->
-            typeSpec.addOriginatingKSFile(mapper.declaration.containingFile!!)
-        }
-
         if (declaration.classKind == ClassKind.INTERFACE) {
             typeSpec.addSuperinterface(className)
         } else {

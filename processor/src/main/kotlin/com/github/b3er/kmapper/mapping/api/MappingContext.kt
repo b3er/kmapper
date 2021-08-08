@@ -26,6 +26,5 @@ interface MappingContext {
     val logger: KSPLogger
     val options: Map<String, String>
     val typeResolver: TypesResolver
-    fun mappers(): Sequence<Mapper>
     fun findMapper(type: KSClassDeclaration): Mapper
 }
