@@ -18,7 +18,11 @@ package com.github.b3er.kmapper.sample.mapper
 import com.github.b3er.kmapper.GenerateMapperFactory
 import com.github.b3er.kmapper.MappersFactory
 
-@GenerateMapperFactory(name = "Mappers", implementation = GenerateMapperFactory.Implementation.Simple)
+@GenerateMapperFactory(
+    name = "Mappers",
+    implementation = GenerateMapperFactory.Implementation.Simple,
+    mappers = [SampleMapper::class]
+)
 interface AppMappersFactory
 
 //@GenerateMapperFactory(name = "MappingModule", implementation = GenerateMapperFactory.Implementation.Hilt)

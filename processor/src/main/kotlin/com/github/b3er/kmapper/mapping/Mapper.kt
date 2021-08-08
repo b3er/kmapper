@@ -82,10 +82,15 @@ class Mapper(val declaration: KSClassDeclaration, val context: MappingContext) {
             fileSpec.addImport(import.packageName, import.simpleName)
         }
         val typeSpec = TypeSpec.classBuilder(implementationClassName)
+
         typeSpec.addOriginatingKSFile(declaration.containingFile!!)
         includes.forEach { (mapper, _) ->
             typeSpec.addOriginatingKSFile(mapper.declaration.containingFile!!)
         }
+//        context
+//            .mappers()
+//            .filter { mapper -> mapper.includes[this] != null }
+//            .forEach { mapper -> typeSpec.addOriginatingKSFile(mapper.declaration.containingFile!!) }
 
         typeSpec.addSuperinterface(className)
 

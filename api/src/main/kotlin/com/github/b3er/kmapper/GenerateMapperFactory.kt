@@ -15,6 +15,9 @@
 
 package com.github.b3er.kmapper
 
+import com.github.b3er.kmapper.GenerateMapperFactory.Implementation
+import kotlin.reflect.KClass
+
 /**
  * Generates  factory in this package with specified name
  * [Implementation.Simple] - just an object used to get mapper instance (new instance is returned each call)
@@ -24,7 +27,8 @@ package com.github.b3er.kmapper
 @Retention(AnnotationRetention.SOURCE)
 annotation class GenerateMapperFactory(
     val name: String,
-    val implementation: Implementation
+    val implementation: Implementation,
+    val mappers: Array<KClass<*>> = []
 ) {
     enum class Implementation {
         Simple, Hilt

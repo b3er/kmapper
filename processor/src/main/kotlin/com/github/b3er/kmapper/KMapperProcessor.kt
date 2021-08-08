@@ -22,6 +22,7 @@ import com.github.b3er.kmapper.mapping.common.TypesResolver
 import com.github.b3er.kmapper.mapping.factory.MapperModuleFactory
 import com.github.b3er.kmapper.mapping.utils.check
 import com.github.b3er.kmapper.mapping.utils.getAnnotation
+import com.github.b3er.kmapper.mapping.utils.isKotlinClass
 import com.github.b3er.kmapper.mapping.utils.writeTo
 import com.google.devtools.ksp.isOpen
 import com.google.devtools.ksp.processing.CodeGenerator
@@ -31,7 +32,6 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
-import com.google.devtools.ksp.symbol.Origin
 
 class KMapperProcessor(
     private val codeGenerator: CodeGenerator,
@@ -44,7 +44,7 @@ class KMapperProcessor(
         resolver
             .getSymbolsWithAnnotation(MAPPER_ANNOTATION_NAME)
             .map { type ->
-                logger.check(type is KSClassDeclaration && type.origin == Origin.KOTLIN && type.isOpen(), type) {
+                logger.check(type is KSClassDeclaration && type.isKotlinClass(resolver) && type.isOpen(), type) {
                     "@Mapper must be applied to open class or interface "
                 }
                 val annotation = type.getAnnotation<com.github.b3er.kmapper.Mapper>()

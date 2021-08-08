@@ -34,6 +34,9 @@ class SimpleMapperFactory(
         TypeSpec.objectBuilder(factoryClassName).apply {
             addSuperinterface(MappersFactory::class)
             addOriginatingKSFile(declaration.containingFile!!)
+            annotation.mappers?.map { context.findMapper(it) }?.forEach {
+                addOriginatingKSFile(it.declaration.containingFile!!)
+            }
             addAnnotation(
                 AnnotationSpec.builder(Suppress::class.asClassName()).addMember("%S", "UNCHECKED_CAST").build()
             )

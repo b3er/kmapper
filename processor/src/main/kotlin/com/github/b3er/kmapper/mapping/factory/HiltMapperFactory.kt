@@ -43,7 +43,8 @@ class HiltMapperFactory(
     }
 
     private fun TypeSpec.Builder.writeFactory() {
-        context.mappers().forEach { mapper ->
+        annotation.mappers?.map { context.findMapper(it) }?.forEach { mapper ->
+            addOriginatingKSFile(mapper.declaration.containingFile!!)
             if (mapper.annotation.injectionType == MapperAnnotation.InjectionType.Jsr330) {
                 writeJsrProvide(mapper)
             } else {
