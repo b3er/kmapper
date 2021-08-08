@@ -75,7 +75,7 @@ class KMapperProcessor(
         var isResolved = false
 
         fun writeMappers() {
-            mappers.values.filterIsInstance<GeneratedMapper>().forEach(::writeMapper)
+            mappers.values.forEach(::writeMapper)
         }
 
         private fun writeMapper(mapper: Mapper) {
@@ -85,9 +85,13 @@ class KMapperProcessor(
             if (mapper.includes.isNotEmpty()) {
                 mapper.includes.keys.forEach(::writeMapper)
             }
-            logger.info("Writing mapper ${mapper.declaration}", mapper.declaration)
-            generatedMappers.add(mapper)
-            mapper.write().writeTo(generator)
+            if (mapper is GeneratedMapper) {
+                logger.info("Writing mapper ${mapper.declaration}", mapper.declaration)
+                generatedMappers.add(mapper)
+                mapper.write().writeTo(generator)
+            } else {
+                generatedMappers.add(mapper)
+            }
         }
 
         override fun findMapper(type: KSClassDeclaration): Mapper {
