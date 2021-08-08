@@ -13,3 +13,4 @@ Dumb and simple implementation of data class mapper on KSP. WIP - not for produc
 - [x] nullability
 - [x] iterable mappings
 - [x] enum mappings
+- [ ] generic data classes
