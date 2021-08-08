@@ -13,10 +13,9 @@
  * limitations under the License.
  */
 
-package com.github.b3er.kmapper.processor.factory
+package com.github.b3er.kmapper.processor.annotations
 
 import com.github.b3er.kmapper.GenerateMapperFactory
-import com.github.b3er.kmapper.processor.annotations.AnnotationHolder
 import com.github.b3er.kmapper.processor.utils.get
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSClassDeclaration

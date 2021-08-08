@@ -16,6 +16,7 @@
 package com.github.b3er.kmapper.processor.factory
 
 import com.github.b3er.kmapper.GenerateMapperFactory
+import com.github.b3er.kmapper.processor.annotations.GenerateMapperFactoryAnnotation
 import com.github.b3er.kmapper.processor.factory.hilt.HiltMapperFactory
 import com.github.b3er.kmapper.processor.factory.simple.SimpleMapperFactory
 import com.github.b3er.kmapper.processor.utils.MappingContext

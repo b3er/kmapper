@@ -22,7 +22,7 @@ interface NamedTypeElement : TypeElement {
     val name: String
 
     fun matchesByName(other: NamedTypeElement): Boolean {
-        return name == other.name
+        return matchesByName(other.name)
     }
 
     fun matchesByName(other: String): Boolean {

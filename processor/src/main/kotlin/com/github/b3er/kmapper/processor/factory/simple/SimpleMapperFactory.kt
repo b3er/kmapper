@@ -16,8 +16,8 @@
 package com.github.b3er.kmapper.processor.factory.simple
 
 import com.github.b3er.kmapper.MappersFactory
+import com.github.b3er.kmapper.processor.annotations.GenerateMapperFactoryAnnotation
 import com.github.b3er.kmapper.processor.factory.DeclaredMapperFactory
-import com.github.b3er.kmapper.processor.factory.GenerateMapperFactoryAnnotation
 import com.github.b3er.kmapper.processor.utils.MappingContext
 import com.github.b3er.kmapper.processor.utils.addOriginatingKSFile
 import com.google.devtools.ksp.symbol.KSClassDeclaration
