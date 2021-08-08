@@ -1,4 +1,4 @@
-KMapper [![Jitpack](https://jitpack.io/v/b3er/kmapper.svg)](https://jitpack.io/v/b3er/kmapper)
+KMapper [![Jitpack](https://jitpack.io/v/b3er/kmapper.svg)](https://jitpack.io/v/b3er/kmapper) [![](https://jitci.com/gh/b3er/kmapper/svg)](https://jitci.com/gh/b3er/kmapper)
 ===
 Dumb and simple implementation of data class mapper on KSP. WIP - not for production, just POC.
 
