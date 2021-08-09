@@ -33,12 +33,17 @@ import kotlin.collections.set
 
 class KMapperProcessor(
     private val codeGenerator: CodeGenerator,
-    private val logger: KSPLogger,
-    private val options: Map<String, String>
-) : SymbolProcessor {
+    override val logger: KSPLogger,
+    override val options: Map<String, String>
+) : SymbolProcessor, MappingContext {
+    override val typeResolver: TypesResolver = TypesResolver(this)
+    private val mappers = mutableMapOf<KSDeclaration, Mapper>()
+    private val generatedMappers = mutableSetOf<Mapper>()
+    override lateinit var resolver: Resolver
+
     override fun process(resolver: Resolver): List<KSAnnotated> {
-        val mappers = mutableMapOf<KSDeclaration, Mapper>()
-        val context = Context(resolver, logger, options, codeGenerator, TypesResolver(resolver), mappers)
+        this.resolver = resolver
+
         resolver
             .getSymbolsWithAnnotation(MAPPER_ANNOTATION_NAME)
             .map { type ->
@@ -49,64 +54,50 @@ class KMapperProcessor(
                 logger.check(annotation != null, type) {
                     "Failed to get @Mapper annotation"
                 }
-                GeneratedMapper(type, context)
+                GeneratedMapper(type, this)
             }.associateByTo(mappers) { it.declaration }
 
-        context.isResolved = true
-        context.writeMappers()
+        writeMappers()
+
         resolver.getSymbolsWithAnnotation(MAPPER_FACTORY_ANNOTATION_NAME)
             .filterIsInstance<KSClassDeclaration>()
             .forEach { factory ->
-                val factoryGenerator = MapperModuleFactory.createFactory(context, factory)
+                val factoryGenerator = MapperModuleFactory.createFactory(this, factory)
                 factoryGenerator.write().writeTo(codeGenerator)
             }
+
         return emptyList()
     }
 
-    private class Context(
-        override val resolver: Resolver,
-        override val logger: KSPLogger,
-        override val options: Map<String, String>,
-        private val generator: CodeGenerator,
-        override val typeResolver: TypesResolver,
-        private val mappers: MutableMap<KSDeclaration, Mapper>
-    ) : MappingContext {
-        private val generatedMappers = mutableSetOf<Mapper>()
-        var isResolved = false
+    private fun writeMappers() {
+        mappers.values.forEach(::writeMapper)
+    }
 
-        fun writeMappers() {
-            mappers.values.forEach(::writeMapper)
+    private fun writeMapper(mapper: Mapper) {
+        if (generatedMappers.contains(mapper)) {
+            return
         }
-
-        private fun writeMapper(mapper: Mapper) {
-            if (generatedMappers.contains(mapper)) {
-                return
-            }
-            if (mapper.includes.isNotEmpty()) {
-                mapper.includes.keys.forEach(::writeMapper)
-            }
-            if (mapper is GeneratedMapper) {
-                logger.info("Writing mapper ${mapper.declaration}", mapper.declaration)
-                generatedMappers.add(mapper)
-                mapper.write().writeTo(generator)
-            } else {
-                generatedMappers.add(mapper)
-            }
+        if (mapper.includes.isNotEmpty()) {
+            mapper.includes.keys.forEach(::writeMapper)
         }
-
-        override fun findMapper(type: KSClassDeclaration): Mapper {
-            require(isResolved) {
-                "Context is not resolved, please try again later :)"
-            }
-            val mapper = mappers[type] ?: resolver.getClassDeclarationByName(type.qualifiedName!!)
-                ?.let { DeclaredMapper(it, this) }
-                ?.also { mappers[it.declaration] = it }
-
-            require(mapper != null) {
-                "Can't find mapper for $type"
-            }
-            return mapper
+        if (mapper is GeneratedMapper) {
+            logger.info("Writing mapper ${mapper.declaration}", mapper.declaration)
+            generatedMappers.add(mapper)
+            mapper.write().writeTo(codeGenerator)
+        } else {
+            generatedMappers.add(mapper)
         }
+    }
+
+    override fun findMapper(type: KSClassDeclaration): Mapper {
+        val mapper = mappers[type] ?: resolver.getClassDeclarationByName(type.qualifiedName!!)
+            ?.let { DeclaredMapper(it, this) }
+            ?.also { mappers[it.declaration] = it }
+
+        require(mapper != null) {
+            "Can't find mapper for $type"
+        }
+        return mapper
     }
 
     companion object {

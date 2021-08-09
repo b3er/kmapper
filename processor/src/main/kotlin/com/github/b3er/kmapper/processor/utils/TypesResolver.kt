@@ -15,14 +15,13 @@
 
 package com.github.b3er.kmapper.processor.utils
 
-import com.google.devtools.ksp.processing.Resolver
 import com.google.devtools.ksp.symbol.KSType
 
-class TypesResolver(resolver: Resolver) {
-    private val iterableType by lazy { resolver.getClassDeclarationByName<Iterable<*>>() }
-    private val listType by lazy { resolver.getClassDeclarationByName<List<*>>() }
-    private val collectionType by lazy { resolver.getClassDeclarationByName<Collection<*>>() }
-    private val unitType by lazy { resolver.getClassDeclarationByName<Unit>() }
+class TypesResolver(context: MappingContext) {
+    private val iterableType by lazy { context.resolver.getClassDeclarationByName<Iterable<*>>() }
+    private val listType by lazy { context.resolver.getClassDeclarationByName<List<*>>() }
+    private val collectionType by lazy { context.resolver.getClassDeclarationByName<Collection<*>>() }
+    private val unitType by lazy { context.resolver.getClassDeclarationByName<Unit>() }
 
     fun isIterable(type: KSType): Boolean {
         return iterableType.asStarProjectedType().isAssignableFrom(type.makeNotNullable())
