@@ -13,25 +13,6 @@
  * limitations under the License.
  */
 
-package com.github.b3er.kmapper.sample.data
+package com.github.b3er.kmapper
 
-data class SampleDto(
-    val id: Long,
-    val name: String,
-    val hello: String,
-    val nested: NestedDto,
-    val nestedOptional: NestedDto?,
-    val nullableSamples: List<NestedDto>?,
-    val sourceNullable: String?,
-    val status: Status
-) {
-    enum class Status {
-        ONE_SAMPLE, SECOND_SAMPLE, THIRD_SAMPLE
-    }
-
-    data class NestedDto(val nestedId: Long, val nestedName: String)
-}
-
-
-
-
+class MappingException(override val message: String?) : RuntimeException()

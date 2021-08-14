@@ -15,6 +15,8 @@
 
 package com.github.b3er.kmapper.processor.generators
 
+import com.github.b3er.kmapper.Mapping.NullabilityCheckStrategy
+import com.github.b3er.kmapper.MappingException
 import com.github.b3er.kmapper.processor.annotations.MappingAnnotation
 import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.mappings.Mapping
@@ -59,7 +61,7 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
     }
 
     fun CodeBlock.Builder.writeOverrides(property: MappingElement): Boolean {
-        val override = overrides.find { property.matchesByName(it.target) }
+        val override = findOverride(property)
         if (override?.expression?.isNotEmpty() == true) {
             writeExpression(property, override.expression)
             return true
@@ -87,11 +89,14 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
         val source = sourcePath.distinct()
         val sourceCount = source.count()
         val property = sourcePath.last()
+        val nullabilityCheckStrategy = getNullabilityStrategy(target)
 
         val sourcePathStr = source.joinToString(".") { it.name }
-        ensureNullabilityComplies(source.drop(1), target) {
-            "Cannot assign nullable source $sourcePathStr" +
-                " to target ${target.name}"
+        if (nullabilityCheckStrategy == NullabilityCheckStrategy.Source) {
+            ensureNullabilityComplies(source.drop(1), target) {
+                "Cannot assign nullable source $sourcePathStr" +
+                    " to target ${target.name}"
+            }
         }
 
         val sourcePathBlock = CodeBlock.of(
@@ -103,11 +108,10 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
                 }
             }, *(source.map { it.name }.toList().toTypedArray())
         )
-        if (target.isAssignableFrom(property)) {
+        if (target.isAssignableFrom(property, ignoreNullability = true)) {
             add("«")
             add("%N = ", target.name)
             add(sourcePathBlock)
-            add(",\n»")
         } else {
             add("«")
             add("%N = ", target.name)
@@ -148,7 +152,26 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
             if (nullables) {
                 add(" }")
             }
-            add(",\n»")
         }
+        if (nullabilityCheckStrategy == NullabilityCheckStrategy.Runtime && !target.type.isMarkedNullable && property.type.isMarkedNullable) {
+            add(
+                " ?: throw %T(%S)", MappingException::class, "Cannot assign nullable source '$sourcePathStr'" +
+                    " to target '${target.name}'"
+            )
+        }
+        add(",\n»")
+    }
+
+    private fun getNullabilityStrategy(property: MappingElement): NullabilityCheckStrategy {
+        return findOverride(property)?.nullabilityStrategy
+            ?: mapper.annotation.nullabilityStrategy?.let {
+                NullabilityCheckStrategy.valueOf(it.name)
+            }
+            ?: NullabilityCheckStrategy.Source
+    }
+
+    private fun findOverride(property: MappingElement): MappingAnnotation? {
+        return overrides
+            .find { property.matchesByName(it.target) } ?: overrides.find { it.target.isEmpty() }
     }
 }

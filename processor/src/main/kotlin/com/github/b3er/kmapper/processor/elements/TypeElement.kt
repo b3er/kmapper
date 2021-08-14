@@ -25,8 +25,12 @@ interface TypeElement {
     val type: KSType
     val typeParameterResolver: TypeParameterResolver
 
-    fun isAssignableFrom(other: TypeElement): Boolean {
-        return type.isAssignableFrom(other.type)
+    fun isAssignableFrom(other: TypeElement, ignoreNullability: Boolean = false): Boolean {
+        return if (ignoreNullability) {
+            type.makeNotNullable().isAssignableFrom(other.type.makeNotNullable())
+        } else {
+            type.isAssignableFrom(other.type)
+        }
     }
 
     fun toTypeName(): TypeName {

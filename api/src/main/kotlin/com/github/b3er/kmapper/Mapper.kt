@@ -15,6 +15,7 @@
 
 package com.github.b3er.kmapper
 
+import com.github.b3er.kmapper.Mapper.NullabilityCheckStrategy
 import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.CLASS)
@@ -31,11 +32,32 @@ annotation class Mapper(
     /**
      * Injection type for constructor annotations
      */
-    val injectionType: InjectionType = InjectionType.None
+    val injectionType: InjectionType = InjectionType.None,
+    /**
+     *  Default [NullabilityCheckStrategy] in this mapper
+     */
+    val nullabilityStrategy: NullabilityCheckStrategy = NullabilityCheckStrategy.Source
 ) {
     enum class InjectionType {
         None, Jsr330
     }
+
+    /**
+     * Nullability checking strategy used in this mapper when target
+     * and source nullability don't match and can't be assigned.
+     */
+    enum class NullabilityCheckStrategy {
+        /**
+         * Check nullability in stage of generation, fail if mismatch
+         */
+        Source,
+
+        /**
+         * Check nullability at runtime throwing [MappingException]
+         */
+        Runtime
+    }
+
 }
 
 

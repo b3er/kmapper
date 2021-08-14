@@ -30,4 +30,29 @@ annotation class Mapping(
      * kotlin code expression
      */
     val expression: String = "",
-)
+    /**
+     * [NullabilityCheckStrategy] used in this mapping
+     */
+    val nullabilityStrategy: NullabilityCheckStrategy = NullabilityCheckStrategy.Default
+) {
+    /**
+     * Nullability checking strategy used in this mapper when target
+     * and source nullability don't match and can't be assigned.
+     */
+    enum class NullabilityCheckStrategy {
+        /**
+         * Uses [Mapper.NullabilityCheckStrategy] defined in this mapper
+         */
+        Default,
+
+        /**
+         * Check nullability in stage of generation, fail if mismatch
+         */
+        Source,
+
+        /**
+         * Check nullability at runtime throwing [MappingException]
+         */
+        Runtime
+    }
+}

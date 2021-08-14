@@ -23,6 +23,7 @@ data class SampleModel(
     val nested: NestedModel,
     val nestedOptional: NestedModel?,
     val nullableSamples: List<NestedModel>?,
+    val sourceNullable: String,
     val status: Status
 ) {
     enum class Status {

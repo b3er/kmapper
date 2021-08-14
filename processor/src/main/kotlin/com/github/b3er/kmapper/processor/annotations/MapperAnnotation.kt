@@ -46,5 +46,12 @@ class MapperAnnotation(override val annotation: KSAnnotation) : AnnotationHolder
             ?.getShortName()
             ?.let { Mapper.InjectionType.valueOf(it) }
     }
+    val nullabilityStrategy: Mapper.NullabilityCheckStrategy? by lazy {
+        ((annotation["nullabilityStrategy"]?.value) as? KSType)
+            ?.declaration
+            ?.simpleName
+            ?.getShortName()
+            ?.let { Mapper.NullabilityCheckStrategy.valueOf(it) }
+    }
     override val matchedAnnotationTypes = listOf(Mapper::class.asClassName())
 }
