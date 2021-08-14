@@ -32,7 +32,7 @@ plugins {
 }
 
 dependencies {
-    val kMapperVersion = "0.1.20"
+    val kMapperVersion = "0.2.0"
     implementation("com.github.b3er.kmapper:api:$kMapperVersion")
     ksp("com.github.b3er.kmapper:processor:$kMapperVersion")
 }
