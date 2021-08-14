@@ -28,6 +28,9 @@ abstract class GeneratedMapping : Mapping, MappingGenerator {
     val context by lazy(LazyThreadSafetyMode.NONE) { mapper.context }
     val logger by lazy(LazyThreadSafetyMode.NONE) { context.logger }
 
+    override val declaration
+        get() = mapper.declaration
+
     override fun write() = FunSpec.builder(name).apply {
         isImplemented = true
         writeFunctionDeclaration()

@@ -18,6 +18,7 @@ package com.github.b3er.kmapper.processor.mappings
 import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.mappers.Mapper
 import com.github.b3er.kmapper.processor.utils.check
+import com.google.devtools.ksp.symbol.KSNode
 import com.squareup.kotlinpoet.FunSpec
 
 interface Mapping {
@@ -26,6 +27,7 @@ interface Mapping {
     val target: MappingElement
     val mapper: Mapper
     val name: String
+    val declaration: KSNode
 
     fun write(): FunSpec
 
@@ -88,7 +90,7 @@ interface Mapping {
         createIfNeeded: Boolean = true
     ): Mapping {
         val ref = mapper.findMapping(target, property, this@Mapping, createIfNeeded = createIfNeeded)
-        mapper.context.logger.check(ref != null, mapper.declaration) {
+        mapper.context.logger.check(ref != null, declaration) {
             "can't find mapping for target.${property.name}"
         }
         return ref
@@ -103,13 +105,13 @@ interface Mapping {
 
     fun ensureNullabilityComplies(source: MappingElement, target: MappingElement, message: () -> String) {
         if (source.type.isMarkedNullable && !target.type.isMarkedNullable) {
-            mapper.context.logger.error(message(), mapper.declaration)
+            mapper.context.logger.error(message(), declaration)
         }
     }
 
     fun ensureNullabilityComplies(source: Sequence<MappingElement>, target: MappingElement, message: () -> String) {
         if (source.any { it.type.isMarkedNullable } && !target.type.isMarkedNullable) {
-            mapper.context.logger.error(message(), mapper.declaration)
+            mapper.context.logger.error(message(), declaration)
         }
     }
 }

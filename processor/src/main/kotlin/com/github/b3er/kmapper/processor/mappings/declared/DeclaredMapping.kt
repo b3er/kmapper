@@ -27,7 +27,7 @@ import com.squareup.kotlinpoet.FunSpec
 import com.squareup.kotlinpoet.KModifier
 
 abstract class DeclaredMapping : Mapping, MappingGenerator {
-    abstract val declaration: KSFunctionDeclaration
+    abstract override val declaration: KSFunctionDeclaration
     protected abstract val overrides: List<AnnotationHolder>
     override val name: String by lazy { declaration.simpleName.getShortName() }
     override val isImplemented get() = !declaration.isAbstract

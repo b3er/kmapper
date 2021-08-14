@@ -36,7 +36,7 @@ class MappingTest {
             nestedOptional = SampleDto.NestedDto(4567, "optional"),
             nullableSamples = 10L.downTo(0).map { SampleDto.NestedDto(it, "nested_$it") },
             status = SampleDto.Status.SECOND_SAMPLE,
-            sourceNullable = "sourceNullable"
+            sourceNullable = "sourceNullable",
         )
 
         val expected = SampleModel(
@@ -48,7 +48,8 @@ class MappingTest {
             nestedOptional = SampleModel.NestedModel(dto.nestedOptional!!.nestedId, dto.nestedOptional!!.nestedName),
             nullableSamples = dto.nullableSamples?.map { SampleModel.NestedModel(it.nestedId, it.nestedName) },
             status = SampleModel.Status.SecondSample,
-            sourceNullable = dto.sourceNullable!!
+            sourceNullable = dto.sourceNullable!!,
+            nonExistentElement = 1231
         )
 
         val result = MyMappers.getMapper<SampleMapper>().map(dto, addedId)

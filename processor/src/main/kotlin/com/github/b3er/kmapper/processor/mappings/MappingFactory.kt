@@ -96,7 +96,7 @@ object MappingFactory {
                 SimpleGeneratedMapping(
                     generateName(mapper, "map${source.type.toClassName().simpleName}"),
                     mapper,
-                    target.type.toMappingElement(enumeration = ConstructorValuesEnumeration),
+                    target.type.toMappingElement(target.node, enumeration = ConstructorValuesEnumeration),
                     listOf(source)
                 )
             }

@@ -13,6 +13,7 @@ Dumb and simple implementation of data class mapper on KSP. WIP - not for produc
 - [x] nullability
 - [x] iterable mappings
 - [x] enum mappings
+- [x] default values
 - [ ] generic data classes
 
 Download
@@ -32,7 +33,7 @@ plugins {
 }
 
 dependencies {
-    val kMapperVersion = "0.2.0"
+    val kMapperVersion = "0.3.0"
     implementation("com.github.b3er.kmapper:api:$kMapperVersion")
     ksp("com.github.b3er.kmapper:processor:$kMapperVersion")
 }

@@ -186,7 +186,9 @@ internal inline fun KSPLogger.check(condition: Boolean, element: KSNode?, messag
     }
 
     if (!condition) {
-        error(message(), element)
+        val messageStr = message()
+        error(messageStr, element)
+        throw kotlin.RuntimeException(messageStr)
     }
 }
 

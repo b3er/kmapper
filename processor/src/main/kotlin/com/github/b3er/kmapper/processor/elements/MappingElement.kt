@@ -23,6 +23,7 @@ import com.google.devtools.ksp.symbol.*
 import com.squareup.kotlinpoet.KModifier
 
 data class MappingElement(
+    val node: KSNode,
     override val type: KSType,
     override val name: String,
     val modifiers: List<KModifier>,
@@ -33,28 +34,30 @@ data class MappingElement(
     override val typeParameterResolver: TypeParameterResolver by lazy {
         type.declaration.typeParameters.toTypeParameterResolver()
     }
-
+    val hasDefault: Boolean = (node as? KSValueParameter)?.hasDefault == true
     fun makeNotNullable(): MappingElement {
         return copy(type = type.makeNotNullable())
     }
 }
 
 fun KSPropertyDeclaration.toMappingElement() =
-    type.resolve().toMappingElement(simpleName.getShortName(), emptyList())
+    type.resolve().toMappingElement(this, simpleName.getShortName(), emptyList())
 
-fun KSValueParameter.toMappingElement() = type.resolve().toMappingElement(name!!.getShortName(), kModifiers().toList())
+fun KSValueParameter.toMappingElement() =
+    type.resolve().toMappingElement(this, name!!.getShortName(), kModifiers().toList())
 
 fun KSTypeReference.toMappingElement(
     name: String = "",
     modifiers: List<KModifier> = emptyList(),
     enumeration: (MappingElement) -> List<MappingElement> = DeclarationValuesEnumeration
-) = resolve().toMappingElement(name, modifiers, enumeration)
+) = resolve().toMappingElement(this, name, modifiers, enumeration)
 
 fun KSType.toMappingElement(
+    node: KSNode,
     name: String = "",
     modifiers: List<KModifier> = emptyList(),
     enumeration: (MappingElement) -> List<MappingElement> = DeclarationValuesEnumeration
-) = MappingElement(this, name, modifiers, enumeration)
+) = MappingElement(node, this, name, modifiers, enumeration)
 
 object ConstructorValuesEnumeration : (MappingElement) -> List<MappingElement> {
     override fun invoke(element: MappingElement): List<MappingElement> {

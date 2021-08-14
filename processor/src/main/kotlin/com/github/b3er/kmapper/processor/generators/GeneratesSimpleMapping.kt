@@ -36,7 +36,7 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
             add("return %T(\n", target.type.toClassName()).indent()
             target.properties.forEach { property ->
                 if (!writeOverrides(property)) {
-                    writeMappingStatement(property)
+                    writeMappingStatement(property, findSource(property))
                 }
             }
             unindent().add(")")
@@ -52,13 +52,6 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
         )
     }
 
-    fun CodeBlock.Builder.writeSourcePath(property: MappingElement, source: String) {
-        val found = findSource(source)
-        logger.check(found.isNotEmpty(), mapper.declaration) {
-            "Source $source for target.${property.name} not found!"
-        }
-        writeMappingStatement(property, found.asSequence())
-    }
 
     fun CodeBlock.Builder.writeOverrides(property: MappingElement): Boolean {
         val override = findOverride(property)
@@ -67,26 +60,27 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
             return true
         }
         if (override?.source?.isNotEmpty() == true) {
-            writeSourcePath(property, override.source)
+            writeMappingStatement(property, findSource(override.source))
             return true
         }
         return false
     }
 
-    fun CodeBlock.Builder.writeMappingStatement(property: MappingElement) {
-        val found = findSource(property)
-        logger.check(found.isNotEmpty(), mapper.declaration) {
-            "Source for target.${property.name} not found." +
-                " Available sources ${sources.map { it.name }}. Mapper: ${toFullString()}"
-        }
-        writeMappingStatement(property, found.asSequence())
-    }
-
     fun CodeBlock.Builder.writeMappingStatement(
         target: MappingElement,
-        sourcePath: Sequence<MappingElement>,
+        sourcePath: List<MappingElement>,
     ) {
-        val source = sourcePath.distinct()
+        if (target.hasDefault && sourcePath.isEmpty()) {
+            // Skip this property bc target has default and no source is found
+            return
+        }
+
+        logger.check(sourcePath.isNotEmpty(), declaration) {
+            "Source for target.${target.name} not found in ${toFullString()}"
+        }
+
+
+        val source = sourcePath.asSequence().distinct()
         val sourceCount = source.count()
         val property = sourcePath.last()
         val nullabilityCheckStrategy = getNullabilityStrategy(target)

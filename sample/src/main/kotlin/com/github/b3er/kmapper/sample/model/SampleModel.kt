@@ -24,7 +24,8 @@ data class SampleModel(
     val nestedOptional: NestedModel?,
     val nullableSamples: List<NestedModel>?,
     val sourceNullable: String,
-    val status: Status
+    val nonExistentElement: Long = 1231,
+    val status: Status,
 ) {
     enum class Status {
         OneSample, SecondSample, Unknown
