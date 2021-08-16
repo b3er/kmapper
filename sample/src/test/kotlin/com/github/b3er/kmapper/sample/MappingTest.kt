@@ -26,7 +26,6 @@ import java.util.*
 import kotlin.test.assertEquals
 
 class MappingTest {
-
     @Test
     fun testMapping() {
         val addedId = 456L

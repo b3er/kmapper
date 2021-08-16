@@ -29,6 +29,7 @@ import com.google.devtools.ksp.processing.SymbolProcessor
 import com.google.devtools.ksp.symbol.KSAnnotated
 import com.google.devtools.ksp.symbol.KSClassDeclaration
 import com.google.devtools.ksp.symbol.KSDeclaration
+import java.util.concurrent.ConcurrentHashMap
 import kotlin.collections.set
 
 class KMapperProcessor(
@@ -37,7 +38,7 @@ class KMapperProcessor(
     override val options: Map<String, String>
 ) : SymbolProcessor, MappingContext {
     override val typeResolver: TypesResolver = TypesResolver(this)
-    private val mappers = mutableMapOf<KSDeclaration, Mapper>()
+    private val mappers = ConcurrentHashMap<KSDeclaration, Mapper>()
     private val generatedMappers = mutableSetOf<Mapper>()
     override lateinit var resolver: Resolver
 

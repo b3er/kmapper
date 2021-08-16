@@ -53,9 +53,14 @@ annotation class Mapper(
         Source,
 
         /**
+         * Check nullability at runtime by using !!
+         */
+        Runtime,
+
+        /**
          * Check nullability at runtime throwing [MappingException]
          */
-        Runtime
+        RuntimeException
     }
 
 }

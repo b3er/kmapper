@@ -19,6 +19,7 @@ import com.github.b3er.kmapper.Mapping.NullabilityCheckStrategy
 import com.github.b3er.kmapper.Mapping.Option
 import com.github.b3er.kmapper.MappingException
 import com.github.b3er.kmapper.processor.annotations.MappingAnnotation
+import com.github.b3er.kmapper.processor.annotations.isRuntime
 import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.mappings.Mapping
 import com.github.b3er.kmapper.processor.utils.check
@@ -114,7 +115,7 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
             add("«")
             add("%N = ", target.name)
             val nullables = (property.type.isMarkedNullable && target.type.isMarkedNullable)
-                || (nullableToNonNullable && nullabilityCheckStrategy == NullabilityCheckStrategy.Runtime)
+                || (nullableToNonNullable && nullabilityCheckStrategy.isRuntime)
             val ref = if (nullables) {
                 peekMapping(target, property) ?: findMapping(target.makeNotNullable(), property.makeNotNullable())
             } else {
@@ -158,6 +159,8 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
             } else if (mapper.context.typeResolver.isString(target.type) && options.contains(Option.NullableStringToEmpty)) {
                 add(" ?: \"\"")
             } else if (nullabilityCheckStrategy == NullabilityCheckStrategy.Runtime) {
+                add("!!")
+            } else if (nullabilityCheckStrategy == NullabilityCheckStrategy.RuntimeException) {
                 add(
                     " ?: throw %T(%S)", MappingException::class, "Cannot assign nullable source '$sourcePathStr'" +
                         " to target '${target.name}'"
@@ -171,8 +174,7 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
         return findOverride(property)?.nullabilityStrategy
             ?: mapper.annotation.nullabilityStrategy?.let {
                 NullabilityCheckStrategy.valueOf(it.name)
-            }
-            ?: NullabilityCheckStrategy.Source
+            } ?: NullabilityCheckStrategy.Source
     }
 
 

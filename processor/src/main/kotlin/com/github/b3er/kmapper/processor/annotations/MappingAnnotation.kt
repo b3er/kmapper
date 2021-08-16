@@ -34,12 +34,17 @@ data class MappingAnnotation(override val annotation: KSAnnotation) : Annotation
             ?.let { Mapping.NullabilityCheckStrategy.valueOf(it) }
     }
     val options: List<Mapping.Option> by lazy {
-        ((annotation["options"]?.value) as? List<KSType>)
+        ((annotation["options"]?.value) as? List<*>)
+            ?.asSequence()
+            ?.filterIsInstance<KSType>()
             ?.map {
                 it.declaration.simpleName.getShortName()
                     .let { v -> Mapping.Option.valueOf(v) }
-            } ?: emptyList()
+            }?.toList() ?: emptyList()
     }
 
     override val matchedAnnotationTypes = listOf(Mapping::class.asClassName(), Mappings::class.asClassName())
 }
+
+val Mapping.NullabilityCheckStrategy.isRuntime: Boolean
+    get() = this == Mapping.NullabilityCheckStrategy.RuntimeException || this == Mapping.NullabilityCheckStrategy.Runtime
