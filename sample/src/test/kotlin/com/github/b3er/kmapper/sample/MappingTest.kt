@@ -37,7 +37,8 @@ class MappingTest {
             nullableSamples = 10L.downTo(0).map { SampleDto.NestedDto(it, "nested_$it") },
             status = "SECOND_SAMPLE",
             sourceNullable = "sourceNullable",
-            explicitStatus = SampleDto.Status.SECOND_SAMPLE
+            explicitStatus = SampleDto.Status.SECOND_SAMPLE,
+            amount = SampleDto.Amount("EUR", 100.123.toBigDecimal())
         )
 
         val expected = SampleModel(
@@ -51,7 +52,8 @@ class MappingTest {
             status = SampleModel.Status.SecondSample,
             sourceNullable = dto.sourceNullable!!,
             nonExistentElement = 1231,
-            explicitStatus = SampleModel.Status.SecondSample
+            explicitStatus = SampleModel.Status.SecondSample,
+            amount = SampleModel.Money(SampleModel.Currency.EUR, 100.123.toBigDecimal())
         )
 
         val result = MyMappers.getMapper<SampleMapper>().map(dto, addedId)

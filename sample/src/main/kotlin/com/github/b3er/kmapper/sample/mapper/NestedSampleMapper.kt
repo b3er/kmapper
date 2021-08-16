@@ -20,6 +20,7 @@ import com.github.b3er.kmapper.EnumMappings
 import com.github.b3er.kmapper.Mapper
 import com.github.b3er.kmapper.sample.data.SampleDto
 import com.github.b3er.kmapper.sample.model.SampleModel
+import java.math.BigDecimal
 
 @Mapper(injectionType = Mapper.InjectionType.None)
 abstract class NestedSampleMapper {
@@ -39,4 +40,14 @@ abstract class NestedSampleMapper {
         ),
     )
     abstract fun map(status: String): SampleModel.Status
+
+    @EnumMappings(
+        EnumMapping(
+            target = "RUB",
+        ),
+    )
+    abstract fun mapCurrency(currency: String): SampleModel.Currency
+
+    abstract fun map(currency: String, amount: BigDecimal): SampleModel.Money
+//    abstract fun map(dto: SampleDto.Amount): SampleModel.Money
 }

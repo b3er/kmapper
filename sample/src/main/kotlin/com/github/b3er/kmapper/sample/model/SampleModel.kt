@@ -28,13 +28,18 @@ data class SampleModel(
     val sourceNullable: String,
     val nonExistentElement: Long = 1231,
     val status: Status,
-    val explicitStatus: Status
+    val explicitStatus: Status,
+    val amount: Money
 ) {
     enum class Status {
         OneSample, SecondSample, Unknown
     }
 
+    enum class Currency {
+        RUB, EUR, USD
+    }
+
     data class NestedModel(val nestedId: Long, val nestedName: String)
+    data class Money(val currency: Currency, val amount: BigDecimal)
 }
 
-data class Money(val currency: String, val amount: BigDecimal)

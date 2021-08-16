@@ -43,16 +43,12 @@ interface Mapping {
     }
 
     fun findSource(target: MappingElement): List<MappingElement> {
-        return sources.find { element ->
+        return sources.asSequence().mapNotNull { element ->
+            element.properties.find { property -> property.matchesByName(target) }
+                ?.let { listOf(element, it) } ?: element.takeIf { it.matchesByName(target) }?.let(::listOf)
+        }.firstOrNull() ?: sources.find { element ->
             element.matchesByName(target)
-        }?.let(::listOf) ?: sources.asSequence().mapNotNull { element ->
-            if (element.matchesByName(target)) {
-                listOf(element)
-            } else {
-                element.properties.find { property -> property.matchesByName(target) }
-                    ?.let { listOf(element, it) }
-            }
-        }.firstOrNull() ?: emptyList()
+        }?.let(::listOf) ?: emptyList()
     }
 
     fun isSourceCompatibleWith(property: MappingElement): Boolean {

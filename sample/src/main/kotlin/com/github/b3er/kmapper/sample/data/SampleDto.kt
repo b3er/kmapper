@@ -15,6 +15,8 @@
 
 package com.github.b3er.kmapper.sample.data
 
+import java.math.BigDecimal
+
 data class SampleDto(
     val id: Long,
     val name: String,
@@ -25,12 +27,14 @@ data class SampleDto(
     val sourceNullable: String?,
     val status: String,
     val explicitStatus: Status,
+    val amount: Amount
 ) {
     enum class Status {
         ONE_SAMPLE, SECOND_SAMPLE, THIRD_SAMPLE
     }
 
     data class NestedDto(val nestedId: Long, val nestedName: String)
+    data class Amount(val currency: String, val amount: BigDecimal)
 }
 
 
