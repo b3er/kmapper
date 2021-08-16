@@ -18,6 +18,7 @@ package com.github.b3er.kmapper.sample.mapper
 import com.github.b3er.kmapper.Mapper
 import com.github.b3er.kmapper.sample.data.SampleDto
 import com.github.b3er.kmapper.sample.model.SampleModel
+import java.time.LocalDate
 
 
 @Mapper(
@@ -27,6 +28,8 @@ import com.github.b3er.kmapper.sample.model.SampleModel
 )
 internal interface SampleMapper {
     fun map(dto: SampleDto, addedId: Long): SampleModel
+
+    fun mapStringToLocalDate(value: String): LocalDate = LocalDate.parse(value)
 
 
 //

@@ -27,7 +27,8 @@ data class SampleDto(
     val sourceNullable: String?,
     val status: String,
     val explicitStatus: Status,
-    val amount: Amount
+    val amount: Amount,
+    val someDate: String
 ) {
     enum class Status {
         ONE_SAMPLE, SECOND_SAMPLE, THIRD_SAMPLE

@@ -16,6 +16,7 @@
 package com.github.b3er.kmapper.sample.model
 
 import java.math.BigDecimal
+import java.time.LocalDate
 
 data class SampleModel(
     val id: Long,
@@ -29,7 +30,8 @@ data class SampleModel(
     val nonExistentElement: Long = 1231,
     val status: Status,
     val explicitStatus: Status,
-    val amount: Money
+    val amount: Money,
+    val someDate: LocalDate
 ) {
     enum class Status {
         OneSample, SecondSample, Unknown

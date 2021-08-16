@@ -52,6 +52,9 @@ internal fun KSClassDeclaration.isKotlinClass(resolver: Resolver): Boolean {
 internal val KSDeclaration.isKotlin: Boolean
     get() = origin == Origin.KOTLIN || origin == Origin.KOTLIN_LIB
 
+internal val KSDeclaration.isData: Boolean
+    get() = modifiers.contains(Modifier.DATA)
+
 internal fun KSAnnotated.hasAnnotation(target: KSType): Boolean {
     return findAnnotationWithType(target) != null
 }

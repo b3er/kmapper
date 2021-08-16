@@ -16,6 +16,7 @@
 package com.github.b3er.kmapper.processor.mappings
 
 import com.github.b3er.kmapper.processor.elements.ConstructorValuesEnumeration
+import com.github.b3er.kmapper.processor.elements.DeclarationValuesEnumeration
 import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.elements.toMappingElement
 import com.github.b3er.kmapper.processor.mappers.GeneratedMapper
@@ -40,22 +41,25 @@ object MappingFactory {
             context.logger.check(ref.returnType != null, ref) {
                 "Mapping function must return value!"
             }
-            val target = ref.returnType!!.toMappingElement(enumeration = ConstructorValuesEnumeration)
-            context.logger.check(target.type.declaration.isKotlin, mapper.declaration) {
-                "Target $target must be a kotlin class, for mapper ${mapper.toFullString()}"
-            }
+            val target = ref.returnType!!.toMappingElement(enumeration = DeclarationValuesEnumeration)
             context.logger.check(!context.typeResolver.isUnit(target.type), ref) {
                 "Mapping function must return value!"
             }
+            val targetElement = if (target.type.declaration.isKotlin && target.type.declaration.isData) {
+                target.type.toMappingElement(target.node, enumeration = ConstructorValuesEnumeration)
+            } else {
+                target.type.toMappingElement(target.node, enumeration = DeclarationValuesEnumeration)
+            }
+
             when {
                 context.typeResolver.isIterable(target.type) -> {
-                    IterableDeclaredMapping(ref, target, mapper)
+                    IterableDeclaredMapping(ref, targetElement, mapper)
                 }
                 target.declaration.isEnumClass() -> {
-                    EnumDeclaredMapping(ref, target, mapper)
+                    EnumDeclaredMapping(ref, targetElement, mapper)
                 }
                 else -> {
-                    SimpleDeclaredMapping(ref, target, mapper)
+                    SimpleDeclaredMapping(ref, targetElement, mapper)
                 }
             }
         }
@@ -90,13 +94,15 @@ object MappingFactory {
                 )
             }
             else -> {
-                context.logger.check(target.type.declaration.isKotlin, mapper.declaration) {
-                    "Target $target must be a kotlin class, for mapper ${mapper.toFullString()}"
+                val targetElement = if (target.type.declaration.isKotlin && target.type.declaration.isData) {
+                    target.type.toMappingElement(target.node, enumeration = ConstructorValuesEnumeration)
+                } else {
+                    target.type.toMappingElement(target.node, enumeration = DeclarationValuesEnumeration)
                 }
                 SimpleGeneratedMapping(
                     generateName(mapper, "map${source.type.toClassName().simpleName}"),
                     mapper,
-                    target.type.toMappingElement(target.node, enumeration = ConstructorValuesEnumeration),
+                    targetElement,
                     listOf(source)
                 )
             }
