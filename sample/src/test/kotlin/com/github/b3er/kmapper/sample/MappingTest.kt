@@ -22,6 +22,7 @@ import com.github.b3er.kmapper.sample.mapper.SampleMapper
 import com.github.b3er.kmapper.sample.model.SampleModel
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
+import java.util.*
 import kotlin.test.assertEquals
 
 class MappingTest {
@@ -41,7 +42,8 @@ class MappingTest {
             explicitStatus = SampleDto.Status.SECOND_SAMPLE,
             amount = SampleDto.Amount("EUR", 100.123.toBigDecimal()),
             someDate = "2021-02-12",
-            nullableBoolean = null
+            nullableBoolean = null,
+            uuid = UUID.randomUUID()
         )
 
         val expected = SampleModel(
@@ -58,7 +60,8 @@ class MappingTest {
             explicitStatus = SampleModel.Status.SecondSample,
             amount = SampleModel.Money(SampleModel.Currency.EUR, 100.123.toBigDecimal()),
             someDate = LocalDate.parse(dto.someDate),
-            nullableBoolean = false
+            nullableBoolean = false,
+            uuid = dto.uuid.toString()
         )
 
         val result = MyMappers.getMapper<SampleMapper>().map(dto, addedId)

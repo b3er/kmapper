@@ -16,6 +16,7 @@
 package com.github.b3er.kmapper.sample.data
 
 import java.math.BigDecimal
+import java.util.*
 
 data class SampleDto(
     val id: Long,
@@ -29,7 +30,8 @@ data class SampleDto(
     val explicitStatus: Status,
     val amount: Amount,
     val someDate: String,
-    val nullableBoolean: Boolean?
+    val nullableBoolean: Boolean?,
+    val uuid: UUID?
 ) {
     enum class Status {
         ONE_SAMPLE, SECOND_SAMPLE, THIRD_SAMPLE

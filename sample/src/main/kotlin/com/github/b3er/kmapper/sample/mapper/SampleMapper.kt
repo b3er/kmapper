@@ -20,6 +20,7 @@ import com.github.b3er.kmapper.Mapping
 import com.github.b3er.kmapper.sample.data.SampleDto
 import com.github.b3er.kmapper.sample.model.SampleModel
 import java.time.LocalDate
+import java.util.*
 
 
 @Mapper(
@@ -28,11 +29,15 @@ import java.time.LocalDate
     nullabilityStrategy = Mapper.NullabilityCheckStrategy.Runtime
 )
 internal interface SampleMapper {
-    @Mapping(options = [Mapping.Option.NullableBooleanToFalse, Mapping.Option.NullableStringToEmpty])
+    @Mapping(
+        options = [Mapping.Option.NullableBooleanToFalse, Mapping.Option.NullableStringToEmpty],
+        nullabilityStrategy = Mapping.NullabilityCheckStrategy.Runtime
+    )
     fun map(dto: SampleDto, addedId: Long): SampleModel
 
     fun mapStringToLocalDate(value: String): LocalDate = LocalDate.parse(value)
 
+    fun mapUUIDToString(value: UUID): String = value.toString()
 
 //
 //    fun mapList(dto: List<SampleDto>, addedId: Long): List<SampleDto>

@@ -32,7 +32,8 @@ data class SampleModel(
     val explicitStatus: Status,
     val amount: Money,
     val someDate: LocalDate,
-    val nullableBoolean: Boolean
+    val nullableBoolean: Boolean,
+    val uuid: String
 ) {
     enum class Status {
         OneSample, SecondSample, Unknown

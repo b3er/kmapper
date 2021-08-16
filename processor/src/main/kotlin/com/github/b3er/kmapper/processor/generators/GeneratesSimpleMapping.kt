@@ -113,8 +113,8 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
         } else {
             add("«")
             add("%N = ", target.name)
-            val nullables = property.type.isMarkedNullable && target.type.isMarkedNullable
-
+            val nullables = (property.type.isMarkedNullable && target.type.isMarkedNullable)
+                || (nullableToNonNullable && nullabilityCheckStrategy == NullabilityCheckStrategy.Runtime)
             val ref = if (nullables) {
                 peekMapping(target, property) ?: findMapping(target.makeNotNullable(), property.makeNotNullable())
             } else {
