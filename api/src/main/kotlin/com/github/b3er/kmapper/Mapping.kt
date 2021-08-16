@@ -33,7 +33,11 @@ annotation class Mapping(
     /**
      * [NullabilityCheckStrategy] used in this mapping
      */
-    val nullabilityStrategy: NullabilityCheckStrategy = NullabilityCheckStrategy.Default
+    val nullabilityStrategy: NullabilityCheckStrategy = NullabilityCheckStrategy.Default,
+    /**
+     * Options for mapping
+     */
+    vararg val options: Option
 ) {
     /**
      * Nullability checking strategy used in this mapper when target
@@ -54,5 +58,17 @@ annotation class Mapping(
          * Check nullability at runtime throwing [MappingException]
          */
         Runtime
+    }
+
+    enum class Option {
+        /**
+         * Assign false if source is null, e.g use target = source == true
+         */
+        NullableBooleanToFalse,
+
+        /**
+         * Assign '' if source is null
+         */
+        NullableStringToEmpty
     }
 }

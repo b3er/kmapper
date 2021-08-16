@@ -20,6 +20,7 @@ import com.github.b3er.kmapper.processor.mappers.Mapper
 import com.github.b3er.kmapper.processor.utils.check
 import com.google.devtools.ksp.symbol.KSNode
 import com.squareup.kotlinpoet.FunSpec
+import com.github.b3er.kmapper.Mapping as MappingAnnotation
 
 interface Mapping {
     val isImplemented: Boolean
@@ -99,14 +100,32 @@ interface Mapping {
         return mapper.findMapping(target, property, this@Mapping, createIfNeeded = false)
     }
 
-    fun ensureNullabilityComplies(source: MappingElement, target: MappingElement, message: () -> String) {
-        if (source.type.isMarkedNullable && !target.type.isMarkedNullable) {
-            mapper.context.logger.error(message(), declaration)
-        }
+    fun ensureNullabilityComplies(
+        source: MappingElement,
+        target: MappingElement,
+        options: List<MappingAnnotation.Option>,
+        message: () -> String
+    ) {
+        ensureNullabilityComplies(sequenceOf(source), target, options, message)
     }
 
-    fun ensureNullabilityComplies(source: Sequence<MappingElement>, target: MappingElement, message: () -> String) {
+    fun ensureNullabilityComplies(
+        source: Sequence<MappingElement>,
+        target: MappingElement,
+        options: List<MappingAnnotation.Option>,
+        message: () -> String
+    ) {
         if (source.any { it.type.isMarkedNullable } && !target.type.isMarkedNullable) {
+            if (mapper.context.typeResolver.isBoolean(target.type)
+                && options.contains(MappingAnnotation.Option.NullableBooleanToFalse)
+            ) {
+                return
+            }
+            if (mapper.context.typeResolver.isString(target.type)
+                && options.contains(MappingAnnotation.Option.NullableStringToEmpty)
+            ) {
+                return
+            }
             mapper.context.logger.error(message(), declaration)
         }
     }

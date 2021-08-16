@@ -40,7 +40,8 @@ class MappingTest {
             sourceNullable = "sourceNullable",
             explicitStatus = SampleDto.Status.SECOND_SAMPLE,
             amount = SampleDto.Amount("EUR", 100.123.toBigDecimal()),
-            someDate = "2021-02-12"
+            someDate = "2021-02-12",
+            nullableBoolean = null
         )
 
         val expected = SampleModel(
@@ -56,7 +57,8 @@ class MappingTest {
             nonExistentElement = 1231,
             explicitStatus = SampleModel.Status.SecondSample,
             amount = SampleModel.Money(SampleModel.Currency.EUR, 100.123.toBigDecimal()),
-            someDate = LocalDate.parse(dto.someDate)
+            someDate = LocalDate.parse(dto.someDate),
+            nullableBoolean = false
         )
 
         val result = MyMappers.getMapper<SampleMapper>().map(dto, addedId)

@@ -16,6 +16,7 @@
 package com.github.b3er.kmapper.processor.generators
 
 import com.github.b3er.kmapper.Mapping.NullabilityCheckStrategy
+import com.github.b3er.kmapper.Mapping.Option
 import com.github.b3er.kmapper.MappingException
 import com.github.b3er.kmapper.processor.annotations.MappingAnnotation
 import com.github.b3er.kmapper.processor.elements.MappingElement
@@ -79,15 +80,18 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
             "Source for target.${target.name} not found in ${toFullString()}"
         }
 
-
         val source = sourcePath.asSequence().distinct()
         val sourceCount = source.count()
         val property = sourcePath.last()
         val nullabilityCheckStrategy = getNullabilityStrategy(target)
+        val options = findOverride(property)?.options ?: emptyList()
+
+        val nullableToNonNullable = !target.type.isMarkedNullable && property.type.isMarkedNullable
 
         val sourcePathStr = source.joinToString(".") { it.name }
+
         if (nullabilityCheckStrategy == NullabilityCheckStrategy.Source) {
-            ensureNullabilityComplies(source.drop(1), target) {
+            ensureNullabilityComplies(source.drop(1), target, options) {
                 "Cannot assign nullable source $sourcePathStr" +
                     " to target ${target.name}"
             }
@@ -147,11 +151,18 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
                 add(" }")
             }
         }
-        if (nullabilityCheckStrategy == NullabilityCheckStrategy.Runtime && !target.type.isMarkedNullable && property.type.isMarkedNullable) {
-            add(
-                " ?: throw %T(%S)", MappingException::class, "Cannot assign nullable source '$sourcePathStr'" +
-                    " to target '${target.name}'"
-            )
+
+        if (nullableToNonNullable) {
+            if (mapper.context.typeResolver.isBoolean(target.type) && options.contains(Option.NullableBooleanToFalse)) {
+                add(" == true")
+            } else if (mapper.context.typeResolver.isString(target.type) && options.contains(Option.NullableStringToEmpty)) {
+                add(" ?: \"\"")
+            } else if (nullabilityCheckStrategy == NullabilityCheckStrategy.Runtime) {
+                add(
+                    " ?: throw %T(%S)", MappingException::class, "Cannot assign nullable source '$sourcePathStr'" +
+                        " to target '${target.name}'"
+                )
+            }
         }
         add(",\n»")
     }
@@ -163,6 +174,7 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
             }
             ?: NullabilityCheckStrategy.Source
     }
+
 
     private fun findOverride(property: MappingElement): MappingAnnotation? {
         return overrides

@@ -23,6 +23,7 @@ class TypesResolver(context: MappingContext) {
     private val collectionType by lazy { context.resolver.getClassDeclarationByName<Collection<*>>() }
     private val unitType by lazy { context.resolver.getClassDeclarationByName<Unit>() }
     private val stringType by lazy { context.resolver.getClassDeclarationByName<String>() }
+    private val booleanType by lazy { context.resolver.getClassDeclarationByName<Boolean>() }
 
     fun isIterable(type: KSType): Boolean {
         return iterableType.asStarProjectedType().isAssignableFrom(type.makeNotNullable())
@@ -42,5 +43,9 @@ class TypesResolver(context: MappingContext) {
 
     fun isString(source: KSType): Boolean {
         return stringType.asType().isAssignableFrom(source.makeNotNullable())
+    }
+
+    fun isBoolean(source: KSType): Boolean {
+        return booleanType.asType().isAssignableFrom(source.makeNotNullable())
     }
 }

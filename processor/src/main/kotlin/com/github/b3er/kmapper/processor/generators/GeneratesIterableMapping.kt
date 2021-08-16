@@ -31,7 +31,7 @@ interface GeneratesIterableMapping : Mapping, MappingGenerator {
     val targetArgument: MappingElement
     val source: MappingElement
     override fun FunSpec.Builder.writeMapping() {
-        ensureNullabilityComplies(sourceArgument, targetArgument) {
+        ensureNullabilityComplies(sourceArgument, targetArgument, emptyList()) {
             "Cannot assign nullable source ${source.name}" +
                 " to target ${target.name}"
         }
