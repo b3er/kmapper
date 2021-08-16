@@ -23,7 +23,8 @@ data class SampleDto(
     val nestedOptional: NestedDto?,
     val nullableSamples: List<NestedDto>?,
     val sourceNullable: String?,
-    val status: Status,
+    val status: String,
+    val explicitStatus: Status,
 ) {
     enum class Status {
         ONE_SAMPLE, SECOND_SAMPLE, THIRD_SAMPLE

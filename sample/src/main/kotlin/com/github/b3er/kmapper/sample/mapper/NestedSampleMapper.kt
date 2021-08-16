@@ -23,11 +23,20 @@ import com.github.b3er.kmapper.sample.model.SampleModel
 
 @Mapper(injectionType = Mapper.InjectionType.None)
 abstract class NestedSampleMapper {
-    abstract fun map(dto: SampleDto.NestedDto): SampleModel.NestedModel
-
+    //    abstract fun map(dto: SampleDto.NestedDto): SampleModel.NestedModel
+//
     @EnumMappings(
         EnumMapping(sourceName = EnumMapping.Naming.UpperUnderscore, targetName = EnumMapping.Naming.UpperCamel),
         EnumMapping(source = "THIRD_SAMPLE", target = "Unknown")
     )
     abstract fun map(status: SampleDto.Status): SampleModel.Status
+
+    @EnumMappings(
+        EnumMapping(
+            target = "Unknown",
+            sourceName = EnumMapping.Naming.UpperUnderscore,
+            targetName = EnumMapping.Naming.UpperCamel
+        ),
+    )
+    abstract fun map(status: String): SampleModel.Status
 }

@@ -59,6 +59,14 @@ abstract class BaseMapper(override val declaration: KSClassDeclaration, override
         createIfNeeded: Boolean
     ): Mapping? {
         return allMappings().find { mapping ->
+//            logger.error(
+//                "$source -> $target: ${mapping.toFullString()}: ${target.isAssignableFrom(mapping.target)}, ${
+//                    mapping.isSourceCompatibleWith(
+//                        source,
+//                        parent.sources
+//                    )
+//                } ${mapping::class}"
+//            )
             target.isAssignableFrom(mapping.target) && mapping.isSourceCompatibleWith(source, parent.sources)
         } ?: includes.mapNotNull { (include, _) -> include.findMapping(target, source, parent, false) }
             .firstOrNull { it !is GeneratedMapping }

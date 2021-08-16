@@ -17,10 +17,9 @@ package com.github.b3er.kmapper.processor.generators
 
 import com.github.b3er.kmapper.EnumMapping
 import com.github.b3er.kmapper.processor.annotations.EnumMappingAnnotation
+import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.mappings.Mapping
-import com.github.b3er.kmapper.processor.utils.check
-import com.github.b3er.kmapper.processor.utils.enumEntries
-import com.github.b3er.kmapper.processor.utils.toClassName
+import com.github.b3er.kmapper.processor.utils.*
 import com.google.common.base.CaseFormat
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -32,25 +31,48 @@ interface GeneratesEnumMapping : Mapping, MappingGenerator {
     val logger: KSPLogger
 
     override fun FunSpec.Builder.writeMapping() {
-        val source = sources.firstOrNull()?.type?.declaration as? KSClassDeclaration
-
-        logger.check(source != null, mapper.declaration) {
+        val source = sources.first()
+        val sourceDeclaration = sources.firstOrNull()?.type?.declaration as? KSClassDeclaration
+        logger.check(sourceDeclaration != null, mapper.declaration) {
             "No sources found for ${toFullString()}"
         }
-
         val targetEnums = target.declaration.enumEntries()
-        val sourceEnums = source.enumEntries()
-
         CodeBlock.builder().apply {
             writeNullPreconditions()
             beginControlFlow("return when (%N) {", sources.first().name)
-            sourceEnums.forEach {
-                indent().indent()
-                writeEntryMapping(it, source, targetEnums)
-                unindent().unindent()
+            if (sourceDeclaration.isEnumClass()) {
+                val sourceEnums = sourceDeclaration.enumEntries()
+                writeNullPreconditions()
+                sourceEnums.forEach {
+                    indent().indent()
+                    writeEntryMapping(it, sourceDeclaration, targetEnums)
+                    unindent().unindent()
+                }
+            } else if (mapper.context.typeResolver.isString(sourceDeclaration.asType())) {
+                writeStringToEnumMappings(source, targetEnums)
             }
             endControlFlow()
         }.build().also { addCode(it) }
+    }
+
+    fun CodeBlock.Builder.writeStringToEnumMappings(source: MappingElement, targetEnums: Set<KSClassDeclaration>) {
+        val defaultOverride = overrides.find { it.source.isEmpty() }
+        logger.check(defaultOverride != null) {
+            "Default mapping source with empty string should be specified for String -> Enum mapping: ${toFullString()}"
+        }
+        targetEnums.forEach { targetEnum ->
+            val targetEnumName = targetEnum.simpleName.getShortName()
+            val targetOverride = overrides.find { it.source == targetEnumName }
+            indent().indent()
+            val targetName = targetOverride?.target?.takeIf { it.isNotEmpty() } ?: targetEnumName
+            val sourceName = targetOverride?.source?.takeIf { it.isNotEmpty() }
+                ?: mapEnumName(targetEnumName, targetOverride ?: defaultOverride, reverse = true)
+            addStatement("%S -> %T.%L", sourceName, target.type.toClassName(), targetName)
+            unindent().unindent()
+        }
+        indent().indent()
+        addStatement("else -> %T.%L", target.type.toClassName(), defaultOverride.target)
+        unindent().unindent()
     }
 
     fun CodeBlock.Builder.writeEntryMapping(
@@ -86,11 +108,31 @@ interface GeneratesEnumMapping : Mapping, MappingGenerator {
         addStatement("%T -> %T", sourceEnum.toClassName(), targetEnum.toClassName())
     }
 
-    fun findDecorator(
+
+    private fun mapEnumName(
+        value: String,
+        mapping: EnumMappingAnnotation?,
+        reverse: Boolean,
+    ): String {
+        if (mapping != null) {
+            val targetName = mapping.targetName
+            val sourceName = mapping.sourceName
+            if (targetName != null && sourceName != null) {
+                return if (reverse) {
+                    findDecorator(targetName, sourceName, value)
+                } else {
+                    findDecorator(sourceName, targetName, value)
+                }
+            }
+        }
+        return value
+    }
+
+    private fun findDecorator(
         sourceName: EnumMapping.Naming,
         targetName: EnumMapping.Naming,
         value: String
-    ): String? {
+    ): String {
         val sourceFormat = sourceName.format()
         val targetFormat = targetName.format()
         logger.check(sourceFormat != null && targetFormat != null, mapper.declaration) {

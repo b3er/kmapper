@@ -15,6 +15,8 @@
 
 package com.github.b3er.kmapper.sample.model
 
+import java.math.BigDecimal
+
 data class SampleModel(
     val id: Long,
     val addedId: Long,
@@ -26,6 +28,7 @@ data class SampleModel(
     val sourceNullable: String,
     val nonExistentElement: Long = 1231,
     val status: Status,
+    val explicitStatus: Status
 ) {
     enum class Status {
         OneSample, SecondSample, Unknown
@@ -34,3 +37,4 @@ data class SampleModel(
     data class NestedModel(val nestedId: Long, val nestedName: String)
 }
 
+data class Money(val currency: String, val amount: BigDecimal)
