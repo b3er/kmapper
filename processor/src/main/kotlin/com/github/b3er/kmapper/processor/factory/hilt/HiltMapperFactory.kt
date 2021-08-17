@@ -45,13 +45,16 @@ class HiltMapperFactory(
     }
 
     private fun TypeSpec.Builder.writeFactory() {
-        annotation.mappers?.map { context.findMapper(it) }?.forEach { mapper ->
-            if (mapper.annotation.injectionType == MapperAnnotation.InjectionType.Jsr330) {
-                writeJsrProvide(mapper)
-            } else {
-                writeConstructorProvide(mapper)
+        annotation.mappers?.asSequence()?.map { context.findMapper(it) }
+            ?.flatMap { it.includes.asSequence().map { (mapper, _) -> context.findMapper(mapper.declaration) } + it }
+            ?.distinctBy { it.declaration }
+            ?.forEach { mapper ->
+                if (mapper.annotation.injectionType == MapperAnnotation.InjectionType.Jsr330) {
+                    writeJsrProvide(mapper)
+                } else {
+                    writeConstructorProvide(mapper)
+                }
             }
-        }
     }
 
     //TODO: Possible function name clash, fix?

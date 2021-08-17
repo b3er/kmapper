@@ -99,13 +99,9 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
         }
 
         val sourcePathBlock = CodeBlock.of(
-            source.take(sourceCount - 1).joinToString(separator = "", postfix = "%N") {
-                if (it.type.isMarkedNullable) {
-                    "%N?."
-                } else {
-                    "%N."
-                }
-            }, *(source.map { it.name }.toList().toTypedArray())
+            source.take(sourceCount - 1)
+                .joinToString(separator = "", postfix = "%N") { "%N." }, *(source.map { it.name }
+                .toList().toTypedArray())
         )
         if (target.isAssignableFrom(property, ignoreNullability = true)) {
             add("«")
