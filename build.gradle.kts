@@ -14,13 +14,13 @@
  */
 
 plugins {
-    kotlin("jvm") apply false
+    alias(libs.plugins.kotlin.jvm)
     `maven-publish`
 }
 
 subprojects {
     group = "com.github.b3er.kmapper"
-    version = "0.3.8"
+    version = "0.3.9"
     plugins.withId("maven-publish") {
         publishing {
             publications {

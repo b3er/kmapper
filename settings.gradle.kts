@@ -28,12 +28,7 @@ dependencyResolutionManagement {
         maven("https://jitpack.io")
     }
 }
-
 pluginManagement {
-    plugins {
-        id("com.google.devtools.ksp") version "1.5.21-1.0.0-beta06"
-        kotlin("jvm") version "1.5.21"
-    }
     repositories {
         gradlePluginPortal()
         google()

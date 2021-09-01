@@ -15,7 +15,7 @@
 
 plugins {
     kotlin("jvm")
-    id("com.google.devtools.ksp")
+    alias(libs.plugins.ksp)
 }
 
 val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
