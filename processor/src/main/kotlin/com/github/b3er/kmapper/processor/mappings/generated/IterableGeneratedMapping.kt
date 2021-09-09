@@ -20,13 +20,15 @@ import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.elements.toMappingElement
 import com.github.b3er.kmapper.processor.generators.GeneratesIterableMapping
 import com.github.b3er.kmapper.processor.mappers.GeneratedMapper
+import com.github.b3er.kmapper.processor.mappings.Mapping
 
 class IterableGeneratedMapping(
+    parent: Mapping,
     override val name: String,
     override val mapper: GeneratedMapper,
     override val target: MappingElement,
     override val sources: List<MappingElement>
-) : GeneratedMapping(), GeneratesIterableMapping {
+) : GeneratedMapping(parent), GeneratesIterableMapping {
     override val source: MappingElement = sources.first()
     override val overrides: List<MappingAnnotation> = emptyList()
     override val sourceArgument by lazy {

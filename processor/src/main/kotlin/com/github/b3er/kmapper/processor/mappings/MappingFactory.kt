@@ -27,7 +27,12 @@ import com.github.b3er.kmapper.processor.mappings.declared.SimpleDeclaredMapping
 import com.github.b3er.kmapper.processor.mappings.generated.EnumGeneratedMapping
 import com.github.b3er.kmapper.processor.mappings.generated.IterableGeneratedMapping
 import com.github.b3er.kmapper.processor.mappings.generated.SimpleGeneratedMapping
-import com.github.b3er.kmapper.processor.utils.*
+import com.github.b3er.kmapper.processor.utils.MappingContext
+import com.github.b3er.kmapper.processor.utils.check
+import com.github.b3er.kmapper.processor.utils.isData
+import com.github.b3er.kmapper.processor.utils.isEnumClass
+import com.github.b3er.kmapper.processor.utils.isKotlin
+import com.github.b3er.kmapper.processor.utils.toClassName
 import com.google.devtools.ksp.symbol.KSDeclaration
 import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 
@@ -68,6 +73,7 @@ object MappingFactory {
 
     fun createGeneratedMapping(
         mapper: GeneratedMapper,
+        parent: Mapping,
         target: MappingElement,
         source: MappingElement
     ): Mapping {
@@ -79,6 +85,7 @@ object MappingFactory {
                 }
                 val src = source.type.arguments.first().type!!.resolve().toClassName()
                 IterableGeneratedMapping(
+                    parent,
                     generateName(mapper, "map${src.simpleName}${source.type.toClassName().simpleName}"),
                     mapper,
                     target,
@@ -87,6 +94,7 @@ object MappingFactory {
             }
             target.declaration.isEnumClass() -> {
                 EnumGeneratedMapping(
+                    parent,
                     generateName(mapper, "map${source.type.toClassName().simpleName}"),
                     mapper,
                     target,
@@ -100,6 +108,7 @@ object MappingFactory {
                     target.type.toMappingElement(target.node, enumeration = DeclarationValuesEnumeration)
                 }
                 SimpleGeneratedMapping(
+                    parent,
                     generateName(mapper, "map${source.type.toClassName().simpleName}"),
                     mapper,
                     targetElement,

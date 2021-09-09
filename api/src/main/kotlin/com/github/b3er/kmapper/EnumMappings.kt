@@ -15,6 +15,9 @@
 
 package com.github.b3er.kmapper
 
+
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-annotation class EnumMappings(vararg val mapping: EnumMapping)
+annotation class EnumMappings(
+    vararg val mapping: EnumMapping
+)

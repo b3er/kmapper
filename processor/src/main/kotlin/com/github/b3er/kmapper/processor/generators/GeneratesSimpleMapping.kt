@@ -157,8 +157,7 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
             } else if (nullabilityCheckStrategy == NullabilityCheckStrategy.Runtime) {
                 add("!!")
             } else if (nullabilityCheckStrategy == NullabilityCheckStrategy.RuntimeException) {
-                add(
-                    " ?: throw %T(%S)", MappingException::class, "Cannot assign nullable source '$sourcePathStr'" +
+                add(" ?: throw %T(%S)", MappingException::class, "Cannot assign nullable source '$sourcePathStr'" +
                         " to target '${target.name}'"
                 )
             }

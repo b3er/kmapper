@@ -15,6 +15,7 @@
 
 package com.github.b3er.kmapper.processor.annotations
 
+import com.github.b3er.kmapper.CheckSeverity
 import com.github.b3er.kmapper.EnumMapping
 import com.github.b3er.kmapper.EnumMappings
 import com.github.b3er.kmapper.processor.utils.get
@@ -38,6 +39,13 @@ data class EnumMappingAnnotation(override val annotation: KSAnnotation) : Annota
             ?.simpleName
             ?.getShortName()
             ?.let { EnumMapping.Naming.valueOf(it) }
+    }
+    val targetComplianceCheck: CheckSeverity? by lazy {
+        ((annotation["targetComplianceCheck"]?.value) as? KSType)
+            ?.declaration
+            ?.simpleName
+            ?.getShortName()
+            ?.let { CheckSeverity.valueOf(it) }
     }
 
     override val matchedAnnotationTypes = listOf(EnumMapping::class.asClassName(), EnumMappings::class.asClassName())

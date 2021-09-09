@@ -15,12 +15,18 @@
 
 package com.github.b3er.kmapper.sample.mapper
 
+import com.github.b3er.kmapper.CheckSeverity.Error
+import com.github.b3er.kmapper.CheckSeverity.None
+import com.github.b3er.kmapper.CheckSeverity.Notice
+import com.github.b3er.kmapper.CheckSeverity.Warning
+import com.github.b3er.kmapper.EnumMapping
+import com.github.b3er.kmapper.EnumMappings
 import com.github.b3er.kmapper.Mapper
 import com.github.b3er.kmapper.Mapping
 import com.github.b3er.kmapper.sample.data.SampleDto
 import com.github.b3er.kmapper.sample.model.SampleModel
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 
 @Mapper(
@@ -29,6 +35,12 @@ import java.util.*
     nullabilityStrategy = Mapper.NullabilityCheckStrategy.Runtime
 )
 internal interface SampleMapper {
+    @EnumMappings(
+        EnumMapping(sourceName = EnumMapping.Naming.UpperUnderscore, targetName = EnumMapping.Naming.UpperCamel),
+        EnumMapping(source = "THIRD_SAMPLE", target = "Unknown")
+    )
+    abstract fun map(status: SampleDto.Status): SampleModel.Status
+
     @Mapping(
         options = [Mapping.Option.NullableBooleanToFalse, Mapping.Option.NullableStringToEmpty],
         nullabilityStrategy = Mapping.NullabilityCheckStrategy.Runtime
@@ -39,6 +51,8 @@ internal interface SampleMapper {
 
     fun mapUUIDToString(value: UUID): String = value.toString()
 
+    @EnumMapping(target = "Three", targetComplianceCheck = Warning)
+    fun map(dto: DtoEnum): ModelEnum
 //
 //    fun mapList(dto: List<SampleDto>, addedId: Long): List<SampleDto>
 //    fun mapIterable(dto: Iterable<SampleDto>, addedId: Long): List<SampleDto>
@@ -47,4 +61,12 @@ internal interface SampleMapper {
 //    fun mapListToModel(dto: List<SampleDto>, addedId: Long): List<SampleModel>
 //    fun mapIterableToModel(dto: Iterable<SampleDto>, addedId: Long): List<SampleModel>
 //    fun mapCollectionToModel(dto: Collection<SampleDto>, addedId: Long): List<SampleModel>
+}
+
+enum class DtoEnum {
+    One, Two
+}
+
+enum class ModelEnum {
+    One, Two, Three
 }

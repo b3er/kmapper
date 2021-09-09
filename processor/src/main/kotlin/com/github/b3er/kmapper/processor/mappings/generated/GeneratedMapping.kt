@@ -21,7 +21,7 @@ import com.github.b3er.kmapper.processor.generators.MappingGenerator
 import com.github.b3er.kmapper.processor.mappings.Mapping
 import com.squareup.kotlinpoet.FunSpec
 
-abstract class GeneratedMapping : Mapping, MappingGenerator {
+abstract class GeneratedMapping(val parent: Mapping) : Mapping, MappingGenerator {
     protected abstract val overrides: List<AnnotationHolder>
     abstract override val sources: List<MappingElement>
     override var isImplemented = false
@@ -29,7 +29,7 @@ abstract class GeneratedMapping : Mapping, MappingGenerator {
     val logger by lazy(LazyThreadSafetyMode.NONE) { context.logger }
 
     override val declaration
-        get() = mapper.declaration
+        get() = parent.declaration
 
     override fun write() = FunSpec.builder(name).apply {
         isImplemented = true

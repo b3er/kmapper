@@ -19,12 +19,14 @@ import com.github.b3er.kmapper.processor.annotations.MappingAnnotation
 import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.generators.GeneratesSimpleMapping
 import com.github.b3er.kmapper.processor.mappers.GeneratedMapper
+import com.github.b3er.kmapper.processor.mappings.Mapping
 
 class SimpleGeneratedMapping(
+    parent: Mapping,
     override val name: String,
     override val mapper: GeneratedMapper,
     override val target: MappingElement,
     override val sources: List<MappingElement>
-) : GeneratedMapping(), GeneratesSimpleMapping {
+) : GeneratedMapping(parent), GeneratesSimpleMapping {
     override val overrides: List<MappingAnnotation> = emptyList()
 }

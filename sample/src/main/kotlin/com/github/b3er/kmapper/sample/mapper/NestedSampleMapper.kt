@@ -24,8 +24,6 @@ import java.math.BigDecimal
 
 @Mapper(injectionType = Mapper.InjectionType.None)
 abstract class NestedSampleMapper {
-    //    abstract fun map(dto: SampleDto.NestedDto): SampleModel.NestedModel
-//
     @EnumMappings(
         EnumMapping(sourceName = EnumMapping.Naming.UpperUnderscore, targetName = EnumMapping.Naming.UpperCamel),
         EnumMapping(source = "THIRD_SAMPLE", target = "Unknown")

@@ -24,7 +24,11 @@ annotation class EnumMapping(
     val source: String = "",
     val target: String = "",
     val sourceName: Naming = Naming.None,
-    val targetName: Naming = Naming.None
+    val targetName: Naming = Naming.None,
+    /**
+     * Check if all target enum values are consumed in mapping, for all values, leave source and target empty
+     */
+    val targetComplianceCheck: CheckSeverity = CheckSeverity.Error,
 ) {
     enum class Naming {
         None,

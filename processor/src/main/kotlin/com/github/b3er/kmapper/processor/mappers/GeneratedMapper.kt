@@ -33,7 +33,7 @@ class GeneratedMapper(declaration: KSClassDeclaration, context: MappingContext) 
         source: MappingElement,
         parent: Mapping
     ): Mapping {
-        return MappingFactory.createGeneratedMapping(this, target, source).also {
+        return MappingFactory.createGeneratedMapping(this, parent, target, source).also {
             createdMappings.add(it)
         }
     }

@@ -19,12 +19,14 @@ import com.github.b3er.kmapper.processor.annotations.EnumMappingAnnotation
 import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.generators.GeneratesEnumMapping
 import com.github.b3er.kmapper.processor.mappers.GeneratedMapper
+import com.github.b3er.kmapper.processor.mappings.Mapping
 
 class EnumGeneratedMapping(
+    parent: Mapping,
     override val name: String,
     override val mapper: GeneratedMapper,
     override val target: MappingElement,
     override val sources: List<MappingElement>
-) : GeneratedMapping(), GeneratesEnumMapping {
+) : GeneratedMapping(parent), GeneratesEnumMapping {
     override val overrides: List<EnumMappingAnnotation> = emptyList()
 }
