@@ -84,7 +84,12 @@ class KMapperProcessor(
         if (mapper is GeneratedMapper) {
             logger.info("Writing mapper ${mapper.declaration}", mapper.declaration)
             generatedMappers.add(mapper)
-            mapper.write().writeTo(codeGenerator)
+            try {
+                mapper.write().writeTo(codeGenerator)
+            }catch (e: Throwable) {
+                logger.error("Failed to write mapper ${mapper.declaration}", mapper.declaration)
+                logger.exception(e)
+            }
         } else {
             generatedMappers.add(mapper)
         }
