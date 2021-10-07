@@ -30,7 +30,13 @@ class IterableGeneratedMapping(
     override val sources: List<MappingElement>
 ) : GeneratedMapping(parent), GeneratesIterableMapping {
     override val source: MappingElement = sources.first()
-    override val overrides: List<MappingAnnotation> = emptyList()
+    override val overrides: List<MappingAnnotation> by lazy {
+        parent.overrides.asSequence()
+            .filterIsInstance<MappingAnnotation>()
+            .filter { it.inherit }
+            .toList()
+    }
+
     override val sourceArgument by lazy {
         sources.first().type.arguments.first().type!!.toMappingElement(name = "item")
     }

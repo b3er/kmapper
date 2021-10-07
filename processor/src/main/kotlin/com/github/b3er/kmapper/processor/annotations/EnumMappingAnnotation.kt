@@ -18,6 +18,7 @@ package com.github.b3er.kmapper.processor.annotations
 import com.github.b3er.kmapper.CheckSeverity
 import com.github.b3er.kmapper.EnumMapping
 import com.github.b3er.kmapper.EnumMappings
+import com.github.b3er.kmapper.EnumNaming
 import com.github.b3er.kmapper.processor.utils.get
 import com.google.devtools.ksp.symbol.KSAnnotation
 import com.google.devtools.ksp.symbol.KSType
@@ -26,19 +27,19 @@ import com.squareup.kotlinpoet.asClassName
 data class EnumMappingAnnotation(override val annotation: KSAnnotation) : AnnotationHolder {
     val source: String by lazy { annotation["source"]!!.value as String }
     val target: String by lazy { annotation["target"]!!.value as String }
-    val sourceName: EnumMapping.Naming? by lazy {
+    val sourceName: EnumNaming? by lazy {
         ((annotation["sourceName"]?.value) as? KSType)
             ?.declaration
             ?.simpleName
             ?.getShortName()
-            ?.let { EnumMapping.Naming.valueOf(it) }
+            ?.let { EnumNaming.valueOf(it) }
     }
-    val targetName: EnumMapping.Naming? by lazy {
+    val targetName: EnumNaming? by lazy {
         ((annotation["targetName"]?.value) as? KSType)
             ?.declaration
             ?.simpleName
             ?.getShortName()
-            ?.let { EnumMapping.Naming.valueOf(it) }
+            ?.let { EnumNaming.valueOf(it) }
     }
     val targetComplianceCheck: CheckSeverity? by lazy {
         ((annotation["targetComplianceCheck"]?.value) as? KSType)

@@ -17,12 +17,14 @@ package com.github.b3er.kmapper.sample
 
 import com.github.b3er.kmapper.getMapper
 import com.github.b3er.kmapper.sample.data.SampleDto
+import com.github.b3er.kmapper.sample.data.SampleDto.Type
 import com.github.b3er.kmapper.sample.mapper.MyMappers
 import com.github.b3er.kmapper.sample.mapper.SampleMapper
 import com.github.b3er.kmapper.sample.model.SampleModel
+import com.github.b3er.kmapper.sample.model.SampleModel.Type.TypeTwo
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 import kotlin.test.assertEquals
 
 class MappingTest {
@@ -39,10 +41,12 @@ class MappingTest {
             status = "SECOND_SAMPLE",
             sourceNullable = "sourceNullable",
             explicitStatus = SampleDto.Status.SECOND_SAMPLE,
+            type = Type.TYPE_TWO,
             amount = SampleDto.Amount("EUR", 100.123.toBigDecimal()),
             someDate = "2021-02-12",
             nullableBoolean = null,
-            uuid = UUID.randomUUID()
+            uuid = UUID.randomUUID(),
+            nullableLong = 1L
         )
 
         val expected = SampleModel(
@@ -56,11 +60,13 @@ class MappingTest {
             status = SampleModel.Status.SecondSample,
             sourceNullable = dto.sourceNullable!!,
             nonExistentElement = 1231,
+            type = TypeTwo,
             explicitStatus = SampleModel.Status.SecondSample,
             amount = SampleModel.Money(SampleModel.Currency.EUR, 100.123.toBigDecimal()),
             someDate = LocalDate.parse(dto.someDate),
             nullableBoolean = false,
-            uuid = dto.uuid.toString()
+            uuid = dto.uuid.toString(),
+            nullableLong = 1L
         )
 
         val result = MyMappers.getMapper<SampleMapper>().map(dto, addedId)

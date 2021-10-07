@@ -25,7 +25,7 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 class IterableDeclaredMapping(
     override val declaration: KSFunctionDeclaration,
     override val target: MappingElement,
-    override val mapper: Mapper
+    override val mapper: Mapper,
 ) : DeclaredMapping(), GeneratesIterableMapping {
     // Annotation not supported for iterable
     override val overrides: List<MappingAnnotation> = emptyList()

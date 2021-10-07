@@ -20,6 +20,7 @@ import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.generators.GeneratesEnumMapping
 import com.github.b3er.kmapper.processor.mappers.GeneratedMapper
 import com.github.b3er.kmapper.processor.mappings.Mapping
+import com.github.b3er.kmapper.processor.mappings.declared.DeclaredMapping
 
 class EnumGeneratedMapping(
     parent: Mapping,

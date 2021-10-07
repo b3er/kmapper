@@ -15,8 +15,9 @@
 
 package com.github.b3er.kmapper.processor.generators
 
+import com.github.b3er.kmapper.CheckSeverity
 import com.github.b3er.kmapper.CheckSeverity.Error
-import com.github.b3er.kmapper.EnumMapping
+import com.github.b3er.kmapper.EnumNaming
 import com.github.b3er.kmapper.processor.annotations.EnumMappingAnnotation
 import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.mappings.Mapping
@@ -32,7 +33,7 @@ import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
 
 interface GeneratesEnumMapping : Mapping, MappingGenerator {
-    val overrides: List<EnumMappingAnnotation>
+    override val overrides: List<EnumMappingAnnotation>
     val logger: KSPLogger
 
     override fun FunSpec.Builder.writeMapping() {
@@ -60,8 +61,12 @@ interface GeneratesEnumMapping : Mapping, MappingGenerator {
             endControlFlow()
         }.build().also { addCode(it) }
         targetEnumConsumer.forEach { notConsumed ->
-            val severity = (overrides.find { it.target == notConsumed.simpleName.getShortName() }
-                ?: overrides.find { it.target == "" })?.targetComplianceCheck ?: Error
+            val severity = overrides.find {
+                it.target == notConsumed.simpleName.getShortName()
+            }?.targetComplianceCheck?.takeIf { it != CheckSeverity.Default }
+                ?: overrides.find { it.target == "" }?.targetComplianceCheck?.takeIf { it != CheckSeverity.Default }
+                ?: mapper.annotation.enumComplianceCheck
+                ?: Error
             logger.check(severity, declaration) {
                 "${target.declaration}.${notConsumed.simpleName.getShortName()} not mapped from ${source.declaration}"
             }
@@ -83,7 +88,7 @@ interface GeneratesEnumMapping : Mapping, MappingGenerator {
             indent().indent()
             val targetName = targetOverride?.target?.takeIf { it.isNotEmpty() } ?: targetEnumName
             val sourceName = targetOverride?.source?.takeIf { it.isNotEmpty() }
-                ?: mapEnumName(targetEnumName, targetOverride ?: defaultOverride, reverse = true)
+                ?: mapEnumName(targetEnumName, targetOverride, defaultOverride, reverse = true)
             addStatement("%S -> %T.%L", sourceName, target.type.toClassName(), targetName)
             unindent().unindent()
             targetEnumConsumer.removeIf { it.simpleName.getShortName() == targetName }
@@ -100,6 +105,7 @@ interface GeneratesEnumMapping : Mapping, MappingGenerator {
         targetEnumConsumer: MutableSet<KSClassDeclaration>
     ) {
         val sourceName = sourceEnum.simpleName.getShortName()
+        val defaultOverride = overrides.find { it.source == "" && it.target == "" }
         val targetOverride = overrides.find { it.source == sourceName } ?: overrides.find { it.source == "" }
 
         if (targetOverride?.source?.isNotEmpty() == true && targetOverride.target.isNotEmpty()) {
@@ -113,14 +119,14 @@ interface GeneratesEnumMapping : Mapping, MappingGenerator {
             targetEnumConsumer.removeIf { it.simpleName.getShortName() == targetOverride.target }
             return
         }
-
-        val targetEnum = if (targetOverride?.targetName != null && targetOverride.sourceName != null) {
-            val decoratedName = findDecorator(targetOverride.sourceName!!, targetOverride.targetName!!, sourceName)
+        val sourceNaming = findSourceEnumNaming(targetOverride, defaultOverride)
+        val targetNaming = findTargetEnumNaming(targetOverride, defaultOverride)
+        val targetEnum = if (sourceNaming != null && targetNaming != null) {
+            val decoratedName = findDecorator(sourceNaming, targetNaming, sourceName)
             targetEnums.find { it.simpleName.getShortName() == decoratedName }
         } else {
             targetEnums.find { it.simpleName.getShortName() == sourceEnum.simpleName.getShortName() }
         }
-
         logger.check(targetEnum != null, declaration) {
             "Can't find target enum value for ${sourceClass.simpleName.getShortName()}.${sourceName}"
         }
@@ -129,29 +135,47 @@ interface GeneratesEnumMapping : Mapping, MappingGenerator {
         targetEnumConsumer.remove(targetEnum)
     }
 
+    private fun findTargetEnumNaming(
+        targetAnnotation: EnumMappingAnnotation?,
+        defaultOverride: EnumMappingAnnotation?
+    ): EnumNaming? {
+        return (targetAnnotation?.targetName?.takeIf { it != EnumNaming.Default }
+            ?: defaultOverride?.targetName?.takeIf { it != EnumNaming.Default }
+            ?: mapper.annotation.enumTargetNaming)?.takeIf { it != EnumNaming.None && it != EnumNaming.Default }
+
+    }
+
+    private fun findSourceEnumNaming(
+        targetAnnotation: EnumMappingAnnotation?,
+        defaultOverride: EnumMappingAnnotation?
+    ): EnumNaming? {
+        return (targetAnnotation?.sourceName?.takeIf { it != EnumNaming.Default }
+            ?: defaultOverride?.sourceName?.takeIf { it != EnumNaming.Default }
+            ?: mapper.annotation.enumSourceNaming)?.takeIf { it != EnumNaming.None && it != EnumNaming.Default }
+
+    }
 
     private fun mapEnumName(
         value: String,
-        mapping: EnumMappingAnnotation?,
+        targetAnnotation: EnumMappingAnnotation?,
+        defaultOverride: EnumMappingAnnotation,
         reverse: Boolean,
     ): String {
-        if (mapping != null) {
-            val targetName = mapping.targetName
-            val sourceName = mapping.sourceName
-            if (targetName != null && sourceName != null) {
-                return if (reverse) {
-                    findDecorator(targetName, sourceName, value)
-                } else {
-                    findDecorator(sourceName, targetName, value)
-                }
+        val targetName = findTargetEnumNaming(targetAnnotation, defaultOverride)
+        val sourceName = findSourceEnumNaming(targetAnnotation, defaultOverride)
+        if (targetName != null && sourceName != null) {
+            return if (reverse) {
+                findDecorator(targetName, sourceName, value)
+            } else {
+                findDecorator(sourceName, targetName, value)
             }
         }
         return value
     }
 
     private fun findDecorator(
-        sourceName: EnumMapping.Naming,
-        targetName: EnumMapping.Naming,
+        sourceName: EnumNaming,
+        targetName: EnumNaming,
         value: String
     ): String {
         val sourceFormat = sourceName.format()
@@ -162,11 +186,11 @@ interface GeneratesEnumMapping : Mapping, MappingGenerator {
         return sourceFormat.to(targetFormat, value)
     }
 
-    fun EnumMapping.Naming.format(): CaseFormat? = when (this) {
-        EnumMapping.Naming.None -> null
-        EnumMapping.Naming.UpperUnderscore -> CaseFormat.UPPER_UNDERSCORE
-        EnumMapping.Naming.LowerUnderscore -> CaseFormat.LOWER_UNDERSCORE
-        EnumMapping.Naming.LowerCamel -> CaseFormat.LOWER_CAMEL
-        EnumMapping.Naming.UpperCamel -> CaseFormat.UPPER_CAMEL
+    fun EnumNaming.format(): CaseFormat? = when (this) {
+        EnumNaming.None, EnumNaming.Default -> null
+        EnumNaming.UpperUnderscore -> CaseFormat.UPPER_UNDERSCORE
+        EnumNaming.LowerUnderscore -> CaseFormat.LOWER_UNDERSCORE
+        EnumNaming.LowerCamel -> CaseFormat.LOWER_CAMEL
+        EnumNaming.UpperCamel -> CaseFormat.UPPER_CAMEL
     }
 }

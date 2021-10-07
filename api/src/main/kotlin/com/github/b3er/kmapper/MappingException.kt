@@ -15,4 +15,8 @@
 
 package com.github.b3er.kmapper
 
-class MappingException(override val message: String?) : RuntimeException()
+class MappingException(override val message: String?) : RuntimeException() {
+}
+
+fun assignNullableError(source: String, target: String): Nothing =
+    throw MappingException("Cannot assign nullable source '$source' to target '$target'")

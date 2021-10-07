@@ -29,7 +29,7 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 class EnumDeclaredMapping(
     override val declaration: KSFunctionDeclaration,
     override val target: MappingElement,
-    override val mapper: Mapper
+    override val mapper: Mapper,
 ) : DeclaredMapping(), GeneratesEnumMapping {
     override val overrides by lazy {
         declaration.getAnnotation<EnumMapping>()?.let(::EnumMappingAnnotation)?.let { listOf(it) }

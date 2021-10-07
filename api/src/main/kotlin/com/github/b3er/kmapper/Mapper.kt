@@ -36,7 +36,19 @@ annotation class Mapper(
     /**
      *  Default [NullabilityCheckStrategy] in this mapper
      */
-    val nullabilityStrategy: NullabilityCheckStrategy = NullabilityCheckStrategy.Source
+    val nullabilityStrategy: NullabilityCheckStrategy = NullabilityCheckStrategy.Source,
+    /**
+     * Default [CheckSeverity] for all enum mappers
+     */
+    val enumComplianceCheck: CheckSeverity = CheckSeverity.Error,
+    /**
+     * Default source [EnumNaming] for all enum mappers
+     */
+    val enumSourceNaming: EnumNaming = EnumNaming.None,
+    /**
+     * Default target [EnumNaming] for all enum mappers
+     */
+    val enumTargetNaming: EnumNaming = EnumNaming.None,
 ) {
     enum class InjectionType {
         None, Jsr330
@@ -62,7 +74,6 @@ annotation class Mapper(
          */
         RuntimeException
     }
-
 }
 
 

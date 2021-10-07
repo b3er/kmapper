@@ -27,16 +27,20 @@ data class SampleDto(
     val nullableSamples: List<NestedDto>?,
     val sourceNullable: String?,
     val status: String,
+    val type: Type,
     val explicitStatus: Status,
     val amount: Amount,
     val someDate: String,
     val nullableBoolean: Boolean?,
-    val uuid: UUID?
+    val uuid: UUID?,
+    val nullableLong: Long?
 ) {
     enum class Status {
         ONE_SAMPLE, SECOND_SAMPLE, THIRD_SAMPLE
     }
-
+    enum class Type {
+        TYPE_ONE, TYPE_TWO
+    }
     data class NestedDto(val nestedId: Long, val nestedName: String)
     data class Amount(val currency: String, val amount: BigDecimal)
 }

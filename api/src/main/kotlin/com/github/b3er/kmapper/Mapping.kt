@@ -35,6 +35,10 @@ annotation class Mapping(
      */
     val nullabilityStrategy: NullabilityCheckStrategy = NullabilityCheckStrategy.Default,
     /**
+     * Indicates that this annotation should be applied to nested generated (not declared) mappers
+     */
+    val inherit: Boolean = false,
+    /**
      * Options for mapping
      */
     vararg val options: Option

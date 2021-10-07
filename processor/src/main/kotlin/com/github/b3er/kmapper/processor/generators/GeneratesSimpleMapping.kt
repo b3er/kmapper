@@ -17,7 +17,6 @@ package com.github.b3er.kmapper.processor.generators
 
 import com.github.b3er.kmapper.Mapping.NullabilityCheckStrategy
 import com.github.b3er.kmapper.Mapping.Option
-import com.github.b3er.kmapper.MappingException
 import com.github.b3er.kmapper.processor.annotations.MappingAnnotation
 import com.github.b3er.kmapper.processor.annotations.isRuntime
 import com.github.b3er.kmapper.processor.elements.MappingElement
@@ -27,9 +26,10 @@ import com.github.b3er.kmapper.processor.utils.toClassName
 import com.google.devtools.ksp.processing.KSPLogger
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.MemberName
 
 interface GeneratesSimpleMapping : Mapping, MappingGenerator {
-    val overrides: List<MappingAnnotation>
+    override val overrides: List<MappingAnnotation>
     val logger: KSPLogger
 
     override fun FunSpec.Builder.writeMapping() {
@@ -157,9 +157,7 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
             } else if (nullabilityCheckStrategy == NullabilityCheckStrategy.Runtime) {
                 add("!!")
             } else if (nullabilityCheckStrategy == NullabilityCheckStrategy.RuntimeException) {
-                add(" ?: throw %T(%S)", MappingException::class, "Cannot assign nullable source '$sourcePathStr'" +
-                        " to target '${target.name}'"
-                )
+                add(" ?: %M(%S, %S)", NULLABLE_ERROR_FUNCTION, sourcePathStr, target.name)
             }
         }
         add(",\n»")
@@ -176,5 +174,10 @@ interface GeneratesSimpleMapping : Mapping, MappingGenerator {
     private fun findOverride(property: MappingElement): MappingAnnotation? {
         return overrides
             .find { property.matchesByName(it.target) } ?: overrides.find { it.target.isEmpty() }
+    }
+
+
+    companion object {
+        private  val NULLABLE_ERROR_FUNCTION = MemberName("com.github.b3er.kmapper","assignNullableError")
     }
 }

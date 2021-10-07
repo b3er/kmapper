@@ -15,6 +15,8 @@
 
 package com.github.b3er.kmapper.processor.annotations
 
+import com.github.b3er.kmapper.CheckSeverity
+import com.github.b3er.kmapper.EnumNaming
 import com.github.b3er.kmapper.Mapper
 import com.github.b3er.kmapper.processor.utils.get
 import com.google.devtools.ksp.symbol.KSAnnotation
@@ -52,6 +54,27 @@ class MapperAnnotation(override val annotation: KSAnnotation) : AnnotationHolder
             ?.simpleName
             ?.getShortName()
             ?.let { Mapper.NullabilityCheckStrategy.valueOf(it) }
+    }
+    val enumComplianceCheck: CheckSeverity? by lazy {
+        ((annotation["enumComplianceCheck"]?.value) as? KSType)
+            ?.declaration
+            ?.simpleName
+            ?.getShortName()
+            ?.let { CheckSeverity.valueOf(it) }
+    }
+    val enumSourceNaming: EnumNaming? by lazy {
+        ((annotation["enumSourceNaming"]?.value) as? KSType)
+            ?.declaration
+            ?.simpleName
+            ?.getShortName()
+            ?.let { EnumNaming.valueOf(it) }
+    }
+    val enumTargetNaming: EnumNaming? by lazy {
+        ((annotation["enumTargetNaming"]?.value) as? KSType)
+            ?.declaration
+            ?.simpleName
+            ?.getShortName()
+            ?.let { EnumNaming.valueOf(it) }
     }
     override val matchedAnnotationTypes = listOf(Mapper::class.asClassName())
 }

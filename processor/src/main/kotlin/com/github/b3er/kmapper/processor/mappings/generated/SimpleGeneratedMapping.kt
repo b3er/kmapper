@@ -20,6 +20,7 @@ import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.generators.GeneratesSimpleMapping
 import com.github.b3er.kmapper.processor.mappers.GeneratedMapper
 import com.github.b3er.kmapper.processor.mappings.Mapping
+import com.github.b3er.kmapper.processor.mappings.declared.DeclaredMapping
 
 class SimpleGeneratedMapping(
     parent: Mapping,
@@ -28,5 +29,10 @@ class SimpleGeneratedMapping(
     override val target: MappingElement,
     override val sources: List<MappingElement>
 ) : GeneratedMapping(parent), GeneratesSimpleMapping {
-    override val overrides: List<MappingAnnotation> = emptyList()
+    override val overrides: List<MappingAnnotation> by lazy {
+        parent.overrides.asSequence()
+            .filterIsInstance<MappingAnnotation>()
+            .filter { it.inherit }
+            .toList()
+    }
 }

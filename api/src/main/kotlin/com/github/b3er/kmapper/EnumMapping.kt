@@ -23,18 +23,10 @@ package com.github.b3er.kmapper
 annotation class EnumMapping(
     val source: String = "",
     val target: String = "",
-    val sourceName: Naming = Naming.None,
-    val targetName: Naming = Naming.None,
+    val sourceName: EnumNaming = EnumNaming.Default,
+    val targetName: EnumNaming = EnumNaming.Default,
     /**
      * Check if all target enum values are consumed in mapping, for all values, leave source and target empty
      */
-    val targetComplianceCheck: CheckSeverity = CheckSeverity.Error,
-) {
-    enum class Naming {
-        None,
-        UpperUnderscore,
-        LowerUnderscore,
-        LowerCamel,
-        UpperCamel
-    }
-}
+    val targetComplianceCheck: CheckSeverity = CheckSeverity.Default,
+)

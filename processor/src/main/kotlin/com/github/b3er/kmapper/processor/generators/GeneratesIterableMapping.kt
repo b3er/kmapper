@@ -25,7 +25,6 @@ import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.asClassName
 
 interface GeneratesIterableMapping : Mapping, MappingGenerator {
-    val overrides: List<MappingAnnotation>
     val logger: KSPLogger
     val sourceArgument: MappingElement
     val targetArgument: MappingElement

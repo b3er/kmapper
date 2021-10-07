@@ -26,6 +26,7 @@ data class MappingAnnotation(override val annotation: KSAnnotation) : Annotation
     val source: String by lazy { annotation["source"]!!.value as String }
     val expression: String by lazy { annotation["expression"]!!.value as String }
     val target: String by lazy { annotation["target"]!!.value as String }
+    val inherit: Boolean by lazy { annotation["inherit"]!!.value as Boolean }
     val nullabilityStrategy: Mapping.NullabilityCheckStrategy? by lazy {
         ((annotation["nullabilityStrategy"]?.value) as? KSType)
             ?.declaration

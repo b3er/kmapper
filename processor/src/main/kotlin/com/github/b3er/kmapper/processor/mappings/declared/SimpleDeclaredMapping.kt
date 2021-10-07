@@ -29,7 +29,7 @@ import com.google.devtools.ksp.symbol.KSFunctionDeclaration
 class SimpleDeclaredMapping(
     override val declaration: KSFunctionDeclaration,
     override val target: MappingElement,
-    override val mapper: Mapper
+    override val mapper: Mapper,
 ) : DeclaredMapping(), GeneratesSimpleMapping {
     override val overrides by lazy {
         declaration.getAnnotation<Mapping>()?.let { listOf(MappingAnnotation(it)) }
