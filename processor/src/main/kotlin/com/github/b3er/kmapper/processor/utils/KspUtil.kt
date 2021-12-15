@@ -16,32 +16,13 @@
 package com.github.b3er.kmapper.processor.utils
 
 import com.github.b3er.kmapper.CheckSeverity
-import com.github.b3er.kmapper.CheckSeverity.Error
-import com.github.b3er.kmapper.CheckSeverity.None
-import com.github.b3er.kmapper.CheckSeverity.Notice
-import com.github.b3er.kmapper.CheckSeverity.Warning
+import com.github.b3er.kmapper.CheckSeverity.*
 import com.google.devtools.ksp.getAllSuperTypes
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.processing.Resolver
-import com.google.devtools.ksp.symbol.ClassKind
+import com.google.devtools.ksp.symbol.*
 import com.google.devtools.ksp.symbol.ClassKind.CLASS
-import com.google.devtools.ksp.symbol.KSAnnotated
-import com.google.devtools.ksp.symbol.KSAnnotation
-import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.google.devtools.ksp.symbol.KSDeclaration
-import com.google.devtools.ksp.symbol.KSName
-import com.google.devtools.ksp.symbol.KSNode
-import com.google.devtools.ksp.symbol.KSType
-import com.google.devtools.ksp.symbol.KSTypeAlias
-import com.google.devtools.ksp.symbol.Modifier
-import com.google.devtools.ksp.symbol.Origin
-import com.google.devtools.ksp.symbol.Visibility
-import com.google.devtools.ksp.symbol.Visibility.INTERNAL
-import com.google.devtools.ksp.symbol.Visibility.JAVA_PACKAGE
-import com.google.devtools.ksp.symbol.Visibility.LOCAL
-import com.google.devtools.ksp.symbol.Visibility.PRIVATE
-import com.google.devtools.ksp.symbol.Visibility.PROTECTED
-import com.google.devtools.ksp.symbol.Visibility.PUBLIC
+import com.google.devtools.ksp.symbol.Visibility.*
 import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
@@ -218,7 +199,7 @@ internal inline fun KSPLogger.check(condition: Boolean, element: KSNode?, messag
 
 internal inline fun KSPLogger.check(severity: CheckSeverity, element: KSNode?, message: () -> String) {
     when (severity) {
-        None -> return
+        None, Default -> return
         Notice -> info(message(), element)
         Warning -> warn(message(), element)
         Error -> {
