@@ -41,7 +41,7 @@ abstract class BaseMapper(override val declaration: KSClassDeclaration, override
     override val includes by lazy {
         annotation.includes?.asSequence()
             ?.map { context.findMapper(it) }
-            ?.flatMap { it.includes.keys + listOf(it) }
+            ?.flatMap { it.includes.keys.plus(it) }
             ?.associate {
                 it to it.declaration.simpleName.getShortName().replaceFirstChar { c -> c.lowercase(Locale.ROOT) }
             } ?: emptyMap()
