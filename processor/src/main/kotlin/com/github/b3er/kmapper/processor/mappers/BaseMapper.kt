@@ -40,10 +40,10 @@ abstract class BaseMapper(override val declaration: KSClassDeclaration, override
     override val logger = context.logger
     override val includes by lazy {
         annotation.includes?.asSequence()
-            ?.map(context::findMapper)
+            ?.map { context.findMapper(it) }
+            ?.flatMap { it.includes.keys + listOf(it) }
             ?.associate {
-                it to it.declaration.simpleName.getShortName()
-                    .replaceFirstChar { c -> c.lowercase(Locale.ROOT) }
+                it to it.declaration.simpleName.getShortName().replaceFirstChar { c -> c.lowercase(Locale.ROOT) }
             } ?: emptyMap()
     }
     protected val declaredMappings: List<Mapping> by lazy {

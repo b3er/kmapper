@@ -23,16 +23,16 @@ val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 val compileTestKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 
 compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "11"
     freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.contracts.ExperimentalContracts"
 }
+
 compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+    jvmTarget = "11"
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    toolchain.languageVersion.set(JavaLanguageVersion.of(11))
 }
 
 dependencies {
