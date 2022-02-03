@@ -20,7 +20,7 @@ plugins {
 
 subprojects {
     group = "com.github.b3er.kmapper"
-    version = "0.3.20"
+    version = "0.3.21"
     plugins.withId("maven-publish") {
         publishing {
             publications {
@@ -28,6 +28,13 @@ subprojects {
                     from(components["java"])
                     pom {
                         url.set("https://github.com/b3er/kmapper")
+                        licenses {
+                            license {
+                                name.set("The Apache Software License, Version 2.0")
+                                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                                distribution.set("repo")
+                            }
+                        }
                     }
                 }
             }
