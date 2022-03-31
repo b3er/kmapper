@@ -6,7 +6,7 @@ junit = "5.6.0"
 kotlin = "1.6.10"
 kotlinMetadata = "0.3.0"
 kotlinPoet = "1.9.0"
-ksp = "1.6.10-1.0.2"
+ksp = "1.6.10-1.0.4"
 hilt = "1.0.0"
 
 [plugins]
