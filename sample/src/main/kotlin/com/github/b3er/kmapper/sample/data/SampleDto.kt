@@ -38,13 +38,15 @@ data class SampleDto(
     enum class Status {
         ONE_SAMPLE, SECOND_SAMPLE, THIRD_SAMPLE
     }
+
     enum class Type {
         TYPE_ONE, TYPE_TWO
     }
+
     data class NestedDto(val nestedId: Long, val nestedName: String)
     data class Amount(val currency: String, val amount: BigDecimal)
 }
 
-
+data class SampleNonTypedDto(val item: SampleDto)
 
 

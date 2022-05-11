@@ -54,3 +54,4 @@ data class SampleModel(
     data class Money(val currency: Currency, val amount: BigDecimal)
 }
 
+data class SampleTypedModel<T>(val item: T)

@@ -21,11 +21,7 @@ import com.github.b3er.kmapper.EnumNaming
 import com.github.b3er.kmapper.processor.annotations.EnumMappingAnnotation
 import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.mappings.Mapping
-import com.github.b3er.kmapper.processor.utils.asType
-import com.github.b3er.kmapper.processor.utils.check
-import com.github.b3er.kmapper.processor.utils.enumEntries
-import com.github.b3er.kmapper.processor.utils.isEnumClass
-import com.github.b3er.kmapper.processor.utils.toClassName
+import com.github.b3er.kmapper.processor.utils.*
 import com.google.common.base.CaseFormat
 import com.google.devtools.ksp.processing.KSPLogger
 import com.google.devtools.ksp.symbol.KSClassDeclaration
@@ -49,10 +45,18 @@ interface GeneratesEnumMapping : Mapping, MappingGenerator {
             beginControlFlow("return when (%N) {", sources.first().name)
             if (sourceDeclaration.isEnumClass()) {
                 val sourceEnums = sourceDeclaration.enumEntries()
-                writeNullPreconditions()
                 sourceEnums.forEach {
                     indent().indent()
                     writeEntryMapping(it, sourceDeclaration, targetEnums, targetEnumConsumer)
+                    unindent().unindent()
+                }
+                if (source.type.isMarkedNullable && !target.type.isMarkedNullable) {
+                    indent().indent()
+                    val defaultOverride = overrides.find { it.source.isEmpty() }
+                    logger.check(defaultOverride != null, declaration) {
+                        "No default enum entry found for nullable source ${toFullString()}"
+                    }
+                    addStatement("else -> %T.%L", target.type.toClassName(), defaultOverride.target)
                     unindent().unindent()
                 }
             } else if (mapper.context.typeResolver.isString(sourceDeclaration.asType())) {
