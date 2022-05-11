@@ -69,8 +69,14 @@ class GeneratedMapper(declaration: KSClassDeclaration, context: MappingContext) 
             constSpec.addParameter(name, mapper.declaration.toClassName())
             typeSpec.addProperty(
                 PropertySpec
-                    .builder(name, mapper.declaration.toClassName(), KModifier.PRIVATE)
-                    .initializer(name).build()
+                    .builder(name, mapper.declaration.toClassName())
+                    .also {
+                        if (declaration.getAllProperties().any { prop -> prop.simpleName.getShortName() == name }) {
+                            it.addModifiers(KModifier.OVERRIDE)
+                        } else {
+                            it.addModifiers(KModifier.PRIVATE)
+                        }
+                    }.initializer(name).build()
             )
         }
         typeSpec.primaryConstructor(constSpec.build())

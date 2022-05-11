@@ -31,6 +31,7 @@ import java.util.*
     enumSourceNaming = EnumNaming.UpperUnderscore
 )
 internal interface SampleMapper {
+    val nestedSampleMapper: NestedSampleMapper
     //    fun map(sampleNonTypedDto: SampleNonTypedDto): SampleTypedModel<SampleModel>
 
     @EnumMappings(
