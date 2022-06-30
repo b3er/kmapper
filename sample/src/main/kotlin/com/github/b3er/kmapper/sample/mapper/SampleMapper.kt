@@ -15,12 +15,15 @@
 
 package com.github.b3er.kmapper.sample.mapper
 
-import com.github.b3er.kmapper.*
-import com.github.b3er.kmapper.CheckSeverity.Warning
+import com.github.b3er.kmapper.EnumMapping
+import com.github.b3er.kmapper.EnumMappings
+import com.github.b3er.kmapper.EnumNaming
+import com.github.b3er.kmapper.Mapper
+import com.github.b3er.kmapper.Mapping
 import com.github.b3er.kmapper.sample.data.SampleDto
 import com.github.b3er.kmapper.sample.model.SampleModel
 import java.time.LocalDate
-import java.util.*
+import java.util.UUID
 
 
 @Mapper(
@@ -50,8 +53,8 @@ internal interface SampleMapper {
 
     fun mapUUIDToString(value: UUID): String = value.toString()
 
-    @EnumMapping(target = "Three", targetComplianceCheck = Warning)
-    fun map(dto: DtoEnum?): ModelEnum
+//    @EnumMapping(target = "Three", targetComplianceCheck = Warning)
+//    fun map(dto: DtoEnum?): ModelEnum
     //
     //    fun mapList(dto: List<SampleDto>, addedId: Long): List<SampleDto>
     //    fun mapIterable(dto: Iterable<SampleDto>, addedId: Long): List<SampleDto>
