@@ -35,6 +35,7 @@ subprojects {
                                 distribution.set("repo")
                             }
                         }
+                        artifactId = "kmapper"
                     }
                 }
             }
