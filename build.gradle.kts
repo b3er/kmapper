@@ -20,7 +20,7 @@ plugins {
 
 subprojects {
     group = "com.github.b3er.kmapper"
-    version = "0.4.0"
+    version = "0.4.1"
     plugins.withId("maven-publish") {
         publishing {
             publications {
@@ -35,7 +35,6 @@ subprojects {
                                 distribution.set("repo")
                             }
                         }
-                        artifactId = "kmapper"
                     }
                 }
             }
