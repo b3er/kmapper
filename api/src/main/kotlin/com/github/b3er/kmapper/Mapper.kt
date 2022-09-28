@@ -15,6 +15,7 @@
 
 package com.github.b3er.kmapper
 
+import com.github.b3er.kmapper.Mapper.InjectionType
 import com.github.b3er.kmapper.Mapper.NullabilityCheckStrategy
 import kotlin.reflect.KClass
 
@@ -49,9 +50,13 @@ annotation class Mapper(
      * Default target [EnumNaming] for all enum mappers
      */
     val enumTargetNaming: EnumNaming = EnumNaming.None,
+    /**
+     * Injection scope for [InjectionType.Anvil]
+     */
+    val injectionScope: KClass<*> = Unit::class
 ) {
     enum class InjectionType {
-        None, Jsr330
+        None, Jsr330, Anvil
     }
 
     /**

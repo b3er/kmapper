@@ -37,6 +37,8 @@ dependencies {
     implementation(libs.kotlin.stdlib)
     implementation(projects.api)
     implementation(libs.kotlinPoet.library)
+    implementation(libs.dagger)
+    implementation(libs.anvil.annotations)
     ksp(projects.processor)
     kspTest(projects.processor)
 

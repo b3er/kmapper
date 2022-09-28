@@ -76,5 +76,10 @@ class MapperAnnotation(override val annotation: KSAnnotation) : AnnotationHolder
             ?.getShortName()
             ?.let { EnumNaming.valueOf(it) }
     }
+
+    val injectionScope: KSClassDeclaration? by lazy {
+        (annotation["injectionScope"]?.value as? KSType)?.declaration as? KSClassDeclaration
+    }
+
     override val matchedAnnotationTypes = listOf(Mapper::class.asClassName())
 }

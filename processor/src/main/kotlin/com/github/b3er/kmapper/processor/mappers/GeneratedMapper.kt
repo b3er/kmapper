@@ -18,10 +18,21 @@ package com.github.b3er.kmapper.processor.mappers
 import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.mappings.Mapping
 import com.github.b3er.kmapper.processor.mappings.MappingFactory
-import com.github.b3er.kmapper.processor.utils.*
+import com.github.b3er.kmapper.processor.utils.MappingContext
+import com.github.b3er.kmapper.processor.utils.addOriginatingKSFile
+import com.github.b3er.kmapper.processor.utils.kModifiers
+import com.github.b3er.kmapper.processor.utils.toAnnotationSpec
+import com.github.b3er.kmapper.processor.utils.toClassName
+import com.github.b3er.kmapper.processor.utils.toTypeName
 import com.google.devtools.ksp.symbol.ClassKind
 import com.google.devtools.ksp.symbol.KSClassDeclaration
-import com.squareup.kotlinpoet.*
+import com.squareup.kotlinpoet.AnnotationSpec
+import com.squareup.kotlinpoet.ClassName
+import com.squareup.kotlinpoet.FileSpec
+import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.KModifier
+import com.squareup.kotlinpoet.PropertySpec
+import com.squareup.kotlinpoet.TypeSpec
 import com.github.b3er.kmapper.Mapper as MapperClassAnnotation
 
 class GeneratedMapper(declaration: KSClassDeclaration, context: MappingContext) : BaseMapper(declaration, context) {
@@ -61,9 +72,24 @@ class GeneratedMapper(declaration: KSClassDeclaration, context: MappingContext) 
         }.map { it.toAnnotationSpec(context.resolver) }.toList())
 
         val constSpec = FunSpec.constructorBuilder()
-        if (annotation.injectionType == MapperClassAnnotation.InjectionType.Jsr330) {
+        if (annotation.injectionType == MapperClassAnnotation.InjectionType.Jsr330
+            || annotation.injectionType == MapperClassAnnotation.InjectionType.Anvil
+        ) {
             logger.info("Using JSR303 injection", declaration)
             constSpec.addAnnotation(AnnotationSpec.builder(ClassName.bestGuess("javax.inject.Inject")).build())
+        }
+        if (annotation.injectionType == MapperClassAnnotation.InjectionType.Anvil) {
+            logger.info("Using Anvil/Dagger injection", declaration)
+            annotation.injectionScope?.also { injectionScope ->
+                if (injectionScope.toClassName().simpleName != "Unit") {
+                    typeSpec.addAnnotation(
+                        AnnotationSpec
+                            .builder(ClassName.bestGuess("com.squareup.anvil.annotations.ContributesBinding"))
+                            .addMember("scope = %T::class", injectionScope.toTypeName())
+                            .build()
+                    )
+                }
+            }
         }
         includes.forEach { (mapper, name) ->
             constSpec.addParameter(name, mapper.declaration.toClassName())
