@@ -41,7 +41,7 @@ internal interface SampleMapper {
         EnumMapping(sourceName = EnumNaming.UpperUnderscore, targetName = EnumNaming.UpperCamel),
         EnumMapping(source = "THIRD_SAMPLE", target = "Unknown")
     )
-    abstract fun map(status: SampleDto.Status): SampleModel.Status
+    fun map(status: SampleDto.Status): SampleModel.Status
 
     @Mapping(
         options = [Mapping.Option.NullableBooleanToFalse, Mapping.Option.NullableStringToEmpty],
@@ -49,6 +49,8 @@ internal interface SampleMapper {
     )
     fun map(dto: SampleDto, addedId: Long): SampleModel
 
+    @EnumMapping(target = "Unknown")
+    fun mapDtoEnum(dto: DtoEnum): ModelEnum
     fun mapStringToLocalDate(value: String): LocalDate = LocalDate.parse(value)
 
     fun mapUUIDToString(value: UUID): String = value.toString()
@@ -66,9 +68,9 @@ internal interface SampleMapper {
 }
 
 enum class DtoEnum {
-    One, Two
+    One, Two, Three, Four
 }
 
 enum class ModelEnum {
-    One, Two, Three
+    One, Two, Unknown
 }
