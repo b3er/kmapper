@@ -18,7 +18,6 @@ package com.github.b3er.kmapper.processor.mappings
 import com.github.b3er.kmapper.processor.annotations.AnnotationHolder
 import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.mappers.Mapper
-import com.github.b3er.kmapper.processor.mappings.declared.DeclaredMapping
 import com.github.b3er.kmapper.processor.utils.check
 import com.google.devtools.ksp.symbol.KSNode
 import com.squareup.kotlinpoet.FunSpec

@@ -16,6 +16,7 @@
 package com.github.b3er.kmapper.sample.model
 
 import com.github.b3er.kmapper.sample.data.SampleDto.Type
+import kotlinx.collections.immutable.ImmutableList
 import java.math.BigDecimal
 import java.time.LocalDate
 
@@ -27,6 +28,7 @@ data class SampleModel(
     val nested: NestedModel,
     val nestedOptional: NestedModel?,
     val nullableSamples: List<NestedModel>?,
+    val immutableSamples: ImmutableList<NestedModel>?,
     val sourceNullable: String,
     val nonExistentElement: Long = 1231,
     val status: Status,

@@ -39,6 +39,7 @@ dependencies {
     implementation(libs.kotlinPoet.library)
     implementation(libs.dagger)
     implementation(libs.anvil.annotations)
+    implementation(libs.kotlinx.collections.immutable)
     ksp(projects.processor)
     kspTest(projects.processor)
 

@@ -25,6 +25,7 @@ data class SampleDto(
     val nested: NestedDto,
     val nestedOptional: NestedDto?,
     val nullableSamples: List<NestedDto>?,
+    val immutableSamples: List<NestedDto>,
     val sourceNullable: String?,
     val status: String,
     val type: Type,

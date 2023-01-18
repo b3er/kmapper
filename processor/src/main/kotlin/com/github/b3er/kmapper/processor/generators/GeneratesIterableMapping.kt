@@ -15,12 +15,12 @@
 
 package com.github.b3er.kmapper.processor.generators
 
-import com.github.b3er.kmapper.processor.annotations.MappingAnnotation
 import com.github.b3er.kmapper.processor.elements.MappingElement
 import com.github.b3er.kmapper.processor.mappings.Mapping
 import com.google.devtools.ksp.processing.KSPLogger
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.FunSpec
+import com.squareup.kotlinpoet.MemberName
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import com.squareup.kotlinpoet.asClassName
 
@@ -35,20 +35,30 @@ interface GeneratesIterableMapping : Mapping, MappingGenerator {
                 " to target ${target.name}"
         }
         CodeBlock.builder().apply {
+            val targetType = ArrayList::class.asClassName().parameterizedBy(targetArgument.toTypeName())
             writeNullPreconditions()
             if (mapper.context.typeResolver.isCollection(source.type)) {
-                addStatement("if (%N.isEmpty()) return emptyList()", source.name)
+                val emptyFunction = when {
+                    mapper.context.typeResolver.isImmutableList(target.type) -> {
+                        MemberName("kotlinx.collections.immutable", "persistentListOf")
+                    }
+
+                    else -> {
+                        MemberName("kotlin.collections", "emptyList")
+                    }
+                }
+                addStatement("if (%N.isEmpty()) return %M()", source.name, emptyFunction)
                 addStatement(
                     "val %N = %T(%N.size)",
                     "result",
-                    ArrayList::class.asClassName().parameterizedBy(targetArgument.toTypeName()),
+                    targetType,
                     source.name
                 )
             } else {
                 addStatement(
                     "val %N = %T()",
                     "result",
-                    ArrayList::class.asClassName().parameterizedBy(targetArgument.toTypeName())
+                    targetType
                 )
             }
             if (targetArgument.isAssignableFrom(sourceArgument)) {
@@ -69,9 +79,28 @@ interface GeneratesIterableMapping : Mapping, MappingGenerator {
                 add("»\n")
                 endControlFlow()
             }
-            addStatement("return %N", "result")
+            when {
+                mapper.context.typeResolver.isImmutableList(target.type) -> {
+                    addStatement(
+                        "return %N.%M()",
+                        "result",
+                        MemberName("kotlinx.collections.immutable", "toImmutableList")
+                    )
+                }
+
+                mapper.context.typeResolver.isImmutableSet(target.type) -> {
+                    addStatement(
+                        "return %N.%M()",
+                        "result",
+                        MemberName("kotlinx.collections.immutable", "toImmutableSet")
+                    )
+                }
+
+                else -> {
+                    addStatement("return %N", "result")
+                }
+            }
             addCode(build())
         }
-        //mapper.findMapping(targetArgument, )
     }
 }

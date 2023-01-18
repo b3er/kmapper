@@ -22,9 +22,10 @@ import com.github.b3er.kmapper.sample.mapper.MyMappers
 import com.github.b3er.kmapper.sample.mapper.SampleMapper
 import com.github.b3er.kmapper.sample.model.SampleModel
 import com.github.b3er.kmapper.sample.model.SampleModel.Type.TypeTwo
+import kotlinx.collections.immutable.toImmutableList
 import org.junit.jupiter.api.Test
 import java.time.LocalDate
-import java.util.UUID
+import java.util.*
 import kotlin.test.assertEquals
 
 class MappingTest {
@@ -46,6 +47,7 @@ class MappingTest {
             someDate = "2021-02-12",
             nullableBoolean = null,
             uuid = UUID.randomUUID(),
+            immutableSamples = 10L.downTo(0).map { SampleDto.NestedDto(it, "nested_$it") },
             nullableLong = 1L
         )
 
@@ -66,6 +68,8 @@ class MappingTest {
             someDate = LocalDate.parse(dto.someDate),
             nullableBoolean = false,
             uuid = dto.uuid.toString(),
+            immutableSamples = dto.immutableSamples.map { SampleModel.NestedModel(it.nestedId, it.nestedName) }
+                .toImmutableList(),
             nullableLong = 1L
         )
 

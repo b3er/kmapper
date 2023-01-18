@@ -16,6 +16,8 @@
 package com.github.b3er.kmapper.processor.utils
 
 import com.google.devtools.ksp.symbol.KSType
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableSet
 
 class TypesResolver(context: MappingContext) {
     private val iterableType by lazy { context.resolver.getClassDeclarationByName<Iterable<*>>() }
@@ -24,9 +26,18 @@ class TypesResolver(context: MappingContext) {
     private val unitType by lazy { context.resolver.getClassDeclarationByName<Unit>() }
     private val stringType by lazy { context.resolver.getClassDeclarationByName<String>() }
     private val booleanType by lazy { context.resolver.getClassDeclarationByName<Boolean>() }
-
+    private val immutableListType by lazy { context.resolver.getClassDeclarationByName<ImmutableList<*>>() }
+    private val immutableSetType by lazy { context.resolver.getClassDeclarationByName<ImmutableSet<*>>() }
     fun isIterable(type: KSType): Boolean {
         return iterableType.asStarProjectedType().isAssignableFrom(type.makeNotNullable())
+    }
+
+    fun isImmutableList(type: KSType): Boolean {
+        return immutableListType.asStarProjectedType().isAssignableFrom(type.makeNotNullable())
+    }
+
+    fun isImmutableSet(type: KSType): Boolean {
+        return immutableSetType.asStarProjectedType().isAssignableFrom(type.makeNotNullable())
     }
 
     fun isList(type: KSType): Boolean {

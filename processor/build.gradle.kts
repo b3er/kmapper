@@ -43,6 +43,7 @@ dependencies {
     implementation(libs.ksp.api)
     implementation(libs.kotlinPoet.library)
     implementation(libs.guava)
+    implementation(libs.kotlinx.collections.immutable)
 
     testImplementation(libs.junit.library)
     testRuntimeOnly(libs.junit.engine)
