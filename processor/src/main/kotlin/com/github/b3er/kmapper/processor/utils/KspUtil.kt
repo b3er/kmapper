@@ -13,6 +13,8 @@
  * limitations under the License.
  */
 
+@file:OptIn(ExperimentalContracts::class)
+
 package com.github.b3er.kmapper.processor.utils
 
 import com.github.b3er.kmapper.CheckSeverity
@@ -27,6 +29,7 @@ import com.squareup.kotlinpoet.AnnotationSpec
 import com.squareup.kotlinpoet.ClassName
 import com.squareup.kotlinpoet.CodeBlock
 import com.squareup.kotlinpoet.KModifier
+import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.contract
 
 internal inline fun <reified T> Resolver.getClassDeclarationByName(): KSClassDeclaration {

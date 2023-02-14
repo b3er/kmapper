@@ -18,20 +18,11 @@ plugins {
     kotlin("jvm")
     `maven-publish`
 }
-val compileKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
-val compileTestKotlin: org.jetbrains.kotlin.gradle.tasks.KotlinCompile by tasks
 
-compileKotlin.kotlinOptions {
-    jvmTarget = "1.8"
-}
-compileTestKotlin.kotlinOptions {
-    jvmTarget = "1.8"
+kotlin {
+    jvmToolchain(8)
 }
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
 
 dependencies {
     implementation(libs.kotlin.stdlib)
