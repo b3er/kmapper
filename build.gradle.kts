@@ -1,3 +1,5 @@
+import java.net.URI
+
 /*
  * Copyright (C) 2021 Ilya Usanov
  *
@@ -14,30 +16,16 @@
  */
 
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.android.library).apply(false)
+    alias(libs.plugins.kotlin.multiplatform).apply(false)
     `maven-publish`
 }
 
 subprojects {
     group = "com.github.b3er.kmapper"
-    version = "0.5.5"
-    plugins.withId("maven-publish") {
-        publishing {
-            publications {
-                create<MavenPublication>("maven") {
-                    from(components["java"])
-                    pom {
-                        url.set("https://github.com/b3er/kmapper")
-                        licenses {
-                            license {
-                                name.set("The Apache Software License, Version 2.0")
-                                url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
-                                distribution.set("repo")
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
+    version = "0.6.0"
+}
+
+rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
+    rootProject.the(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension::class).nodeVersion = "18.0.0"
 }

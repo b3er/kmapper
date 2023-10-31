@@ -25,12 +25,12 @@ import kotlin.reflect.KClass
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.SOURCE)
-annotation class GenerateMapperFactory(
+public annotation class GenerateMapperFactory(
     val name: String,
     val implementation: Implementation,
     val mappers: Array<KClass<*>> = []
 ) {
-    enum class Implementation {
+    public enum class Implementation {
         Simple, Hilt
     }
 }

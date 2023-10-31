@@ -21,7 +21,7 @@ import kotlin.reflect.KClass
 
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class Mapper(
+public annotation class Mapper(
     /**
      * Additional mappers to use
      */
@@ -55,7 +55,7 @@ annotation class Mapper(
      */
     val injectionScope: KClass<*> = Unit::class
 ) {
-    enum class InjectionType {
+    public enum class InjectionType {
         None, Jsr330, Anvil
     }
 
@@ -63,7 +63,7 @@ annotation class Mapper(
      * Nullability checking strategy used in this mapper when target
      * and source nullability don't match and can't be assigned.
      */
-    enum class NullabilityCheckStrategy {
+    public enum class NullabilityCheckStrategy {
         /**
          * Check nullability in stage of generation, fail if mismatch
          */

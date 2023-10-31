@@ -1,6 +1,6 @@
 package com.github.b3er.kmapper
 
-enum class EnumNaming {
+public enum class EnumNaming {
     None,
     Default,
     UpperUnderscore,

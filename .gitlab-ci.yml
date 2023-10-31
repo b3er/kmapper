@@ -1,0 +1,18 @@
+image: gradle:8.4.0-jdk17
+
+stages:
+  - deploy
+
+publish:
+  stage: deploy
+  tags:
+    - java
+  only:
+      refs:
+        - tags
+  script:
+    - './gradlew clean check publish'
+  artifacts:
+      expire_in: 7 days
+      reports:
+        junit: '**/build/test-results/*/*.xml'

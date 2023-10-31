@@ -17,4 +17,4 @@ package com.github.b3er.kmapper
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-annotation class Mappings(vararg val mapping: Mapping)
+public annotation class Mappings(vararg val mapping: Mapping)

@@ -17,7 +17,7 @@ package com.github.b3er.kmapper
 
 @Target(AnnotationTarget.FUNCTION)
 @Retention(AnnotationRetention.BINARY)
-annotation class Mapping(
+public annotation class Mapping(
     /**
      * source property name
      */
@@ -47,7 +47,7 @@ annotation class Mapping(
      * Nullability checking strategy used in this mapper when target
      * and source nullability don't match and can't be assigned.
      */
-    enum class NullabilityCheckStrategy {
+    public enum class NullabilityCheckStrategy {
         /**
          * Uses [Mapper.NullabilityCheckStrategy] defined in this mapper
          */
@@ -69,7 +69,7 @@ annotation class Mapping(
         RuntimeException,
     }
 
-    enum class Option {
+    public enum class Option {
         /**
          * Assign false if source is null, e.g use target = source == true
          */

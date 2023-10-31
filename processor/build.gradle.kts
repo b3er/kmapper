@@ -1,3 +1,5 @@
+import java.net.URI
+
 /*
  * Copyright (C) 2021 Ilya Usanov
  *
@@ -18,8 +20,11 @@ plugins {
     kotlin("jvm")
     `maven-publish`
 }
-kotlin {
-    jvmToolchain(8)
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(8))
+    }
 }
 
 dependencies {
@@ -37,4 +42,36 @@ dependencies {
 
 tasks.getByName<Test>("test") {
     useJUnitPlatform()
+}
+
+publishing {
+    publications {
+        create<MavenPublication>("maven") {
+            from(components["java"])
+            pom {
+                name.set(project.name)
+                url.set("https://github.com/b3er/kmapper")
+                licenses {
+                    license {
+                        name.set("The Apache Software License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                        distribution.set("repo")
+                    }
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = "GitLabAndroid"
+            url = uri("${System.getenv("CI_API_V4_URL")}/projects/${System.getenv("CI_PROJECT_ID")}/packages/maven")
+            credentials(HttpHeaderCredentials::class) {
+                name = "Job-Token"
+                value = System.getenv("CI_JOB_TOKEN")
+            }
+            authentication {
+                create<HttpHeaderAuthentication>("header")
+            }
+        }
+    }
 }

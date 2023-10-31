@@ -15,8 +15,18 @@
 
 package com.github.b3er.kmapper
 
-class MappingException(override val message: String?) : RuntimeException() {
-}
-
-fun assignNullableError(source: String, target: String): Nothing =
-    throw MappingException("Cannot assign nullable source '$source' to target '$target'")
+/**
+ * Enum mapping function annotations, auto rename case, or direct matching
+ */
+@Target(AnnotationTarget.FUNCTION)
+@Retention(AnnotationRetention.BINARY)
+public annotation class EnumMapping(
+    val source: String = "",
+    val target: String = "",
+    val sourceName: EnumNaming = EnumNaming.Default,
+    val targetName: EnumNaming = EnumNaming.Default,
+    /**
+     * Check if all target enum values are consumed in mapping, for all values, leave source and target empty
+     */
+    val targetComplianceCheck: CheckSeverity = CheckSeverity.Default,
+)

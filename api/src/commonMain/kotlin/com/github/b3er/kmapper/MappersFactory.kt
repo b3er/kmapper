@@ -20,8 +20,8 @@ import kotlin.reflect.KClass
 /**
  * Factory to get all mappers
  */
-interface MappersFactory {
-    fun <T : Any> getMapper(cls: KClass<T>): T
+public interface MappersFactory {
+    public fun <T : Any> getMapper(cls: KClass<T>): T
 }
 
-inline fun <reified T : Any> MappersFactory.getMapper(): T = getMapper(T::class)
+public inline fun <reified T : Any> MappersFactory.getMapper(): T = getMapper(T::class)
